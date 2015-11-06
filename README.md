@@ -93,12 +93,29 @@ div (0 tabulators and spaces)
         div (2 tabulators)
   ```
 ###Skip areas
-Skip tags are used on places, where we dont want to compile the code. The **skip** tag cannot be in another skip tag. You can change the name of this tag in the **Compiler** class.
+Skip tags are used on places, where we dont want to compile the code. The **skip** tag cannot be in another skip tag. You can change the name of this tag in the **Compiler** class. Skip tags and skipped HTML tags **must be separated by line break**.
 ```
 SKIP
   content is not being compiled
 /SKIP
 ```
-Other ignored areas in basic settings: script, style
+Other ignored areas in default settings: script, style
+```
+// For HTML script and style tag
+// Not skipped
+<head><style>...</style></head>
+
+// Not skipped
+<head>
+	<style>...</style>
+</head>
+
+// Skipped 
+<head>
+	<style>
+	...
+	</style>
+</head>
+```
 ##Examples
 See examples in the “examples” directory. There are examples on everything that is possible to do with Macdom. Just copy the content of those files into **@layout.latte** and see what happened.
