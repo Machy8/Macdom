@@ -2,7 +2,7 @@
 HTML Abstraction markup language.
 ##Requirements
 Nette version 2.3 or newer.
-##Usage
+##Installation
 1 - Download the Macdom using composer:
 ```
  composer require machy8/macdom:@dev
