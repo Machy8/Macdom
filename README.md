@@ -3,12 +3,21 @@ HTML Abstraction markup language.
 ##Requirements
 Nette version 2.3 or newer.
 ##Usage
-Place the file Macdom.php into **App\Macdom** (default - you can change it => also change the path in the setLoader) and code below into your **BasePresenter.php**
+1 - Download the Macdom using composer:
+```
+ composer require machy8/macdom:@dev
+```
+2 - Register the Macdom in the **config.neon** as an extension:
+```
+extensions:
+	macdom: Machy8\Macdom\MacdomExtension
+```
+3 - Place the code bellow into your **base presenter**:
 ```
 protected function createTemplate()
     {
         $template = parent::createTemplate();
-        $template->getLatte()->setLoader(new \App\Macdom\Macdom($this));
+        $template->getLatte()->setLoader(new \Machy8\Macdom\Loader($this));
         return $template;
     }
 ```
@@ -90,5 +99,6 @@ SKIP
   content is not being compiled
 /SKIP
 ```
+Other ignored areas in basic settings: script, style
 ##Examples
 See examples in the “examples” directory. There are examples on everything that is possible to do with Macdom. Just copy the content of those files into **@layout.latte** and see what happened.
