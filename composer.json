@@ -6,16 +6,15 @@
     "require": {
         "php": ">=5.3.0"
     },
-    "authors": [
-		{
-			"name": "Vladimír Macháček",
-			"email": "8machy@seznam.cz"
+    "authors": [	
+        {
+           "name": "Vladimír Macháček",
+            "email": "8machy@seznam.cz"
 		}
     ],
     "autoload": {
-		"psr-0": {
-			"Machy8\\Macdom": "src/"
-		},
-		"classmap": ["src/"]
+	    "psr-4": {
+			"Machy8\\Macdom\\": "src"
+		}
     }
 }
