@@ -6,11 +6,11 @@
     "require": {
         "php": ">=5.3.0"
     },
-    "authors": [	
-        {
-           "name": "Vladimír Macháček",
+    "authors": [
+    	{
+            "name": "Vladimír Macháček",
             "email": "8machy@seznam.cz"
-		}
+    	}
     ],
     "autoload": {
 	    "psr-4": {
