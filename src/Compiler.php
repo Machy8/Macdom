@@ -12,35 +12,53 @@
 
 namespace Machy8\Macdom;
 
-class Compiler extends ElementsHelpers
-{
+use Machy8\Macdom;
+use Machy8\Macdom\Elements;
+use Machy8\Macdom\Macros;
 
-	// @var string
+class Compiler extends Elements
+{
+	/** @var Macros\Macros */
+	private $Macros;
+	
+	/** @var Elements\Elements */
+	private $Elements;
+
+	/** @var string */
 	private $codeStorage = "";
 
-	// @var array
+	/** @var array */
 	private $closeTags = [];
 
-	// @var integer
-	private $spacesInTab = 4;
+	/** @var integer */
+	private $spacesPerIndent = 4;
 
-	// @var regular expression
+	/** @var regular expression */
 	private $sRegExp;
 
 	// @var string
 	private $noCompileAreaTag = "SKIP";
 
-	// @var bool
+	/** @var bool */
 	private $inNoCompileArea = FALSE;
 
-	public function __construct ()
+	/**
+	 * @param Macros $Macros
+	 * @param Elements $Elements
+	 */
+	public function __construct (Macros $Macros, Elements $Elements)
 	{
-		parent::__construct();
-		$this->sRegExp = "/ {".$this->spacesInTab."}/";
+
+		$this->Macros = $Macros;
+		$this->Elements = $Elements;
+
+		$this->sRegExp = "/ {".$this->spacesPerIndent."}/";
 	}
 
-	// @param string $content
-	// @return string $this->codeStorage
+	/**
+	 * @param string $content
+	 * @return string $this->codeStorage
+	 */
 	public function compile ($content)
 	{
 		$lns = preg_split("/\n/", $content);
@@ -49,14 +67,14 @@ class Compiler extends ElementsHelpers
 		{
 			$ln = $value;
 			$lvl = $this->getLnLvl($ln);
-			$txt = $this->getLnText($ln);
+			$txt = $this->getLnTxt($ln, FALSE);
 			$ln2array = explode(" ", trim($txt));
 
 			// Element is the first word on line
 			$element = $ln2array[0];
 			$noCompileAreaTag = $this->detectNoCompileArea($element);
 
-			if ($this->findElement($element, "exists") === TRUE and $this->inNoCompileArea === FALSE)
+			if ($this->Elements->findElement($element, "exists") === TRUE and $this->inNoCompileArea === FALSE)
 			{
 				$removeElement = preg_replace('/'.$element.'/', '', trim($txt), 1);
 				$txt = $removeElement;
@@ -67,19 +85,28 @@ class Compiler extends ElementsHelpers
 			{
 				if ($txt !== NULL and $this->inNoCompileArea === FALSE)
 				{
-				    if($noCompileAreaTag === FALSE)
-				    {
-					$this->addCloseTags($lvl);
-					$this->codeStorage .= $txt;
-				    }
+					if($noCompileAreaTag === FALSE)
+					{
+						$macro = $this->Macros->replace($element, $txt);
+						$macroExists = $macro['exists'];
+
+						if($macroExists === FALSE)
+						{
+							$this->addCloseTags($lvl);
+							$this->codeStorage .= $txt;
+						}
+						elseif($macroExists === TRUE)
+						{
+							$this->codeStorage .= $macro['replacement'];
+						}
+					}
 				}
 				elseif($txt !== NULL and $this->inNoCompileArea === TRUE)
 				{
-				    if($noCompileAreaTag === FALSE)
-				    {
-
-					$this->codeStorage .= $ln;
-				    }
+					if($noCompileAreaTag === FALSE)
+					{
+						$this->codeStorage .= $ln;
+					}
 				}
 			}
 		}
@@ -89,33 +116,65 @@ class Compiler extends ElementsHelpers
 		return $this->codeStorage;
 	}
 
-	// @param string $ln
-	// @return string $lvl
+	/**
+	 * @param string $ln
+	 * @return integer $lvl
+	 */
 	private function getLnLvl ($ln)
 	{
+		/*
+		 * HOW LEVELS WORKS
+		 *
+		 * method 1 = spaces
+		 *	- is better to set the number of the variable spacesPerIndent
+		 *	  as you have it in your editor "spaces per indent"
+		 * method 2 = tabulators
+		 * method 3 = spaces&tabulators
+		 *	- is better to set up the tab size twice bigger then spaces have
+		 *	- Example:
+		 *	  - spaces per indent = 4 => tab size = 8
+		 *	  - spaces per indent = 8 => tab size = 16
+		 *	  - etc...
+		 */
+
+		// Get the number of spaces on the line
 		$spaces = preg_match_all($this->sRegExp, $ln);
 
 		// Get the number of tabulators on the line
-		// One tabulators = 2 levels
+		// One tabulator = 2 levels
 		$tabulators = preg_match_all("/\t/", $ln)*2;
 		$lvl = $spaces + $tabulators;
 
 		return $lvl;
 	}
 
-	// @param string $ln
-	// @return string $txt
-	private function getLnText ($ln)
+	/**
+	 * @param string $ln
+	 * @param bool $trim
+	 * @return string
+	 */
+	private function getLnTxt ($ln, $trim = FALSE)
 	{
-		$replaceTabulators = preg_replace("/\t/", "", trim($ln));
+		switch($trim)
+		{
+			case TRUE:
+				$replaceTabulators = preg_replace("/\t/", "", trim($ln));
+			break;
+			case FALSE:
+				$replaceTabulators = preg_replace("/\t/", "", $ln);
+			break;
+		}
+
 		$replaceSpaces = preg_replace($this->sRegExp, "", $replaceTabulators);
 		$txt = $replaceSpaces;
 
 		return $txt;
 	}
 
-	// @param string $txt
-	// @return array
+	/**
+	 *  @param string $txt
+	 *  @return array
+	 */
 	private function getLnAttributes ($txt)
 	{
 		// Replace n$*; for n:href=""
@@ -242,7 +301,7 @@ class Compiler extends ElementsHelpers
 		}
 
 		// Get the text
-		$getTxt = $this->getLnText($txt);
+		$getTxt = $this->getLnTxt($txt, TRUE);
 		$txt = $getTxt;
 
 		// Split the txt to an array in oder to get the boolean attributes
@@ -252,7 +311,7 @@ class Compiler extends ElementsHelpers
 		// Get boolean attributes
 		foreach ($txt2array as $key => $attribute)
 		{
-			if ($this->isBoolean($attribute) === TRUE)
+			if ($this->Elements->isBoolean($attribute) === TRUE)
 			{
 				$remove = str_replace($attribute, '', $txt);
 				$txt = $remove;
@@ -285,21 +344,25 @@ class Compiler extends ElementsHelpers
 		];
 	}
 
-	// @param string $element
-	// @param int $lvl
-	// @param array $attributes
+	/**
+	 * @param string $element
+	 * @param int $lvl
+	 * @param array $attributes
+	 */
 	private function addOpenTag ($element, $lvl, $attributes)
 	{
-		$elementSettings = $this->findElement($element, "settings");
+		$elementSettings = $this->Elements->findElement($element, "settings");
 		$openTag = '<'.$element;
 
 		if ($elementSettings['qkAttributes'] !== NULL and $attributes['qkAttributes'] !== NULL)
 		{
 			$usedParameters = [];
 
-			// For each quick attribute in the array
-			// of recieved quick attributes from the actual line
-			// Only for quick attributes with an index before
+			/*
+			 * For each quick attribute in the array
+			 * of recieved quick attributes from the actual line
+			 * Only for quick attributes with an index before
+			 */
 			foreach($attributes['qkAttributes'] as $key => $parameter)
 			{
 				if(count($parameter) === 2)
@@ -374,7 +437,7 @@ class Compiler extends ElementsHelpers
 		}
 	}
 
-	// @param int $lvl
+	/** @param int $lvl */
 	private function addCloseTags ($lvl)
 	{
 		$length = count($this->closeTags);
@@ -398,24 +461,24 @@ class Compiler extends ElementsHelpers
 			array_splice($this->closeTags, $lastTag);
 		}
 	}
-
-	// @param string $element
-	// @return bool $detected
+	/**
+	 * @param type $element
+	 * @return boolean
+	 */
 	private function detectNoCompileArea ($element)
 	{
-		$detected = FALSE;
+		$tagDetected = FALSE;
 
 		// For skip tag
 		$closeTag = '/'.$this->noCompileAreaTag;
-
 		if ($element === $this->noCompileAreaTag)
 		{
-			$detected = TRUE;
+			$tagDetected = TRUE;
 			$this->inNoCompileArea = TRUE;
 		}
 		elseif ($element === $closeTag)
 		{
-			$detected = TRUE;
+			$tagDetected = TRUE;
 			$this->inNoCompileArea = FALSE;
 		}
 
@@ -426,11 +489,11 @@ class Compiler extends ElementsHelpers
 
 		if ($element === $open.'>' or $element === $open)
 		{
-		    $this->inNoCompileArea = TRUE;
+			$this->inNoCompileArea = TRUE;
 		}
 		elseif ($element === $close)
 		{
-		    $this->inNoCompileArea = FALSE;
+			$this->inNoCompileArea = FALSE;
 		}
 
 		// For script tag
@@ -440,15 +503,15 @@ class Compiler extends ElementsHelpers
 
 		if ($element === $open.'>' or $element === $open)
 		{
-		    $this->inNoCompileArea = TRUE;
+			$this->inNoCompileArea = TRUE;
 		}
 		elseif ($element === $close)
 		{
-		    $this->inNoCompileArea = FALSE;
+			$this->inNoCompileArea = FALSE;
 		}
 
-		// User defined or other tags...
+		// User defined or other tags
 
-		return $detected;
+		return $tagDetected;
 	}
 }

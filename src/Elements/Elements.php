@@ -10,16 +10,20 @@
  *
  */
 
-namespace Machy8\Macdom;
+namespace Machy8\Macdom\Elements;
 
-class ElementsHelpers extends Elements
+class Elements extends ElementsList
 {
-
-	public function __construct() {
+	public function __construct() 
+	{
 	    parent::__construct();
 	}
-
-	protected function isBoolean ($attribute)
+	
+	/**
+	 * @param string $attribute
+	 * @return boolean
+	 */
+	public function isBoolean ($attribute)
 	{
 		if (in_array($attribute, $this->booleanAttributes))
 		{
@@ -31,11 +35,13 @@ class ElementsHelpers extends Elements
 		}
 	}
 
-	// @param string $el
-	// @param string $method
-	// method settings = @return array $settings
-	// method exists = @return boolean
-	protected function findElement ($el, $method)
+	/**
+	 * @param string $el
+	 * @param string $method
+	 * @return boolean
+	 * @return array $settings
+	 */
+	public function findElement ($el, $method)
 	{
 		$exists = FALSE;
 
@@ -67,8 +73,10 @@ class ElementsHelpers extends Elements
 		}
 	}
 
-	// @param string $el
-	// @return array
+	/**
+	 * @param string $el
+	 * @return array
+	 */
 	private function getElementSettings ($el)
 	{
 		$qkAttributes = NULL;
