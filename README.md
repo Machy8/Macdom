@@ -2,10 +2,12 @@
 HTML Abstraction markup language.
 ##Requirements
 Nette version 2.3 or newer.
+##Note
+May contains errors or bugs. Use Macdom in master branch for your projects. 
 ##Installation
 1 - Download the Macdom using composer:
 ```
- composer require machy8/macdom:@dev
+ composer require machy8/macdom:dev-develop
 ```
 2 - Register the Macdom in the **config.neon** as an extension:
 ```
