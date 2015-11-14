@@ -13,10 +13,10 @@
 namespace Machy8\Macdom\Elements;
 
 class ElementsSettings {
-    
+
     /** @var array */
     public $elementsSettings = [];
-    
+
     public function __construct ()
     {
 		$this->setElementsSettings();

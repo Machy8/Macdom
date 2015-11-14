@@ -19,7 +19,7 @@ class BooleanAttributes {
     
     public function __construct ()
     {
-	    $this->setBooleanAttributes();
+	$this->setBooleanAttributes();
     }
     
     private function setBooleanAttributes ()

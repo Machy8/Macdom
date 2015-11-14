@@ -20,7 +20,7 @@ class Compiler
 	/** @var Macros\Macros */
 	private $Macros;
 	
-	/** @var Elements*/
+	/** @var Elements */
 	private $Elements;
 
 	/** @var string */

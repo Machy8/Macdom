@@ -18,7 +18,7 @@ use Machy8\Macdom;
 class Loader extends Latte\Loaders\FileLoader
 {
 
-	/**
+	/** 
 	 * @param string $file
 	 * @return string $compiled
 	 */
