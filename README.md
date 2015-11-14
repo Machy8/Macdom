@@ -2,7 +2,7 @@
 HTML Abstraction markup language.
 ##Requirements
 Nette version 2.3 or newer.
-##Note
+##Note to develop version
 May contain errors and bugs. Use Macdom from the Master branch for your projects.
 ##Installation
 1 - Download the Macdom using composer:
