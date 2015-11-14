@@ -12,15 +12,14 @@
 
 namespace Machy8\Macdom\Elements;
 
-class ElementsList extends ElementsSettings
+class ElementsList
 {
 
 	/** @var array */
-	protected $elements = [];
+	public $elements = [];
 
 	public function __construct ()
 	{
-		parent::_construct();
 		$this->setElements();
 	}
 

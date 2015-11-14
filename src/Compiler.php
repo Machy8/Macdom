@@ -12,16 +12,15 @@
 
 namespace Machy8\Macdom;
 
-use Machy8\Macdom;
-use Machy8\Macdom\Elements;
-use Machy8\Macdom\Macros;
+use Machy8\Macdom\Elements\Elements;
+use Machy8\Macdom\CompilerMacros\Macros;
 
-class Compiler extends Elements
+class Compiler
 {
 	/** @var Macros\Macros */
 	private $Macros;
 	
-	/** @var Elements\Elements */
+	/** @var Elements*/
 	private $Elements;
 
 	/** @var string */
@@ -46,11 +45,10 @@ class Compiler extends Elements
 	 * @param Macros $Macros
 	 * @param Elements $Elements
 	 */
-	public function __construct (Macros $Macros, Elements $Elements)
+	public function __construct ()
 	{
-
-		$this->Macros = $Macros;
-		$this->Elements = $Elements;
+		$this->Macros = new Macros;
+		$this->Elements = new Elements;
 
 		$this->sRegExp = "/ {".$this->spacesPerIndent."}/";
 	}
@@ -73,7 +71,7 @@ class Compiler extends Elements
 			// Element is the first word on line
 			$element = $ln2array[0];
 			$noCompileAreaTag = $this->detectNoCompileArea($element);
-
+			
 			if ($this->Elements->findElement($element, "exists") === TRUE and $this->inNoCompileArea === FALSE)
 			{
 				$removeElement = preg_replace('/'.$element.'/', '', trim($txt), 1);
@@ -471,6 +469,7 @@ class Compiler extends Elements
 
 		// For skip tag
 		$closeTag = '/'.$this->noCompileAreaTag;
+		
 		if ($element === $this->noCompileAreaTag)
 		{
 			$tagDetected = TRUE;

@@ -22,5 +22,7 @@ class MacdomExtension extends Nette\DI\CompilerExtension
 
 		$builder->addDefinition($this->prefix('loader'))
 			->setClass('Machy8\Macdom\Loader');
+		
+	
 	}
 }
