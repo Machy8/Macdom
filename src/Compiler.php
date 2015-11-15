@@ -13,14 +13,14 @@
 namespace Machy8\Macdom;
 
 use Machy8\Macdom\Elements\Elements;
-use Machy8\Macdom\CompilerMacros\Macros;
+use Machy8\Macdom\Macros\Macros;
 
 class Compiler
 {
 	/** @var Macros\Macros */
 	private $Macros;
 	
-	/** @var Elements */
+	/** @var Elements*/
 	private $Elements;
 
 	/** @var string */
