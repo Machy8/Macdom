@@ -18,34 +18,32 @@ use Machy8\Macdom\Elements\BooleanAttributes;
 
 class Elements
 {
-	
+
 	public $Elements;
 	public $Settings;
 	public $BooleanAttributes;
-	
-	public function __construct() 
+
+	public function __construct()
 	{
 		$this->Elements = new ElementsList;
 		$this->Settings = new ElementsSettings;
 		$this->BooleanAttributes = new BooleanAttributes;
 	}
-	
+
 	/**
 	 * @param string $attribute
 	 * @return boolean
 	 */
 	public function isBoolean ($attribute)
 	{
-		if (in_array($attribute, $this->BooleanAttributes->booleanAttributes))
-		{
+		if (in_array($attribute, $this->BooleanAttributes->booleanAttributes)){
 			return TRUE;
 		}
-		else
-		{
+		else{
 			return FALSE;
 		}
 	}
-	
+
 	/**
 	 * @param string $el
 	 * @param string $method
@@ -56,19 +54,17 @@ class Elements
 	{
 		$exists = FALSE;
 
-		foreach ($this->Elements->elements as $element)
-		{
-			if ($element === $el)
-			{
+		foreach ($this->Elements->elements as $element){
+
+			if ($element === $el){
 				$exists = TRUE;
 				break;
 			}
 		}
 
-		if ($exists === TRUE)
-		{
-			switch ($method)
-			{
+		if ($exists === TRUE){
+
+			switch ($method){
 				case 'exists':
 					return TRUE;
 					break;
@@ -78,8 +74,7 @@ class Elements
 					break;
 			}
 		}
-		else
-		{
+		else{
 			return FALSE;
 		}
 	}
@@ -93,17 +88,14 @@ class Elements
 		$qkAttributes = NULL;
 		$paired = TRUE;
 
-		if (array_key_exists($el, $this->Settings->elementsSettings))
-		{
+		if (array_key_exists($el, $this->Settings->elementsSettings)){
 			$settings = $this->Settings->elementsSettings[$el];
 
-			if (array_key_exists('paired', $settings))
-			{
+			if (array_key_exists('paired', $settings)){
 				$paired = FALSE;
 			}
 
-			if (array_key_exists('qkAttributes', $settings))
-			{
+			if (array_key_exists('qkAttributes', $settings)){
 				$qkAttributes = $settings['qkAttributes'];
 			}
 		}

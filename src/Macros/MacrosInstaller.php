@@ -15,15 +15,14 @@ namespace Machy8\Macdom\Macros;
 use Nette;
 
 class MacrosInstaller {
-	
+
 	public $macros = [];
-	
+
 	protected function addMacro($fnName, $macroId)
 	{
-		if($fnName !== NULL and $macroId !== NULL)
-		{
-			if(!in_array($macroId, $this->macros))
-			{
+		if($fnName !== NULL and $macroId !== NULL){
+
+			if(!in_array($macroId, $this->macros)){
 				$this->macros[$macroId] = $fnName;
 			}
 		}

@@ -15,9 +15,9 @@ namespace Machy8\Macdom\Macros;
 use Machy8\Macdom\Macros\CoreMacros;
 
 class Macros {
-	
+
 	private $CoreMacros;
-	
+
 	/**
 	 * @param string $macro
 	 * @param line $line
@@ -27,7 +27,7 @@ class Macros {
 	{
 		$this->CoreMacros = new CoreMacros;
 	}
-	
+
 	/**
 	 * @param string $macro
 	 * @param string $line
@@ -37,27 +37,25 @@ class Macros {
 	{
 		$replacement = NULL;
 		$exists = FALSE;
-		
+
 		$line = trim(strstr($line, " "));
-		
-		foreach($this->CoreMacros->macros as $macroId => $fnName)
-		{
-			if($exists === TRUE)
-			{
+
+		foreach($this->CoreMacros->macros as $macroId => $fnName){
+
+			if($exists === TRUE){
 				break;
 			}
-			
+
 			$selectedMacro = $this->CoreMacros->macros[$macroId];
 
-			if($macro === $macroId)
-			{
+			if($macro === $macroId){
 				$fn = ucfirst($fnName);
 				$replacement = $this->CoreMacros->{'macro'.$fn}($line);
 				$exists = TRUE;
 				break;
 			}
 		}
-		
+
 		$macro =
 		[
 			'exists' => $exists,

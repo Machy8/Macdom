@@ -15,13 +15,13 @@ namespace Machy8\Macdom\Macros;
 use Machy8\Macdom\Macros\MacrosInstaller;
 
 class CoreMacros extends MacrosInstaller {
-	
+
 	public function __construct ()
-	{	
+	{
 		// Doctype
 		$this->addMacro('doctype5', '!5');
 		$this->addMacro('doctype', '!DOCTYPE');
-		
+
 		// Meta tags
 		$this->addMacro('charset', 'charset');
 		$this->addMacro('utf8', 'utf-8');
@@ -29,22 +29,27 @@ class CoreMacros extends MacrosInstaller {
 		$this->addMacro('description', 'description');
 		$this->addMacro('author', 'author');
 		$this->addMacro('viewport', 'viewport');
-		
+
 		// Twitter + Facebook
 		$this->addMacro('facebook', 'og-');
 		$this->addMacro('twitter', 'tw-');
-		
+
 		// Stylesheet
-		$this->addMacro("css", 'css');
-		
+		$this->addMacro('css', 'css');
+
 		// Favicon
-		$this->addMacro("favicon", 'favicon');
-		
+		$this->addMacro('favicon', 'favicon');
+
 		// Javascript
-		$this->addMacro("js", "js");
-		$this->addMacro("jsAsync", "js-async");
+		$this->addMacro('js', 'js');
+		$this->addMacro('jsAsync', 'js-async');
+
+		// Html comments
+		$this->addMacro('inlineHtmlComment', '//');
+		$this->addMacro('openHtmlComment', '/');
+		$this->addMacro('closeHtmlComment', '\\');
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -52,16 +57,16 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<!DOCTYPE html>';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
 	 */
 	public function macroDoctype ($line)
 	{
-		return '<!DOCTYPE '.$line.'>'; 
+		return '<!DOCTYPE '.$line.'>';
 	}
-	
+
 	/**
 	 * @return sring
 	 */
@@ -69,7 +74,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<meta charset="utf-8">';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -78,7 +83,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<meta charset="'.$line.'" />';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -87,7 +92,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<meta name="Keywords" content="'.$line.'" />';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -96,7 +101,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<meta name="Description" content="'.$line.'" />';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -105,7 +110,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<meta name="Author" content="'.$line.'" />';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -114,7 +119,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<meta name="viewport" content="'.$line.'" />';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -125,7 +130,7 @@ class CoreMacros extends MacrosInstaller {
 		$content = preg_replace("/".$selected." /", "", $line);
 		return '<meta property="og:'.$selected.'" content="'.$content.'" />';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -136,7 +141,7 @@ class CoreMacros extends MacrosInstaller {
 		$content = preg_replace("/".$selected." /", "", $line);
 		return '<meta name="twitter:'.$selected.'" content="'.$content.'" />';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -145,7 +150,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<link rel="stylesheet" type="text/css" href="'.$line.'">';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -154,7 +159,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<link rel="shortcut icon" href="'.$line.'">';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -163,7 +168,7 @@ class CoreMacros extends MacrosInstaller {
 	{
 		return '<script language="javascript" type="text/javascript" src="'.$line.'"></script>';
 	}
-	
+
 	/**
 	 * @param string $line
 	 * @return sring
@@ -171,5 +176,30 @@ class CoreMacros extends MacrosInstaller {
 	public function macroJsAsync ($line)
 	{
 		return '<script language="javascript" type="text/javascript" src="'.$line.'" async></script>';
+	}
+
+	/**
+	 * @param string $line
+	 * @return sring
+	 */
+	public function macroInlineHtmlComment ($line)
+	{
+		return '<!--'.$line.'-->';
+	}
+
+	/**
+	 * @return sring
+	 */
+	public function macroOpenHtmlComment ()
+	{
+		return '<!--';
+	}
+
+	/**
+	 * @return sring
+	 */
+	public function macroCloseHtmlComment ()
+	{
+		return '-->';
 	}
 }

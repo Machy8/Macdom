@@ -13,17 +13,17 @@
 namespace Machy8\Macdom\Elements;
 
 class ElementsSettings {
-    
-    /** @var array */
-    public $elementsSettings = [];
-    
-    public function __construct ()
-    {
+
+	/** @var array */
+	public $elementsSettings = [];
+
+	public function __construct ()
+	{
 		$this->setElementsSettings();
-    }
-    
-    private function setElementsSettings ()
-    {
+	}
+
+	private function setElementsSettings ()
+	{
 		$this->elementsSettings = array
 		(
 			// Document metadata
@@ -225,7 +225,7 @@ class ElementsSettings {
 			]
 
 		);
-    }
-    
-    
+	}
+
+
 }

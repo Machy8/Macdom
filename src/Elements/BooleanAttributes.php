@@ -13,16 +13,16 @@
 namespace Machy8\Macdom\Elements;
 
 class BooleanAttributes {
-    
-    /** @var array */
-    public $booleanAttributes = [];
-    
-    public function __construct ()
-    {
-	    $this->setBooleanAttributes();
-    }
-    
-    private function setBooleanAttributes ()
+
+	/** @var array */
+	public $booleanAttributes = [];
+
+	public function __construct ()
+	{
+		$this->setBooleanAttributes();
+	}
+
+	private function setBooleanAttributes ()
 	{
 		$this->booleanAttributes =
 		[
