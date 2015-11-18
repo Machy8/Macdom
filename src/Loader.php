@@ -12,12 +12,13 @@
 
 namespace Machy8\Macdom;
 
-use Latte;
-use Machy8\Macdom;
+use Latte\Loaders\FileLoader;
+use Machy8\Macdom\Elements\Elements;
+use Machy8\Macdom\Macros\Macros;
+use Machy8\Macdom\Replicator\Replicator;
 
-class Loader extends Latte\Loaders\FileLoader
+class Loader extends FileLoader
 {
-
 	/**
 	 * @param string $file
 	 * @return string $compiled
@@ -25,7 +26,7 @@ class Loader extends Latte\Loaders\FileLoader
 	public function getContent ($file)
 	{
 		$content = parent::getContent($file);
-		$compiler = new Compiler;
+		$compiler = new Compiler(new Elements, new Macros, new Replicator);
 		$compiled = $compiler->compile($content);
 
 		return $compiled;

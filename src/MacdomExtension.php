@@ -12,9 +12,9 @@
 
 namespace Machy8\Macdom;
 
-use Nette;
+use Nette\DI\CompilerExtension;
 
-class MacdomExtension extends Nette\DI\CompilerExtension
+class MacdomExtension extends CompilerExtension
 {
 	public function loadConfiguration()
 	{

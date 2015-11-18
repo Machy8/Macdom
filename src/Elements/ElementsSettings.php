@@ -12,220 +12,209 @@
 
 namespace Machy8\Macdom\Elements;
 
-class ElementsSettings {
+use Machy8\Macdom\Elements\ElementsList;
+
+class ElementsSettings extends ElementsList {
 
 	/** @var array */
-	public $elementsSettings = [];
+	protected $elementsSettings = 
+	[
+		// Document metadata
+		'html' =>
+		[
+			'qkAttributes' => ['lang']
+		],
 
-	public function __construct ()
-	{
-		$this->setElementsSettings();
-	}
+		'meta' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['name', 'content']
+		],
 
-	private function setElementsSettings ()
-	{
-		$this->elementsSettings = array
-		(
-			// Document metadata
-			'html' =>
-			[
-				'qkAttributes' => ['lang']
-			],
+		'link' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['href', 'rel', 'title']
+		],
 
-			'meta' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['name', 'content']
-			],
+		'style' =>
+		[
+			'qkAttributes' => ['type']
+		],
 
-			'link' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['href', 'rel', 'title']
-			],
+		// Text content
+		'hr' =>
+		[
+			'paired' => FALSE
+		],
 
-			'style' =>
-			[
-				'qkAttributes' => ['type']
-			],
+		'ol' =>
+		[
+			'qkAttributes' => ['type', 'start', 'reversed']
+		],
 
-			// Text content
-			'hr' =>
-			[
-				'paired' => FALSE
-			],
+		// Inline text semantic
+		'a' =>
+		[
+			'qkAttributes' => ['href', 'target', 'role']
+		],
 
-			'ol' =>
-			[
-				'qkAttributes' => ['type', 'start', 'reversed']
-			],
+		'abbr' =>
+		[
+			'qkAttributes' => ['title']
+		],
 
-			// Inline text semantic
-			'a' =>
-			[
-				'qkAttributes' => ['href', 'target', 'role']
-			],
+		'bdo' =>
+		[
+			'qkAttributes' => ['dir']
+		],
 
-			'abbr' =>
-			[
-				'qkAttributes' => ['title']
-			],
+		'br' =>
+		[
+			'paired' => FALSE
+		],
 
-			'bdo' =>
-			[
-				'qkAttributes' => ['dir']
-			],
+		'data' =>
+		[
+			'qkAttributes' => ['value']
+		],
 
-			'br' =>
-			[
-				'paired' => FALSE
-			],
+		'q' =>
+		[
+			'qkAttributes' => ['cite']
+		],
 
-			'data' =>
-			[
-				'qkAttributes' => ['value']
-			],
+		'wbr' =>
+		[
+			'paired' => FALSE
+		],
 
-			'q' =>
-			[
-				'qkAttributes' => ['cite']
-			],
+		// Image and multimedia
+		'img' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['src', 'alt']
+		],
 
-			'wbr' =>
-			[
-				'paired' => FALSE
-			],
+		'audio' =>
+		[
+			'qkAttributes' => ['src']
+		],
 
-			// Image and multimedia
-			'img' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['src', 'alt']
-			],
+		'track' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['src', 'srclang', 'kind']
+		],
 
-			'audio' =>
-			[
-				'qkAttributes' => ['src']
-			],
+		'track' =>
+		[
+			'qkAttributes' => ['src']
+		],
 
-			'track' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['src', 'srclang', 'kind']
-			],
+		// Embedded content
+		'embed' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['src', 'type', 'width', 'height']
+		],
 
-			'track' =>
-			[
-				'qkAttributes' => ['src']
-			],
+		'iframe' =>
+		[
+			'qkAttributes' => ['src', 'frameborder', 'width', 'height']
+		],
 
-			// Embedded content
-			'embed' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['src', 'type', 'width', 'height']
-			],
+		'object' =>
+		[
+			'qkAttributes' => ['data', 'type']
+		],
 
-			'iframe' =>
-			[
-				'qkAttributes' => ['src', 'frameborder', 'width', 'height']
-			],
+		'param' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['name', 'value']
+		],
 
-			'object' =>
-			[
-				'qkAttributes' => ['data', 'type']
-			],
+		'source' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['src', 'type']
+		],
 
-			'param' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['name', 'value']
-			],
+		// Scripting
+		'canvas' =>
+		[
+			'qkAttributes' => ['width', 'height']
+		],
 
-			'source' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['src', 'type']
-			],
+		'script' =>
+		[
+			'qkAttributes' => ['src', 'type']
+		],
 
-			// Scripting
-			'canvas' =>
-			[
-				'qkAttributes' => ['width', 'height']
-			],
+		// Table content
+		'col' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['span']
+		],
 
-			'script' =>
-			[
-				'qkAttributes' => ['src', 'type']
-			],
+		'td' =>
+		[
+			'qkAttributes' => ['rowspan', 'colspan']
+		],
 
-			// Table content
-			'col' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['span']
-			],
+		// Forms
+		'button' =>
+		[
+			'qkAttributes' => ['type', 'value']
+		],
 
-			'td' =>
-			[
-				'qkAttributes' => ['rowspan', 'colspan']
-			],
+		'form' =>
+		[
+			'qkAttributes' => ['method']
+		],
 
-			// Forms
-			'button' =>
-			[
-				'qkAttributes' => ['type', 'value']
-			],
+		'input' =>
+		[
+			'paired' => FALSE,
+			'qkAttributes' => ['type', 'value', 'placeholder']
+		],
 
-			'form' =>
-			[
-				'qkAttributes' => ['method']
-			],
+		'textarea' =>
+		[
+			'qkAttributes' => ['placeholder']
+		],
 
-			'input' =>
-			[
-				'paired' => FALSE,
-				'qkAttributes' => ['type', 'value', 'placeholder']
-			],
+		'label' =>
+		[
+			'qkAttributes' => ['for']
+		],
 
-			'textarea' =>
-			[
-				'qkAttributes' => ['placeholder']
-			],
+		'progress' =>
+		[
+			'qkAttributes' => ['value', 'max']
+		],
 
-			'label' =>
-			[
-				'qkAttributes' => ['for']
-			],
+		'optgroup' =>
+		[
+			'qkAttributes' => ['label']
+		],
 
-			'progress' =>
-			[
-				'qkAttributes' => ['value', 'max']
-			],
+		'option' =>
+		[
+			'qkAttributes' => ['value']
+		],
 
-			'optgroup' =>
-			[
-				'qkAttributes' => ['label']
-			],
+		// Interactive elements
+		'menu' =>
+		[
+			'qkAttributes' => ['type', 'label']
+		],
 
-			'option' =>
-			[
-				'qkAttributes' => ['value']
-			],
-
-			// Interactive elements
-			'menu' =>
-			[
-				'qkAttributes' => ['type', 'label']
-			],
-
-			'menuitem' =>
-			[
-				'qkAttributes' => ['type']
-			]
-
-		);
-	}
-
-
+		'menuitem' =>
+		[
+			'qkAttributes' => ['type']
+		]
+	];
 }

@@ -18,7 +18,26 @@ use Machy8\Macdom\Replicator\Replicator;
 
 class Compiler
 {
-	/** @var Elements*/
+	const 
+
+		/** @const string */
+		AREA_TAG = "SKIP",
+			
+		/**
+		 * 1 = only spaces
+		 * 2 = only tabulators
+		 * 3 = combined
+		 * @const int
+		 */	
+		INDENT_METHOD = 3,
+		
+		/**
+		 *  For 1. and 3. method
+		 *  @const integer
+		 */
+		SPACES_PER_INDENT = 4;
+	
+	/** @var Elements */
 	private $Elements;
 
 	/** @var Macros\Macros */
@@ -33,14 +52,8 @@ class Compiler
 	/** @var array */
 	private $closeTags = [];
 
-	/** @var integer */
-	private $spacesPerIndent = 4;
-
 	/** @var regular expression */
 	private $sRegExp;
-
-	// @var string
-	private $noCompileAreaTag = "SKIP";
 
 	/** @var bool */
 	private $inNoCompileArea = FALSE;
@@ -49,12 +62,12 @@ class Compiler
 	 * @param Macros $Macros
 	 * @param Elements $Elements
 	 */
-	public function __construct ()
+	public function __construct ($elements, $macros, $replicator)
 	{
-		$this->Elements = new Elements;
-		$this->Macros = new Macros;
-		$this->Replicator = new Replicator;
-		$this->sRegExp = "/ {".$this->spacesPerIndent."}/";
+		$this->Elements = $elements;
+		$this->Macros = $macros;
+		$this->Replicator = $replicator;
+		$this->sRegExp = "/ {".self::SPACES_PER_INDENT."}/";
 	}
 
 	/**
@@ -74,7 +87,7 @@ class Compiler
 
 			$noCompileAreaTag = $this->detectNoCompileArea($element);
 
-			if($this->inNoCompileArea === FALSE and $noCompileAreaTag === FALSE){
+			if($this->inNoCompileArea === FALSE and $noCompileAreaTag === FALSE and $this->Elements->findElement($element, "exists") === FALSE){
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
 
 				if($replicatorResult['replicate'] === TRUE){
@@ -139,32 +152,44 @@ class Compiler
 	}
 
 	/**
+	 *  HOW LEVELS WORKS
+	 *
+	 * method 1 = spaces
+	 *	- is better to set the number of the constant SPACES_PER_INDENT on the number
+	 *	  you have in your editor setted as "spaces per indent"
+	 * method 2 = tabulators
+	 * method 3 = combined
+	 *	- is better to set up the tab size twice bigger then spaces have
+	 *	- Example:
+	 *	  - spaces per indent = 4 => tab size = 8
+	 *	  - spaces per indent = 8 => tab size = 16
+	 *	  - etc...
 	 * @param string $ln
 	 * @return integer $lvl
 	 */
 	private function getLnLvl ($ln)
 	{
-		/*
-		 * HOW LEVELS WORKS
-		 *
-		 * method 1 = spaces
-		 *	- is better to set the number of the variable spacesPerIndent
-		 *	  as you have it in your editor "spaces per indent"
-		 * method 2 = tabulators
-		 * method 3 = spaces&tabulators
-		 *	- is better to set up the tab size twice bigger then spaces have
-		 *	- Example:
-		 *	  - spaces per indent = 4 => tab size = 8
-		 *	  - spaces per indent = 8 => tab size = 16
-		 *	  - etc...
-		 */
+		$spaces = 0;
+		$tabulators = 0;
+		$method = self::INDENT_METHOD;
 
-		// Get the number of spaces on the line
-		$spaces = preg_match_all($this->sRegExp, $ln);
+		// Only for spaces and combined method
+		If($method === 1 or $method === 3){
 
-		// Get the number of tabulators on the line
-		// One tabulator = 2 levels
-		$tabulators = preg_match_all("/\t/", $ln)*2;
+			// Get the number of spaces on the line
+			$spaces = preg_match_all($this->sRegExp, $ln);
+		}
+
+		// Only for tabulators and combined method
+		if($method === 2 or $method === 3){
+			$tabulators = preg_match_all("/\t/", $ln);
+
+			if($method === 3){
+				$rise = $tabulators * 2;
+				$tabulators = $tabulators;
+			}
+		}
+		
 		$lvl = $spaces + $tabulators;
 
 		return $lvl;
@@ -459,9 +484,9 @@ class Compiler
 		$tagDetected = FALSE;
 
 		// For skip tag
-		$closeTag = '/'.$this->noCompileAreaTag;
+		$closeTag = '/'.self::AREA_TAG;
 
-		if ($element === $this->noCompileAreaTag){
+		if ($element === self::AREA_TAG){
 			$tagDetected = TRUE;
 			$this->inNoCompileArea = TRUE;
 		}

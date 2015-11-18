@@ -12,31 +12,14 @@
 
 namespace Machy8\Macdom\Elements;
 
-use Machy8\Macdom\Elements\ElementsList;
 use Machy8\Macdom\Elements\ElementsSettings;
-use Machy8\Macdom\Elements\BooleanAttributes;
 
-class Elements
+class Elements extends ElementsSettings
 {
 
-	public $Elements;
-	public $Settings;
-	public $BooleanAttributes;
-
-	public function __construct()
-	{
-		$this->Elements = new ElementsList;
-		$this->Settings = new ElementsSettings;
-		$this->BooleanAttributes = new BooleanAttributes;
-	}
-
-	/**
-	 * @param string $attribute
-	 * @return boolean
-	 */
 	public function isBoolean ($attribute)
 	{
-		if (in_array($attribute, $this->BooleanAttributes->booleanAttributes)){
+		if (in_array($attribute, $this->booleanAttributes)){
 			return TRUE;
 		}
 		else{
@@ -54,7 +37,7 @@ class Elements
 	{
 		$exists = FALSE;
 
-		foreach ($this->Elements->elements as $element){
+		foreach ($this->elements as $element){
 
 			if ($element === $el){
 				$exists = TRUE;
@@ -88,8 +71,8 @@ class Elements
 		$qkAttributes = NULL;
 		$paired = TRUE;
 
-		if (array_key_exists($el, $this->Settings->elementsSettings)){
-			$settings = $this->Settings->elementsSettings[$el];
+		if (array_key_exists($el, $this->elementsSettings)){
+			$settings = $this->elementsSettings[$el];
 
 			if (array_key_exists('paired', $settings)){
 				$paired = FALSE;

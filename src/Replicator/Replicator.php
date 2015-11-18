@@ -13,27 +13,29 @@
 namespace Machy8\Macdom\Replicator;
 
 use Machy8\Macdom\Replicator\Register;
-use Tracy\Debugger;
 
-class Replicator extends Register {
 
-	private $caRegExp = "/\[(.*?)\]/";
+class Replicator extends Register 
+{
+	const 
 
-	public function __construct() {
-		parent::__construct();
-	}
+		/** @const regular expression */
+		REG_EXP_A = '/\[(.*?)\]/',
+
+		/** @const regular expression */
+		REG_EXP_B = '/\[\@\]/';
 
 	public function detect ($lvl, $element, $line) {
 		$replicate = FALSE;
 		$clearLine = FALSE;
 		$replacement = NULL;
 
-		$registrationLine = preg_match("/".$this->regExp."/", $line);
+		$registrationLine = preg_match("/".parent::REG_EXP."/", $line);
 
 		if($registrationLine === 1){
 			$clearLine = TRUE;
-			$removeElement = str_replace($element, "", $line);
-			$line = trim($removeElement);
+			$removeElement = preg_replace('/\\'.$element.'/', "", $line, 1);
+			$line = $removeElement;
 		}
 
 		$deregister = $this->deregisterLvl($lvl, $element);
@@ -42,7 +44,18 @@ class Replicator extends Register {
 			$isRegistered = $this->isRegistered($lvl, $element, $line, $registrationLine);
 
 			if($isRegistered['registered'] === TRUE and $registrationLine !== 1 and $registrationLine !== FALSE){
-				$replacement = $this->replicate($isRegistered['registerId'], $line);
+				
+				// If the first word on line is also the part of the key in the register
+				$key = $isRegistered['key'];
+				
+				if($key === TRUE)
+				{
+					$replacement = $this->replicate($isRegistered['registerId'], $line, $element, $key);
+				}
+				else 
+				{
+					$replacement = $this->replicate($isRegistered['registerId'], $line);
+				}
 				$replicate = TRUE;
 			}
 
@@ -59,35 +72,40 @@ class Replicator extends Register {
 		];
 	}
 
-	private function replicate ($registerId, $line){
-		$registeredLine = $this->getRegisteredLine($registerId);
+	private function replicate ($registerId, $line, $element = NULL, $key = FALSE){
 
-		$contentArrays = preg_match_all($this->caRegExp, $line, $matches);
+		$contentArrays = preg_match_all(self::REG_EXP_A, $line, $matches);
+		
+		if($key === TRUE)
+		{
+			$removeKey = preg_replace("/".$element."/", "", $line, 1);
+			$line = $removeKey;
+		}
 
-		if($contentArrays !== 0 and $contentArrays !== FALSE){
-			$line = $this->synchronizeLines($line, $registeredLine, $matches[1]);
+		if($contentArrays > 0){
+			$replicatedline = $this->synchronizeLines($line, $registerId, $matches[1]);
 		}
 		else{
-			$line = $this->synchronizeLines($line, $registeredLine);
+			$replicatedline = $this->synchronizeLines($line, $registerId);
 		}
 
-		return $line;
+		return $replicatedline;
 	}
 
-	private function synchronizeLines ($line, $registeredLine, $matches = NULL){
-
-		$replicatedLine = NULL;
+	private function synchronizeLines ($line, $registerId, $matches = NULL){
+		$registeredLine = $this->getRegisteredLine($registerId);
+		$synchronizedLine = NULL;
 
 		if($matches !== NULL){
 
 			foreach($matches as $key => $match){
-				$exists = preg_match($this->caRegExp, $registeredLine);
+				$exists = preg_match(self::REG_EXP_B, $registeredLine);
 
 				if($exists === 1){
-					$replaceRegisteredLine = preg_replace($this->caRegExp, $match, $registeredLine, 1);
-					$replaceLine = preg_replace("/\[".$match."\]/", "", $line, 1);
-					$registeredLine = $replaceRegisteredLine;
-					$line = $replaceLine;
+					$synchronizeLine = preg_replace(self::REG_EXP_B, $match, $registeredLine, 1);
+					$clearLine = preg_replace("/\[".$match."\]/", "", $line, 1);
+					$registeredLine = $synchronizeLine;
+					$line = $clearLine;
 				}
 				else {
 					break;
@@ -95,12 +113,11 @@ class Replicator extends Register {
 			}
 		}
 
-		$replaceRegisteredLine = preg_replace("/\[\]/", "", $registeredLine);
-		$registeredLine = $replaceRegisteredLine;
+		$clearedRegisteredLine = preg_replace(self::REG_EXP_B, "", $registeredLine);
 
-		$replicatedLine = $registeredLine.$line;
-
-		return $replicatedLine;
+		$synchronizedLine = trim($clearedRegisteredLine.$line);
+		
+		return $synchronizedLine;
 	}
 
 }

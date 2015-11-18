@@ -12,154 +12,146 @@
 
 namespace Machy8\Macdom\Elements;
 
-class ElementsList
+use Machy8\Macdom\Elements\BooleanAttributes;
+
+class ElementsList extends BooleanAttributes
 {
 
 	/** @var array */
-	public $elements = [];
+	protected $elements = 
+	[
+		// Document metadata
+		'html',
+		'base',
+		'head',
+		'link',
+		'meta',
+		'style',
+		'title',
 
-	public function __construct ()
-	{
-		$this->setElements();
-	}
+		// Content sectioning
+		'address',
+		'article',
+		'body',
+		'footer',
+		'header',
+		'h1',
+		'h2',
+		'h3',
+		'h4',
+		'h5',
+		'h6',
+		'hgroup',
+		'nav',
+		'section',
 
-	private function setElements ()
-	{
-		$this->elements =
-		[
-			// Document metadata
-			'html',
-			'base',
-			'head',
-			'link',
-			'meta',
-			'style',
-			'title',
+		// Text content
+		'dd',
+		'div',
+		'dl',
+		'dt',
+		'figcaption',
+		'figure',
+		'hr',
+		'main',
+		'ol',
+		'ul',
+		'li',
+		'p',
+		'pre',
 
-			// Content sectioning
-			'address',
-			'article',
-			'body',
-			'footer',
-			'header',
-			'h1',
-			'h2',
-			'h3',
-			'h4',
-			'h5',
-			'h6',
-			'hgroup',
-			'nav',
-			'section',
+		// Inline text semantic
+		'a',
+		'abbr',
+		'b',
+		'i',
+		'bdi',
+		'bdo',
+		'br',
+		'cite',
+		'code',
+		'data',
+		'dfn',
+		'em',
+		'kbd',
+		'mark',
+		'q',
+		'rp',
+		'rt',
+		'rtc',
+		'ruby',
+		's',
+		'samp',
+		'small',
+		'span',
+		'strong',
+		'sub',
+		'sup',
+		'time',
+		'u',
+		'var',
+		'wbr',
 
-			// Text content
-			'dd',
-			'div',
-			'dl',
-			'dt',
-			'figcaption',
-			'figure',
-			'hr',
-			'main',
-			'ol',
-			'ul',
-			'li',
-			'p',
-			'pre',
+		// Multimedia
+		'area',
+		'audio',
+		'img',
+		'map',
+		'track',
+		'video',
 
-			// Inline text semantic
-			'a',
-			'abbr',
-			'b',
-			'i',
-			'bdi',
-			'bdo',
-			'br',
-			'cite',
-			'code',
-			'data',
-			'dfn',
-			'em',
-			'kbd',
-			'mark',
-			'q',
-			'rp',
-			'rt',
-			'rtc',
-			'ruby',
-			's',
-			'samp',
-			'small',
-			'span',
-			'strong',
-			'sub',
-			'sup',
-			'time',
-			'u',
-			'var',
-			'wbr',
+		// Embedded content
+		'embed',
+		'iframe',
+		'object',
+		'param',
+		'source',
 
-			// Multimedia
-			'area',
-			'audio',
-			'img',
-			'map',
-			'track',
-			'video',
+		// Scripting
+		'canvas',
+		'noscript',
+		'script',
 
-			// Embedded content
-			'embed',
-			'iframe',
-			'object',
-			'param',
-			'source',
+		// Demarcating edits
+		'del',
+		'ins',
 
-			// Scripting
-			'canvas',
-			'noscript',
-			'script',
+		// Table content
+		'caption',
+		'col',
+		'colgroup',
+		'table',
+		'tbody',
+		'td',
+		'tfoot',
+		'th',
+		'thead',
+		'tr',
 
-			// Demarcating edits
-			'del',
-			'ins',
+		// Forms
+		'button',
+		'datalist',
+		'fieldset',
+		'form',
+		'input',
+		'label',
+		'legend',
+		'meter',
+		'optgroup',
+		'option',
+		'output',
+		'progress',
+		'select',
+		'textarea',
 
-			// Table content
-			'caption',
-			'col',
-			'colgroup',
-			'table',
-			'tbody',
-			'td',
-			'tfoot',
-			'th',
-			'thead',
-			'tr',
+		// Interactive elements
+		'details',
+		'dialog',
+		'menu',
+		'menuitem',
+		'summary'
 
-			// Forms
-			'button',
-			'datalist',
-			'fieldset',
-			'form',
-			'input',
-			'label',
-			'legend',
-			'meter',
-			'optgroup',
-			'option',
-			'output',
-			'progress',
-			'select',
-			'textarea',
+		// User defined elements
 
-			// Interactive elements
-			'details',
-			'dialog',
-			'menu',
-			'menuitem',
-			'summary'
-
-			// User defined elements
-
-		];
-	}
+	];
 }

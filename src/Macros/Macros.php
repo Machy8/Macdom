@@ -14,19 +14,7 @@ namespace Machy8\Macdom\Macros;
 
 use Machy8\Macdom\Macros\CoreMacros;
 
-class Macros {
-
-	private $CoreMacros;
-
-	/**
-	 * @param string $macro
-	 * @param line $line
-	 * @return array [exists, replacement]
-	 */
-	public function __construct()
-	{
-		$this->CoreMacros = new CoreMacros;
-	}
+class Macros extends CoreMacros {
 
 	/**
 	 * @param string $macro
@@ -40,17 +28,17 @@ class Macros {
 
 		$line = trim(strstr($line, " "));
 
-		foreach($this->CoreMacros->macros as $macroId => $fnName){
+		foreach($this->macros as $macroId => $fnName){
 
 			if($exists === TRUE){
 				break;
 			}
 
-			$selectedMacro = $this->CoreMacros->macros[$macroId];
+			$selectedMacro = $this->macros[$macroId];
 
 			if($macro === $macroId){
 				$fn = ucfirst($fnName);
-				$replacement = $this->CoreMacros->{'macro'.$fn}($line);
+				$replacement = $this->{'macro'.$fn}($line);
 				$exists = TRUE;
 				break;
 			}

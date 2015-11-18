@@ -15,30 +15,20 @@ namespace Machy8\Macdom\Elements;
 class BooleanAttributes {
 
 	/** @var array */
-	public $booleanAttributes = [];
-
-	public function __construct ()
-	{
-		$this->setBooleanAttributes();
-	}
-
-	private function setBooleanAttributes ()
-	{
-		$this->booleanAttributes =
-		[
-			'autofocus',
-			'async',
-			'disabled',
-			'default',
-			'formnovalidate',
-			'checked',
-			'multiple',
-			'open',
-			'readonly',
-			'required',
-			'selected',
-			'contentEditable',
-			'n:ifcontent'
-		];
-	}
+	protected $booleanAttributes = 
+	[
+		'autofocus',
+		'async',
+		'disabled',
+		'default',
+		'formnovalidate',
+		'checked',
+		'multiple',
+		'open',
+		'readonly',
+		'required',
+		'selected',
+		'contentEditable',
+		'n:ifcontent'
+	];
 }

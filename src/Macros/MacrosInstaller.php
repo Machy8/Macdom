@@ -12,11 +12,9 @@
 
 namespace Machy8\Macdom\Macros;
 
-use Nette;
-
 class MacrosInstaller {
 
-	public $macros = [];
+	protected $macros = [];
 
 	protected function addMacro($fnName, $macroId)
 	{

@@ -14,22 +14,20 @@ namespace Machy8\Macdom\Replicator;
 
 class Register {
 
-	/** @var string */
-	private $character = "@";
-
-	/** @var string */
-	private $prefix = "ln-";
+	
+	const 
+		
+		/** @const regular expression */
+		REG_EXP = "\@([\S]*)",
+		
+		/** @const string */
+		PREFIX = 'ln-';
 
 	/** @var regular expression */
 	protected $regExp;
 
 	/** @var array */
 	private $register = [];
-
-	protected function __construct()
-	{
-		$this->regExp = $this->character.'([\S]*)'; 
-	}
 
 	/**
 	 * @param integer $lvl
@@ -40,9 +38,9 @@ class Register {
 	{
 		$unregistered = FALSE;
 
-		$match = preg_match("/\/".$this->regExp."/", $element, $matches);
+		$match = preg_match("/\/".self::REG_EXP."/", $element, $matches);
 		if($match === 1){
-			$selected = $this->prefix.$lvl;
+			$selected = self::PREFIX.$lvl;
 
 			if(!empty($matches[1])){
 				$selected .= '-'.$matches[1];
@@ -71,13 +69,14 @@ class Register {
 	protected function isRegistered ($lvl, $element, $line, $registrationLine)
 	{
 		$registered = FALSE;
+		$key = FALSE;
 		$registereId = NULL;
 
-		$selected = $this->prefix.$lvl;
-
-		if($registrationLine === 0){
-
+		$selected = self::PREFIX.$lvl;
+		if($registrationLine === 0)
+		{
 			if(array_key_exists($selected.'-'.$element, $this->register)){
+				$key = TRUE;
 				$registered = TRUE;
 				$registerId = $selected.'-'.$element;
 			}
@@ -96,6 +95,7 @@ class Register {
 		return 
 		[
 			'registered' => $registered,
+			'key' => $key,
 			'registerId' => $registerId
 		];
 
@@ -112,11 +112,11 @@ class Register {
 		$registered = FALSE;
 		$registerId = NULL;
 
-		$match = preg_match("/".$this->regExp."/", $element, $matches);
+		$match = preg_match("/".self::REG_EXP."/", $element, $matches);
 
 		if($match === 1){
 
-			$newKey = $this->prefix.$lvl;
+			$newKey = self::PREFIX.$lvl;
 
 			if(!empty($matches[1])){
 				$newKey .= '-'.$matches[1];
