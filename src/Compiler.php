@@ -12,48 +12,44 @@
 
 namespace Machy8\Macdom;
 
-use Machy8\Macdom\Elements\Elements;
-use Machy8\Macdom\Macros\Macros;
-use Machy8\Macdom\Replicator\Replicator;
-
 class Compiler
 {
-	const 
+	const
 
-		/** @const string */
+		/**
+		 * The skip are tag
+		 * @const string
+		 */
 		AREA_TAG = "SKIP",
-			
+
 		/**
 		 * 1 = only spaces
 		 * 2 = only tabulators
 		 * 3 = combined
 		 * @const int
-		 */	
+		 */
 		INDENT_METHOD = 3,
-		
+
 		/**
 		 *  For 1. and 3. method
 		 *  @const integer
 		 */
 		SPACES_PER_INDENT = 4;
-	
-	/** @var Elements */
+
+	/** @var Elements\Elements */
 	private $Elements;
 
 	/** @var Macros\Macros */
 	private $Macros;
 
-	/** @var Replicator */
+	/** @var Replicator\Replicator */
 	private $Replicator;
 
 	/** @var string */
-	private $codeStorage = "";
+	private $codeStorage;
 
 	/** @var array */
 	private $closeTags = [];
-
-	/** @var regular expression */
-	private $sRegExp;
 
 	/** @var bool */
 	private $inNoCompileArea = FALSE;
@@ -62,12 +58,11 @@ class Compiler
 	 * @param Macros $Macros
 	 * @param Elements $Elements
 	 */
-	public function __construct ($elements, $macros, $replicator)
+	public function __construct ($Elements, $Macros, $Replicator)
 	{
-		$this->Elements = $elements;
-		$this->Macros = $macros;
-		$this->Replicator = $replicator;
-		$this->sRegExp = "/ {".self::SPACES_PER_INDENT."}/";
+		$this->Elements = $Elements;
+		$this->Macros = $Macros;
+		$this->Replicator = $Replicator;
 	}
 
 	/**
@@ -81,7 +76,7 @@ class Compiler
 		foreach ($lns as $key => $value){
 			$ln = $value;
 			$lvl = $this->getLnLvl($ln);
-			$txt = $this->getLnTxt($ln, FALSE);
+			$txt = $this->getLnTxt($ln);
 
 			$element = $this->getElement($txt);
 
@@ -91,19 +86,19 @@ class Compiler
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
 
 				if($replicatorResult['replicate'] === TRUE){
-					$txt = $this->getLnTxt($replicatorResult['line'], FALSE);
+					$txt = $this->getLnTxt($replicatorResult['line']);
 					$element = $this->getElement($txt);
 				}
-				elseif($replicatorResult['clearLine'] === TRUE){
+
+				if($replicatorResult['clearLine'] === TRUE){
 					$txt = NULL;
 					$element = FALSE;
 				}
 			}
 
 			if ($this->Elements->findElement($element, "exists") === TRUE and $this->inNoCompileArea === FALSE){
-				$removeElement = preg_replace('/'.$element.'/', '', trim($txt), 1);
-				$txt = $removeElement;
-				$attributes = $this->getLnAttributes($txt);
+				$clearedText = preg_replace('/'.$element.'/', '', $txt, 1);
+				$attributes = $this->getLnAttributes($clearedText);
 				$this->addOpenTag($element, $lvl, $attributes);
 			}
 			else{
@@ -116,7 +111,16 @@ class Compiler
 
 						if($macroExists === FALSE){
 							$this->addCloseTags($lvl);
-							$this->codeStorage .= $txt;
+
+							$spacePrefix = "";
+							$match = preg_match_all("/[^_\->\/\\\\&]+$/",$this->codeStorage);
+							$match2 = preg_match_all("/^[^\-_\/\\\\&]+/", $txt);
+
+							if($match === 1 and $match2 === 1){
+								$spacePrefix = " ";
+							}
+
+							$this->codeStorage .= $spacePrefix.$txt;
 						}
 						elseif($macroExists === TRUE){
 							$this->codeStorage .= $macro['replacement'];
@@ -169,27 +173,31 @@ class Compiler
 	 */
 	private function getLnLvl ($ln)
 	{
+		$method = self::INDENT_METHOD;
+		$spacesRe = "/ {".self::SPACES_PER_INDENT."}/";
 		$spaces = 0;
 		$tabulators = 0;
-		$method = self::INDENT_METHOD;
+
+		preg_match_all("/^\s+/", $ln, $matches);
+		$whites = implode("", $matches[0]);
 
 		// Only for spaces and combined method
 		If($method === 1 or $method === 3){
 
 			// Get the number of spaces on the line
-			$spaces = preg_match_all($this->sRegExp, $ln);
+			$spaces = preg_match_all($spacesRe, $whites);
 		}
 
 		// Only for tabulators and combined method
 		if($method === 2 or $method === 3){
-			$tabulators = preg_match_all("/\t/", $ln);
+			$tabulators = preg_match_all("/\t/", $whites);
 
 			if($method === 3){
 				$rise = $tabulators * 2;
-				$tabulators = $tabulators;
+				$tabulators = $rise;
 			}
 		}
-		
+
 		$lvl = $spaces + $tabulators;
 
 		return $lvl;
@@ -197,24 +205,11 @@ class Compiler
 
 	/**
 	 * @param string $ln
-	 * @param bool $trim
 	 * @return string
 	 */
-	private function getLnTxt ($ln, $trim = FALSE)
+	private function getLnTxt ($ln)
 	{
-		switch($trim){
-			case TRUE:
-				$replaceTabulators = preg_replace("/\t/", "", trim($ln));
-			break;
-			case FALSE:
-				$replaceTabulators = preg_replace("/\t/", "", $ln);
-			break;
-		}
-
-		$replaceSpaces = preg_replace($this->sRegExp, "", $replaceTabulators);
-		$txt = $replaceSpaces;
-
-		return $txt;
+		return ltrim($ln);
 	}
 
 	/**
@@ -228,10 +223,12 @@ class Compiler
 		$nHref = preg_match($re, $txt, $matches);
 
 		if ($nHref === 1){
-			$value = $matches[1];
 
-			if (empty($value)){
+			if (empty($matches[1])){
 				$value = $matches[2];
+			}
+			else{
+				$value = $matches[1];
 			}
 
 			$newHref = ' n:href="'.$value.'"';
@@ -240,7 +237,7 @@ class Compiler
 		}
 
 		// Get all html attributes
-		$re = '/ [\w:-]+={1}\"{1}.*\"{1}| [\w:-]+={1}\S+/';
+		$re = '/ [\w:-]+={1}\"{1}[^"]*\"{1}| [\w:-]+={1}\S+/';
 		$htmlAttributes = preg_match_all($re, $txt, $matches);
 		$matches2selectors = "";
 
@@ -291,7 +288,7 @@ class Compiler
 		}
 
 		// Get all quick attributes
-		$re = '/ ([\d]*)\$([^$]+);{1}| ([\d]*)\$(\S+)/';
+		$re = '/ ([\d]*)\${1}([^$;"]+);{1}| ([\d]*)\${1}(\S+)/';
 		$qkAttributes = preg_match_all($re, $txt, $matches, PREG_SET_ORDER);
 		$matches2selectors = [];
 
@@ -330,7 +327,7 @@ class Compiler
 		}
 
 		// Get the text
-		$getTxt = $this->getLnTxt($txt, TRUE);
+		$getTxt = $this->getLnTxt($txt);
 		$txt = $getTxt;
 
 		// Split the txt to an array in oder to get the boolean attributes
@@ -377,7 +374,14 @@ class Compiler
 	private function addOpenTag ($element, $lvl, $attributes)
 	{
 		$elementSettings = $this->Elements->findElement($element, "settings");
-		$openTag = '<'.$element;
+		$spacePrefix = "";
+
+		$match = preg_match_all("/[^ >\n\-_\/\\\\&]+$/",$this->codeStorage);
+		if($match === 1){
+			$spacePrefix = " ";
+		}
+
+		$openTag = $spacePrefix.'<'.$element;
 
 		if ($elementSettings['qkAttributes'] !== NULL and $attributes['qkAttributes'] !== NULL){
 			$usedParameters = [];
@@ -405,7 +409,7 @@ class Compiler
 
 			// For each quick attribute without an index before
 			foreach ($elementSettings['qkAttributes'] as $key => $attribute){
-				
+
 				if (array_key_exists($key, $attributes['qkAttributes']) and !in_array($key, $usedParameters)){
 
 					if (strtolower($attributes['qkAttributes'][$key][0]) !== 'null' and strlen($attributes['qkAttributes'][$key][0]) > 0){
@@ -437,7 +441,7 @@ class Compiler
 		}
 
 		// Close the open tag, add close tags if needed
-		$openTag .= ' >';
+		$openTag .= '>';
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
@@ -471,7 +475,6 @@ class Compiler
 					break;
 				}
 			}
-
 			array_splice($this->closeTags, $lastTag);
 		}
 	}

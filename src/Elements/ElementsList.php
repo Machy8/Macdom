@@ -18,7 +18,7 @@ class ElementsList extends BooleanAttributes
 {
 
 	/** @var array */
-	protected $elements = 
+	protected $elements =
 	[
 		// Document metadata
 		'html',

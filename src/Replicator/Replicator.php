@@ -15,9 +15,9 @@ namespace Machy8\Macdom\Replicator;
 use Machy8\Macdom\Replicator\Register;
 
 
-class Replicator extends Register 
+class Replicator extends Register
 {
-	const 
+	const
 
 		/** @const regular expression */
 		REG_EXP_A = '/\[(.*?)\]/',
@@ -25,7 +25,14 @@ class Replicator extends Register
 		/** @const regular expression */
 		REG_EXP_B = '/\[\@\]/';
 
-	public function detect ($lvl, $element, $line) {
+	/**
+	 * @param integer $lvl
+	 * @param string $element
+	 * @param string $line
+	 * @return array [replicate, clearLine, line]
+	 */
+	public function detect ($lvl, $element, $line)
+	{
 		$replicate = FALSE;
 		$clearLine = FALSE;
 		$replacement = NULL;
@@ -44,16 +51,14 @@ class Replicator extends Register
 			$isRegistered = $this->isRegistered($lvl, $element, $line, $registrationLine);
 
 			if($isRegistered['registered'] === TRUE and $registrationLine !== 1 and $registrationLine !== FALSE){
-				
+
 				// If the first word on line is also the part of the key in the register
 				$key = $isRegistered['key'];
-				
-				if($key === TRUE)
-				{
+
+				if($key === TRUE){
 					$replacement = $this->replicate($isRegistered['registerId'], $line, $element, $key);
 				}
-				else 
-				{
+				else{
 					$replacement = $this->replicate($isRegistered['registerId'], $line);
 				}
 				$replicate = TRUE;
@@ -64,7 +69,7 @@ class Replicator extends Register
 			$clearLine = TRUE;
 		}
 
-		return 
+		return
 		[
 			'replicate' => $replicate,
 			'clearLine' => $clearLine,
@@ -72,12 +77,19 @@ class Replicator extends Register
 		];
 	}
 
-	private function replicate ($registerId, $line, $element = NULL, $key = FALSE){
+	/**
+	 * @param string $registerId
+	 * @param string $line
+	 * @param string $element
+	 * @param boolean $key
+	 * @return string $replicatedLine
+	 */
+	private function replicate ($registerId, $line, $element = NULL, $key = FALSE)
+	{
 
 		$contentArrays = preg_match_all(self::REG_EXP_A, $line, $matches);
-		
-		if($key === TRUE)
-		{
+
+		if($key === TRUE){
 			$removeKey = preg_replace("/".$element."/", "", $line, 1);
 			$line = $removeKey;
 		}
@@ -92,7 +104,14 @@ class Replicator extends Register
 		return $replicatedline;
 	}
 
-	private function synchronizeLines ($line, $registerId, $matches = NULL){
+	/**
+	 * @param string $line
+	 * @param string $registerId
+	 * @param array $matches
+	 * @return string $synchronizedLine
+	 */
+	private function synchronizeLines ($line, $registerId, $matches = NULL)
+	{
 		$registeredLine = $this->getRegisteredLine($registerId);
 		$synchronizedLine = NULL;
 
@@ -115,8 +134,8 @@ class Replicator extends Register
 
 		$clearedRegisteredLine = preg_replace(self::REG_EXP_B, "", $registeredLine);
 
-		$synchronizedLine = trim($clearedRegisteredLine.$line);
-		
+		$synchronizedLine = trim($clearedRegisteredLine.' '.$line);
+
 		return $synchronizedLine;
 	}
 

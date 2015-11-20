@@ -14,12 +14,12 @@ namespace Machy8\Macdom\Replicator;
 
 class Register {
 
-	
-	const 
-		
+
+	const
+
 		/** @const regular expression */
 		REG_EXP = "\@([\S]*)",
-		
+
 		/** @const string */
 		PREFIX = 'ln-';
 
@@ -73,8 +73,7 @@ class Register {
 		$registereId = NULL;
 
 		$selected = self::PREFIX.$lvl;
-		if($registrationLine === 0)
-		{
+		if($registrationLine === 0){
 			if(array_key_exists($selected.'-'.$element, $this->register)){
 				$key = TRUE;
 				$registered = TRUE;
@@ -92,7 +91,7 @@ class Register {
 			$registerId = $registerLvl['registerId'];
 		}
 
-		return 
+		return
 		[
 			'registered' => $registered,
 			'key' => $key,
@@ -129,7 +128,7 @@ class Register {
 
 		}
 
-		return 
+		return
 		[
 			'registered' => $registered,
 			'registerId' => $registerId

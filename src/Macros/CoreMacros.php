@@ -31,7 +31,7 @@ class CoreMacros extends MacrosInstaller {
 		$this->addMacro('viewport', 'viewport');
 
 		// Twitter + Facebook
-		$this->addMacro('facebook', 'og-');
+		$this->addMacro('facebook', 'fb-');
 		$this->addMacro('twitter', 'tw-');
 
 		// Stylesheet
@@ -138,7 +138,7 @@ class CoreMacros extends MacrosInstaller {
 	public function macroTwitter ($line)
 	{
 		$selected = strtok($line, " ");
-		$content = preg_replace("/".$selected." /", "", $line);
+		$content = trim(preg_replace("/".$selected."/", "", $line));
 		return '<meta name="twitter:'.$selected.'" content="'.$content.'" />';
 	}
 

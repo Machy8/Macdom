@@ -17,203 +17,166 @@ use Machy8\Macdom\Elements\ElementsList;
 class ElementsSettings extends ElementsList {
 
 	/** @var array */
-	protected $elementsSettings = 
-	[
+	protected $elementsSettings =[
 		// Document metadata
-		'html' =>
-		[
+		'html' => [
 			'qkAttributes' => ['lang']
 		],
 
-		'meta' =>
-		[
+		'meta' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['name', 'content']
 		],
 
-		'link' =>
-		[
+		'link' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['href', 'rel', 'title']
 		],
 
-		'style' =>
-		[
+		'style' => [
 			'qkAttributes' => ['type']
 		],
 
 		// Text content
-		'hr' =>
-		[
+		'hr' => [
 			'paired' => FALSE
 		],
 
-		'ol' =>
-		[
+		'ol' => [
 			'qkAttributes' => ['type', 'start', 'reversed']
 		],
 
 		// Inline text semantic
-		'a' =>
-		[
+		'a' => [
 			'qkAttributes' => ['href', 'target', 'role']
 		],
 
-		'abbr' =>
-		[
+		'abbr' => [
 			'qkAttributes' => ['title']
 		],
 
-		'bdo' =>
-		[
+		'bdo' => [
 			'qkAttributes' => ['dir']
 		],
 
-		'br' =>
-		[
+		'br' => [
 			'paired' => FALSE
 		],
 
-		'data' =>
-		[
+		'data' => [
 			'qkAttributes' => ['value']
 		],
 
-		'q' =>
-		[
+		'q' => [
 			'qkAttributes' => ['cite']
 		],
 
-		'wbr' =>
-		[
+		'wbr' => [
 			'paired' => FALSE
 		],
 
 		// Image and multimedia
-		'img' =>
-		[
+		'img' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['src', 'alt']
 		],
 
-		'audio' =>
-		[
+		'audio' => [
 			'qkAttributes' => ['src']
 		],
 
-		'track' =>
-		[
+		'track' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['src', 'srclang', 'kind']
 		],
 
-		'track' =>
-		[
+		'track' => [
 			'qkAttributes' => ['src']
 		],
 
 		// Embedded content
-		'embed' =>
-		[
+		'embed' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['src', 'type', 'width', 'height']
 		],
 
-		'iframe' =>
-		[
+		'iframe' => [
 			'qkAttributes' => ['src', 'frameborder', 'width', 'height']
 		],
 
-		'object' =>
-		[
+		'object' => [
 			'qkAttributes' => ['data', 'type']
 		],
 
-		'param' =>
-		[
+		'param' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['name', 'value']
 		],
 
-		'source' =>
-		[
+		'source' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['src', 'type']
 		],
 
 		// Scripting
-		'canvas' =>
-		[
+		'canvas' => [
 			'qkAttributes' => ['width', 'height']
 		],
 
-		'script' =>
-		[
+		'script' => [
 			'qkAttributes' => ['src', 'type']
 		],
 
 		// Table content
-		'col' =>
-		[
+		'col' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['span']
 		],
 
-		'td' =>
-		[
+		'td' => [
 			'qkAttributes' => ['rowspan', 'colspan']
 		],
 
 		// Forms
-		'button' =>
-		[
+		'button' => [
 			'qkAttributes' => ['type', 'value']
 		],
 
-		'form' =>
-		[
+		'form' => [
 			'qkAttributes' => ['method']
 		],
 
-		'input' =>
-		[
+		'input' => [
 			'paired' => FALSE,
 			'qkAttributes' => ['type', 'value', 'placeholder']
 		],
 
-		'textarea' =>
-		[
+		'textarea' => [
 			'qkAttributes' => ['placeholder']
 		],
 
-		'label' =>
-		[
+		'label' => [
 			'qkAttributes' => ['for']
 		],
 
-		'progress' =>
-		[
+		'progress' => [
 			'qkAttributes' => ['value', 'max']
 		],
 
-		'optgroup' =>
-		[
+		'optgroup' => [
 			'qkAttributes' => ['label']
 		],
 
-		'option' =>
-		[
+		'option' => [
 			'qkAttributes' => ['value']
 		],
 
 		// Interactive elements
-		'menu' =>
-		[
+		'menu' => [
 			'qkAttributes' => ['type', 'label']
 		],
 
-		'menuitem' =>
-		[
+		'menuitem' => [
 			'qkAttributes' => ['type']
 		]
 	];
