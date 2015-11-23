@@ -82,9 +82,9 @@ class Compiler
 
 			$noCompileAreaTag = $this->detectNoCompileArea($element);
 
-			if($this->inNoCompileArea === FALSE and $noCompileAreaTag === FALSE and $this->Elements->findElement($element, "exists") === FALSE){
+			if($this->inNoCompileArea === FALSE and $noCompileAreaTag === FALSE and $this->Elements->findElement($element, "exists") === FALSE and strlen(trim($txt)) >= 1 and preg_match("/^[<*]+/", trim($txt)) === 0){
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
-
+	
 				if($replicatorResult['replicate'] === TRUE){
 					$txt = $this->getLnTxt($replicatorResult['line']);
 					$element = $this->getElement($txt);
@@ -209,7 +209,15 @@ class Compiler
 	 */
 	private function getLnTxt ($ln)
 	{
-		return ltrim($ln);
+		$txt = NULL;
+		$clearLn = ltrim($ln);
+
+		if(strlen($clearLn) >= 1)
+		{
+			$txt = $clearLn;
+		}
+
+		return $txt;
 	}
 
 	/**
