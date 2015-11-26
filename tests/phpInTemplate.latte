@@ -1,0 +1,40 @@
+{* Latte template *}
+
+{block content}
+<?php
+    // Text
+    // Text
+    /** Text
+    *
+    * 
+    * Text
+    */
+    
+    /*
+    *
+    * Text
+    *
+    */
+    
+    /** Text */
+    /* Text */
+    $b = TRUE;
+    $a = ['one', 'two', 'three'];
+    if($b === TRUE)
+    {
+	foreach($a as $value)
+	{
+	    echo $value."<br>";
+	}
+    }
+
+    if($b === TRUE) echo "Var b is TRUE";
+
+    echo "<br>".($b === TRUE ? "Happy" : "Bad")." ending";
+?>
+
+<?
+    // Text 2
+    echo "Text 2";
+
+?>

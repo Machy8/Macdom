@@ -108,10 +108,10 @@ class Compiler
 					if($noCompileAreaTag === FALSE){
 						$macro = $this->Macros->replace($element, $txt);
 						$macroExists = $macro['exists'];
-
+						
+						$this->addCloseTags($lvl);
+						
 						if($macroExists === FALSE){
-							$this->addCloseTags($lvl);
-
 							$spacePrefix = "";
 							$match = preg_match_all("/[^_\->\/\\\\&]+$/",$this->codeStorage);
 							$match2 = preg_match_all("/^[^\-_\/\\\\&]+/", $txt);
@@ -130,7 +130,7 @@ class Compiler
 				elseif($txt !== NULL and $this->inNoCompileArea === TRUE){
 
 					if($noCompileAreaTag === FALSE){
-						$this->codeStorage .= $ln;
+						$this->codeStorage .= $ln."\n";
 					}
 				}
 			}
@@ -529,7 +529,20 @@ class Compiler
 		elseif ($element === $close){
 			$this->inNoCompileArea = FALSE;
 		}
+		
+		// For php
+		$open = "<?";
+		$close = "?>";
 
+		if ($element === $open."php" or $element === $open)
+		{
+			$this->inNoCompileArea = TRUE;
+		}
+		elseif ($element === $close)
+		{
+			$this->inNoCompileArea = FALSE;
+		}
+		
 		// User defined or other tags
 
 		return $tagDetected;
