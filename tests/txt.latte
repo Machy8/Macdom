@@ -24,7 +24,15 @@ div just-
     
 div just/
     short
-    /text
+    text
+
+div just_
+    short
+    _text
+
+div just_
+    short
+    text
     
 div Long text with a
     a $http://www.google.com $blank
@@ -33,3 +41,15 @@ div Long text with a
 		-link 
 	on Google
     .
+    
+div Inline text with &#35;hash as entity
+    Text under with #hash as normal character
+
+div #inline
+    <?php 
+	echo "Text";
+    ?>
+    div #inner
+	<?php echo "Text ";?>
+	<?php $a = "Text2";?>
+	{$a}

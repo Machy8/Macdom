@@ -1,17 +1,32 @@
 {* Latte template *}
 
 {block content}
-@ a $http://www.[@].com title="Link on [@]" 1$blank style="background-color:[@]; color:[@]" 
-[google] [Google] [#06f] [White] Google link
+@ a $http://www.[@].com title="Link on [@]" 2$blank style="background-color:[@]; color:[@]" .[@]
+[google] [google] [#06f] [White] [google] Google link
 br
 [github] [Github] [green] [Black] Github link
 @H h1 .mainTitle .greenTitle style="color:green" data-title-id=[@]
 H [1] #firstTitle First title
 H [2] #secondTitle Second title
 ul
-    @ li .replicatedLi What to bought -
-    Beer
-    Ham
-    Meat
-    Beer
-    Another beer
+    @ li .replicatedLi Number -
+    one
+    two
+    three
+
+<?php
+
+    $id = "myId";
+    $class = "myClass";
+    $classArr = ['first', 'second'];
+    $text = "Text text text.";
+?>
+
+@ div #[@] class="[@]"
+[{$id}][{$class}] {$text}
+[NULL] [{foreach $classArr as $cls}{/foreach}] {$text}
+
+@ div <?php echo "Replicated line - "; ?>
+one
+two
+three

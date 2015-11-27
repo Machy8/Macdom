@@ -32,8 +32,17 @@
 
     echo "<br>".($b === TRUE ? "Happy" : "Bad")." ending";
 ?>
+<?php 
+    $class = "myClass";
+    $id = "myId2";
+    $text = "Text text text";
+?>
+div id="<?php echo 'myId'; ?>" .{$class}
+div #{$id} class={$class}
+div class="{$class}"
+div {$text}
+<?php
 
-<?
     // Text 2
     echo "Text 2";
 
