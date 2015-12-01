@@ -21,7 +21,7 @@ class Register {
 		REG_EXP = "\@([\S]*)",
 
 		/** @const string */
-		PREFIX = 'ln-';
+		SUFFIX = '-x';
 
 	/** @var regular expression */
 	protected $regExp;
@@ -39,18 +39,18 @@ class Register {
 		$unregistered = FALSE;
 
 		$match = preg_match("/\/".self::REG_EXP."/", $element, $matches);
-		if($match === 1){
-			$selected = self::PREFIX.$lvl;
+		if ($match === 1) {
+			$selected = $lvl.self::SUFFIX;
 
-			if(!empty($matches[1])){
-				$selected .= '-'.$matches[1];
+			if (!empty($matches[1])) {
+				$selected = $lvl.'-'.$matches[1];
 
-				if(array_key_exists($selected, $this->register)){
+				if (isset($this->register[$selected])) {
 					unset($this->register[$selected]);
 					$unregistered = TRUE;
 				}
 			}
-			elseif(array_key_exists($selected, $this->register)){
+			elseif (isset($this->register[$selected])) {
 				unset($this->register[$selected]);
 				$unregistered = TRUE;
 			}
@@ -72,20 +72,19 @@ class Register {
 		$key = FALSE;
 		$registereId = NULL;
 
-		$selected = self::PREFIX.$lvl;
-		if($registrationLine === 0){
-			if(array_key_exists($selected.'-'.$element, $this->register)){
+		if ($registrationLine === 0) {
+			if (array_key_exists($lvl.'-'.$element, $this->register)) {
 				$key = TRUE;
 				$registered = TRUE;
-				$registerId = $selected.'-'.$element;
+				$registerId = $lvl.'-'.$element;
 			}
-			elseif(array_key_exists($selected, $this->register)){
+			elseif (array_key_exists($lvl.self::SUFFIX, $this->register)) {
 				$registered = TRUE;
-				$registerId = $selected;
+				$registerId = $lvl.self::SUFFIX;
 			}
 		}
 
-		if($registered === FALSE or $registrationLine === 1){
+		if ($registered === FALSE || $registrationLine === 1) {
 			$registerLvl = $this->registerLvl($element, $line, $lvl);
 			$registered = $registerLvl['registered'];
 			$registerId = $registerLvl['registerId'];
@@ -113,13 +112,10 @@ class Register {
 
 		$match = preg_match("/".self::REG_EXP."/", $element, $matches);
 
-		if($match === 1){
+		if ($match === 1) {
 
-			$newKey = self::PREFIX.$lvl;
-
-			if(!empty($matches[1])){
-				$newKey .= '-'.$matches[1];
-			}
+			$newKey = $lvl;
+			$newKey .= !empty($matches[1]) ? '-'.$matches[1] : self::SUFFIX;
 
 			$this->register[$newKey] = $line;
 

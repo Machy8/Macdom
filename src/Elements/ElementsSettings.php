@@ -16,8 +16,8 @@ use Machy8\Macdom\Elements\ElementsList;
 
 class ElementsSettings extends ElementsList {
 
-	/** @var array */
-	protected $elementsSettings =[
+	/** @const array */
+	const ELEMENT_SETTINGS =[
 		// Document metadata
 		'html' => [
 			'qkAttributes' => ['lang']

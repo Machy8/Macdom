@@ -16,11 +16,11 @@ class MacrosInstaller {
 
 	protected $macros = [];
 
-	protected function addMacro($fnName, $macroId)
+	protected function addMacro($fnName = NULL, $macroId = NULL)
 	{
-		if($fnName !== NULL and $macroId !== NULL){
+		if ($fnName !== NULL && $macroId !== NULL) {
 
-			if(!in_array($macroId, $this->macros)){
+			if (!in_array($macroId, $this->macros)) {
 				$this->macros[$macroId] = $fnName;
 			}
 		}

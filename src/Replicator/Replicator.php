@@ -14,7 +14,6 @@ namespace Machy8\Macdom\Replicator;
 
 use Machy8\Macdom\Replicator\Register;
 
-
 class Replicator extends Register
 {
 	const
@@ -39,7 +38,7 @@ class Replicator extends Register
 
 		$registrationLine = preg_match("/".parent::REG_EXP."/", $line);
 
-		if($registrationLine === 1){
+		if ($registrationLine === 1) {
 			$clearLine = TRUE;
 			$removeElement = preg_replace('/\\'.$element.'/', "", $line, 1);
 			$line = $removeElement;
@@ -47,15 +46,15 @@ class Replicator extends Register
 
 		$deregister = $this->deregisterLvl($lvl, $element);
 
-		if($deregister === FALSE and strlen($line) !== 0){
+		if ($deregister === FALSE && strlen($line) !== 0) {
 			$isRegistered = $this->isRegistered($lvl, $element, $line, $registrationLine);
 
-			if($isRegistered['registered'] === TRUE and $registrationLine !== 1 and $registrationLine !== FALSE){
+			if ($isRegistered['registered'] === TRUE && $registrationLine !== 1 && $registrationLine !== FALSE) {
 
 				// If the first word on line is also the part of the key in the register
 				$key = $isRegistered['key'];
 
-				if($key === TRUE){
+				if ($key === TRUE) {
 					$replacement = $this->replicate($isRegistered['registerId'], $line, $element, $key);
 				}
 				else{
@@ -88,13 +87,12 @@ class Replicator extends Register
 	{
 
 		$contentArrays = preg_match_all(self::REG_EXP_A, $line, $matches);
-
-		if($key === TRUE){
+		if ($key === TRUE) {
 			$removeKey = preg_replace("/".$element."/", "", $line, 1);
 			$line = $removeKey;
 		}
 
-		if($contentArrays > 0){
+		if ($contentArrays > 0) {
 			$replicatedline = $this->synchronizeLines($line, $registerId, $matches[1]);
 		}
 		else{
@@ -113,16 +111,15 @@ class Replicator extends Register
 	private function synchronizeLines ($line, $registerId, $matches = NULL)
 	{
 		$registeredLine = $this->getRegisteredLine($registerId);
-		$synchronizedLine = NULL;
 
-		if($matches !== NULL){
+		if ($matches !== NULL) {
 
-			foreach($matches as $key => $match){
+			foreach ($matches as $key => $match) {
 				$exists = preg_match(self::REG_EXP_B, $registeredLine);
 
-				if($exists === 1){
+				if ($exists === 1) {
 					$synchronizeLine = preg_replace(self::REG_EXP_B, $match, $registeredLine, 1);
-					$clearLine = preg_replace("/\[".$match."\]/", "", $line, 1);
+					$clearLine = str_replace('['.$match.']', "", $line);
 					$registeredLine = $synchronizeLine;
 					$line = $clearLine;
 				}

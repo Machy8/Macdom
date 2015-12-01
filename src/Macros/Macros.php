@@ -21,27 +21,17 @@ class Macros extends CoreMacros {
 	 * @param string $line
 	 * @return array [exists, replacement]
 	 */
-	public function replace ($macro, $line)
+	public function replace ($macro, $ln)
 	{
 		$replacement = NULL;
 		$exists = FALSE;
 
-		$line = trim(strstr($line, " "));
-
-		foreach($this->macros as $macroId => $fnName){
-
-			if($exists === TRUE){
-				break;
-			}
-
-			$selectedMacro = $this->macros[$macroId];
-
-			if($macro === $macroId){
-				$fn = ucfirst($fnName);
-				$replacement = $this->{'macro'.$fn}($line);
-				$exists = TRUE;
-				break;
-			}
+		if(isset($this->macros[$macro]))
+		{
+			$line = trim(strstr($ln, " "));
+			$fn = ucfirst($this->macros[$macro]);
+			$replacement = $this->{'macro'.$fn}($line);
+			$exists = TRUE;
 		}
 
 		$macro =

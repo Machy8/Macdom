@@ -13,18 +13,16 @@
 namespace Machy8\Macdom\Elements;
 
 use Machy8\Macdom\Elements\ElementsSettings;
+use Tracy\Debugger;
 
 class Elements extends ElementsSettings
 {
 
 	public function isBoolean ($attribute)
 	{
-		if (in_array($attribute, $this->booleanAttributes)){
-			return TRUE;
-		}
-		else{
-			return FALSE;
-		}
+		$is = in_array($attribute, parent::BOOLEAN_ATTRIBUTES);
+		
+		return $is;
 	}
 
 	/**
@@ -35,31 +33,22 @@ class Elements extends ElementsSettings
 	 */
 	public function findElement ($el, $method)
 	{
-		$exists = FALSE;
-
-		foreach ($this->elements as $element){
-
-			if ($element === $el){
-				$exists = TRUE;
-				break;
-			}
-		}
+		$exists = in_array($el, parent::ELEMENTS);
+		$return = FALSE;
 
 		if ($exists === TRUE){
 
 			switch ($method){
 				case 'exists':
-					return TRUE;
+					$return = TRUE;
 					break;
 				case 'settings':
-					$settings = $this->getElementSettings($el);
-					return $settings;
+					$return = $this->getElementSettings($el);
 					break;
 			}
 		}
-		else{
-			return FALSE;
-		}
+		
+		return $return;
 	}
 
 	/**
@@ -70,16 +59,17 @@ class Elements extends ElementsSettings
 	{
 		$qkAttributes = NULL;
 		$paired = TRUE;
-
-		if (array_key_exists($el, $this->elementsSettings)){
-			$settings = $this->elementsSettings[$el];
-
-			if (array_key_exists('paired', $settings)){
+		$settings = parent::ELEMENT_SETTINGS;
+		
+		if (isset($settings[$el])){
+			$s = $settings[$el];
+			
+			if (isset($s['paired'])){
 				$paired = FALSE;
 			}
 
-			if (array_key_exists('qkAttributes', $settings)){
-				$qkAttributes = $settings['qkAttributes'];
+			if (isset($s['qkAttributes'])){
+				$qkAttributes = $s['qkAttributes'];
 			}
 		}
 
