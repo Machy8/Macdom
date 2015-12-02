@@ -15,7 +15,7 @@ namespace Machy8\Macdom\Elements;
 class BooleanAttributes {
 
 	/** @var array */
-	const BOOLEAN_ATTRIBUTES =
+	protected $booleanAttributes =
 	[
 		'autofocus',
 		'async',

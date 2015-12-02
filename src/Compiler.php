@@ -15,29 +15,28 @@ namespace Machy8\Macdom;
 class Compiler
 {
 	const
-
 		/**
 		 * The skip are tag
 		 * @const string
 		 */
 		AREA_TAG = "SKIP",
 
-		/**
-		 * 1 = only spaces
-		 * 2 = only tabulators
-		 * 3 = combined - Default
-		 * @const int
-		 */
-		INDENT_METHOD = 3,
-
-		/**
-		 *  For 1. and 3. method
-		 *  @const integer
-		 */
-		SPACES_PER_INDENT = 4,
-
 		/** @const string connectors reg exp*/
 		STR_CONNECTORS = '\+=<>\|\-_\/\\&';
+
+	/**
+	* 1 = only spaces
+	* 2 = only tabulators
+	* 3 = combined - Default
+	* @var integer
+	*/
+	private $indentMethod = 3;
+
+	/**
+	*  For 1. and 3. method
+	*  @var integer
+	*/
+	private $spacesPerIndent = 4;
 
 	/** @var Elements\Elements */
 	private $Elements;
@@ -64,8 +63,16 @@ class Compiler
 	 * @param Macros $Macros
 	 * @param Elements $Elements
 	 */
-	public function __construct ($Elements, $Macros, $Replicator)
+	public function __construct ($Elements, $Macros, $Replicator, $indentMethod = NULL, $spacesPerIndent = NULL)
 	{
+		if($indentMethod !== NULL) {
+			$this->indentMethod = $indentMethod;
+		}
+
+		if($spacesPerIndent !== NULL) {
+			$this->spacesPerIndent = $spacesPerIndent;
+		}
+
 		$this->Elements = $Elements;
 		$this->Macros = $Macros;
 		$this->Replicator = $Replicator;
@@ -175,8 +182,8 @@ class Compiler
 	 */
 	private function getLnLvl ($ln)
 	{
-		$method = self::INDENT_METHOD;
-		$spacesRe = "/ {".self::SPACES_PER_INDENT."}/";
+		$method = $this->indentMethod;
+		$spacesRe = "/ {".$this->spacesPerIndent."}/";
 		$spaces = 0;
 		$tabulators = 0;
 

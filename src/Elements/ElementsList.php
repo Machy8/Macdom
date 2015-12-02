@@ -17,8 +17,8 @@ use Machy8\Macdom\Elements\BooleanAttributes;
 class ElementsList extends BooleanAttributes
 {
 
-	/** @const array */
-	const ELEMENTS =
+	/** @var array */
+	protected $elements =
 	[
 		// Document metadata
 		'html',

@@ -16,20 +16,20 @@ use Machy8\Macdom\Elements\ElementsList;
 
 class ElementsSettings extends ElementsList {
 
-	/** @const array */
-	const ELEMENT_SETTINGS =[
+	/** @var array */
+	protected $elementsSettings = [
 		// Document metadata
 		'html' => [
 			'qkAttributes' => ['lang']
 		],
 
 		'meta' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['name', 'content']
 		],
 
 		'link' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['href', 'rel', 'title']
 		],
 
@@ -39,7 +39,7 @@ class ElementsSettings extends ElementsList {
 
 		// Text content
 		'hr' => [
-			'paired' => FALSE
+			'unpaired'
 		],
 
 		'ol' => [
@@ -60,7 +60,7 @@ class ElementsSettings extends ElementsList {
 		],
 
 		'br' => [
-			'paired' => FALSE
+			'unpaired'
 		],
 
 		'data' => [
@@ -72,12 +72,12 @@ class ElementsSettings extends ElementsList {
 		],
 
 		'wbr' => [
-			'paired' => FALSE
+			'unpaired'
 		],
 
 		// Image and multimedia
 		'img' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['src', 'alt']
 		],
 
@@ -86,7 +86,7 @@ class ElementsSettings extends ElementsList {
 		],
 
 		'track' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['src', 'srclang', 'kind']
 		],
 
@@ -96,7 +96,7 @@ class ElementsSettings extends ElementsList {
 
 		// Embedded content
 		'embed' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['src', 'type', 'width', 'height']
 		],
 
@@ -109,12 +109,12 @@ class ElementsSettings extends ElementsList {
 		],
 
 		'param' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['name', 'value']
 		],
 
 		'source' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['src', 'type']
 		],
 
@@ -129,7 +129,7 @@ class ElementsSettings extends ElementsList {
 
 		// Table content
 		'col' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['span']
 		],
 
@@ -147,7 +147,7 @@ class ElementsSettings extends ElementsList {
 		],
 
 		'input' => [
-			'paired' => FALSE,
+			'unpaired',
 			'qkAttributes' => ['type', 'value', 'placeholder']
 		],
 
