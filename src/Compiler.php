@@ -141,7 +141,7 @@ class Compiler
 					elseif ($this->inNoCompileArea === TRUE) {
 
 						if ($noCompileAreaTag === FALSE) {
-							$this->codeStorage .= $ln."\n";
+							$this->codeStorage .= $txt."\n";
 						}
 					}
 				}

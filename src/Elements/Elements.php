@@ -35,9 +35,9 @@ class Elements extends ElementsSettings
 		$exists = in_array($el, $this->elements);
 		$return = FALSE;
 
-		if ($exists === TRUE){
+		if ($exists === TRUE) {
 
-			switch ($method){
+			switch ($method) {
 				case 'exists':
 					$return = TRUE;
 					break;
@@ -60,12 +60,12 @@ class Elements extends ElementsSettings
 		$paired = TRUE;
 		$settings = $this->elementsSettings;
 
-		if (isset($settings[$el])){
+		if (isset($settings[$el])) {
 			$s = $settings[$el];
 
 			$paired = in_array('unpaired', $s) ? FALSE : TRUE;
 
-			if (isset($s['qkAttributes'])){
+			if (isset($s['qkAttributes'])) {
 				if(count($s['qkAttributes']) >= 1)
 				{
 					$qkAttributes = $s['qkAttributes'];
