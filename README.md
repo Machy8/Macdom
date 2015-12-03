@@ -10,7 +10,7 @@ May contain errors and bugs. Use Macdom from the Master branch for your projects
 ##Installation
 1 - Download the Macdom using composer:
 ```
- composer require machy8/macdom:dev-develop
+ composer require machy8/macdom:@dev
 ```
 2 - Place the code bellow into your **base presenter**:
 ```
