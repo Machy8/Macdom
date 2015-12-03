@@ -12,12 +12,7 @@ May contain errors and bugs. Use Macdom from the Master branch for your projects
 ```
  composer require machy8/macdom:dev-develop
 ```
-2 - Register the Macdom in the **config.neon** as an extension:
-```
-extensions:
-	macdom: Machy8\Macdom\MacdomExtension
-```
-3 - Place the code bellow into your **base presenter**:
+2 - Place the code bellow into your **base presenter**:
 ```
 protected function createTemplate()
     {
@@ -28,4 +23,4 @@ protected function createTemplate()
 ```
 
 ##Examples
-See examples in the “examples” directory. There are examples on everything that is possible to do with Macdom. Just copy the content of those files into **@layout.latte** and see what happened.
+See tests in the tests folder. Tests are also examples of how it all works. For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki).
