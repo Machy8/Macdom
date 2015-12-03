@@ -1,0 +1,55 @@
+{* Latte template *}
+
+{block content}
+div Short text
+    conected with
+    another long text
+    closed by a DOT.
+
+div just-
+    short
+    -text
+    
+div just/
+    short
+    /text
+
+div just-
+    short
+    text
+    
+div just-
+    b bold 
+    text
+    
+div just/
+    short
+    text
+
+div just_
+    short
+    _text
+
+div just_
+    short
+    text
+    
+div Long text with a
+    a $http://www.google.com $blank
+	b
+	    i Bold
+		-link 
+	on Google
+    .
+    
+div Inline text with &#35;hash as entity.
+    Connected text with #hash as normal character
+
+div #inline
+    <?php 
+	echo "Text";
+    ?>
+    div #inner
+	<?php echo "Text ";?>
+	<?php $a = "Text2";?>
+	{$a}

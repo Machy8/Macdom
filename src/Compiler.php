@@ -12,74 +12,138 @@
 
 namespace Machy8\Macdom;
 
-class Compiler extends ElementsHelpers
+class Compiler
 {
+	const
+		/**
+		 * The skip are tag
+		 * @const string
+		 */
+		AREA_TAG = "SKIP",
 
-	// @var string
-	private $codeStorage = "";
+		/** @const string connectors reg exp*/
+		STR_CONNECTORS = '\+=<>\|\-_\/\\&';
 
-	// @var array
+	/**
+	* 1 = only spaces
+	* 2 = only tabulators
+	* 3 = combined - Default
+	* @var integer
+	*/
+	private $indentMethod = 3;
+
+	/**
+	*  For 1. and 3. method
+	*  @var integer
+	*/
+	private $spacesPerIndent = 4;
+
+	/** @var Elements\Elements */
+	private $Elements;
+
+	/** @var Macros\Macros */
+	private $Macros;
+
+	/** @var Replicator\Replicator */
+	private $Replicator;
+
+	/** @var string */
+	private $codeStorage;
+
+	/** @var array */
 	private $closeTags = [];
 
-	// @var integer
-	private $spacesInTab = 4;
-
-	// @var regular expression
-	private $sRegExp;
-
-	// @var string
-	private $noCompileAreaTag = "SKIP";
-
-	// @var bool
+	/** @var bool */
 	private $inNoCompileArea = FALSE;
 
-	public function __construct ()
+	/** @var bool */
+	private $noCompileAreaClosed = NULL;
+
+	/**
+	 * @param Macros $Macros
+	 * @param Elements $Elements
+	 */
+	public function __construct ($Elements, $Macros, $Replicator, $indentMethod = NULL, $spacesPerIndent = NULL)
 	{
-		parent::__construct();
-		$this->sRegExp = "/ {".$this->spacesInTab."}/";
+		if($indentMethod !== NULL) {
+			$this->indentMethod = $indentMethod;
+		}
+
+		if($spacesPerIndent !== NULL) {
+			$this->spacesPerIndent = $spacesPerIndent;
+		}
+
+		$this->Elements = $Elements;
+		$this->Macros = $Macros;
+		$this->Replicator = $Replicator;
 	}
 
-	// @param string $content
-	// @return string $this->codeStorage
+	/**
+	 * @param string $content
+	 * @return string $this->codeStorage
+	 */
 	public function compile ($content)
 	{
 		$lns = preg_split("/\n/", $content);
 
-		foreach ($lns as $key => $value)
-		{
+		foreach ($lns as $key => $value) {
 			$ln = $value;
 			$lvl = $this->getLnLvl($ln);
-			$txt = $this->getLnText($ln);
-			$ln2array = explode(" ", trim($txt));
+			$txt = $this->getLnTxt($ln);
 
-			// Element is the first word on line
-			$element = $ln2array[0];
+			$element = $this->getElement($txt);
+
 			$noCompileAreaTag = $this->detectNoCompileArea($element);
 
-			if ($this->findElement($element, "exists") === TRUE and $this->inNoCompileArea === FALSE)
-			{
-				$removeElement = preg_replace('/'.$element.'/', '', trim($txt), 1);
-				$txt = $removeElement;
-				$attributes = $this->getLnAttributes($txt);
+			if ($this->inNoCompileArea === FALSE && $noCompileAreaTag === FALSE && $this->noCompileAreaClosed === NULL && $this->Elements->findElement($element, "exists") === FALSE && strlen(ltrim($txt)) >= 1 && preg_match("/^[<*]+/", trim($txt)) === 0 && $txt !== NULL) {
+				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
+
+				if ($replicatorResult['replicate'] === TRUE) {
+					$txt = $this->getLnTxt($replicatorResult['line']);
+					$element = $this->getElement($txt);
+				}
+
+				if ($replicatorResult['clearLine'] === TRUE) {
+					$txt = NULL;
+					$element = FALSE;
+				}
+			}
+
+			if ($this->Elements->findElement($element, "exists") === TRUE && $this->inNoCompileArea === FALSE) {
+				$clearedText = preg_replace('/'.$element.'/', '', $txt, 1);
+				$attributes = $this->getLnAttributes($clearedText);
 				$this->addOpenTag($element, $lvl, $attributes);
 			}
-			else
-			{
-				if ($txt !== NULL and $this->inNoCompileArea === FALSE)
+			else{
+				if ($txt !== NULL)
 				{
-				    if($noCompileAreaTag === FALSE)
-				    {
 					$this->addCloseTags($lvl);
-					$this->codeStorage .= $txt;
-				    }
-				}
-				elseif($txt !== NULL and $this->inNoCompileArea === TRUE)
-				{
-				    if($noCompileAreaTag === FALSE)
-				    {
 
-					$this->codeStorage .= $ln;
-				    }
+					if ($this->inNoCompileArea === FALSE) {
+
+						if ($noCompileAreaTag === FALSE) {
+							$macro = $this->Macros->replace($element, $txt);
+							$macroExists = $macro['exists'];
+
+							if ($macroExists === FALSE) {
+								$match1 = preg_match('/[^'.self::STR_CONNECTORS.']+$/',$this->codeStorage);
+								$match2 = preg_match('/^[^'.self::STR_CONNECTORS.']+/', $txt);
+
+								$spacePrefix =  $match1 === 1 && $match2 === 1 ? " " : "";
+
+								$this->codeStorage .= $spacePrefix.$txt;
+							}
+							elseif ($macroExists === TRUE) {
+								$this->codeStorage .= $macro['replacement'];
+							}
+						}
+					}
+					elseif ($this->inNoCompileArea === TRUE) {
+
+						if ($noCompileAreaTag === FALSE) {
+							$this->codeStorage .= $txt."\n";
+						}
+					}
 				}
 			}
 		}
@@ -89,47 +153,89 @@ class Compiler extends ElementsHelpers
 		return $this->codeStorage;
 	}
 
-	// @param string $ln
-	// @return string $lvl
+	/**
+	 * @param string $txt
+	 * @return string $element
+	 */
+	private function getElement ($txt)
+	{
+		$element = explode(" ", trim($txt));
+
+		return $element[0];
+	}
+
+	/**
+	 *  HOW LEVELS WORKS
+	 *
+	 * method 1 = spaces
+	 *	- is better to set the number of the constant SPACES_PER_INDENT on the number
+	 *	  you have in your editor setted as "spaces per indent"
+	 * method 2 = tabulators
+	 * method 3 = combined
+	 *	- is better to set up the tab size twice bigger then spaces have
+	 *	- Example:
+	 *	  - spaces per indent = 4 => tab size = 8
+	 *	  - spaces per indent = 8 => tab size = 16
+	 *	  - etc...
+	 * @param string $ln
+	 * @return integer $lvl
+	 */
 	private function getLnLvl ($ln)
 	{
-		$spaces = preg_match_all($this->sRegExp, $ln);
+		$method = $this->indentMethod;
+		$spacesRe = "/ {".$this->spacesPerIndent."}/";
+		$spaces = 0;
+		$tabulators = 0;
 
-		// Get the number of tabulators on the line
-		// One tabulators = 2 levels
-		$tabulators = preg_match_all("/\t/", $ln)*2;
+		preg_match_all("/^\s+/", $ln, $matches);
+		$whites = implode("", $matches[0]);
+
+		// Only for spaces and combined method
+		If($method === 1 || $method === 3) {
+			$spaces = preg_match_all($spacesRe, $whites);
+		}
+
+		// Only for tabulators and combined method
+		if ($method === 2 || $method === 3) {
+			$tabulators = preg_match_all("/\t/", $whites);
+
+			if ($method === 3) {
+				$rise = $tabulators * 2;
+				$tabulators = $rise;
+			}
+		}
+
 		$lvl = $spaces + $tabulators;
 
 		return $lvl;
 	}
 
-	// @param string $ln
-	// @return string $txt
-	private function getLnText ($ln)
+	/**
+	 * @param string $ln
+	 * @return string
+	 */
+	private function getLnTxt ($ln)
 	{
-		$replaceTabulators = preg_replace("/\t/", "", trim($ln));
-		$replaceSpaces = preg_replace($this->sRegExp, "", $replaceTabulators);
-		$txt = $replaceSpaces;
+		$clearLn = ltrim($ln);
+
+		$txt = strlen($clearLn) >= 1 ? $clearLn : NULL;
 
 		return $txt;
 	}
 
-	// @param string $txt
-	// @return array
+	/**
+	 *  @param string $txt
+	 *  @return array
+	 */
 	private function getLnAttributes ($txt)
 	{
 		// Replace n$*; for n:href=""
-		$re = '/ n\${1}(.+);{1}/';
+		$re = '/ n\$(.+);/';
 		$nHref = preg_match($re, $txt, $matches);
 
-		if ($nHref !== 0 and $nHref !== FALSE)
-		{
-			$value = $matches[1];
+		if ($nHref === 1) {
 
-			if (empty($value))
-			{
-				$value = $matches[2];
-			}
+			$value = empty($matches[1]) ?  $matches[2] : $matches[1];
 
 			$newHref = ' n:href="'.$value.'"';
 			$replaced = preg_replace($re, $newHref, $txt);
@@ -137,112 +243,77 @@ class Compiler extends ElementsHelpers
 		}
 
 		// Get all html attributes
-		$re = '/ [\w:-]+={1}\"{1}.*\"{1}| [\w:-]+={1}\S+/';
+		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\S+/';
 		$htmlAttributes = preg_match_all($re, $txt, $matches);
-		$matches2selectors = "";
 
-		if ($htmlAttributes !== 0 and $htmlAttributes !== FALSE)
-		{
+		if ($htmlAttributes !== 0 && $htmlAttributes !== FALSE) {
 			$remove = preg_replace($re, '', $txt);
 			$txt = $remove;
-
-			foreach ($matches[0] as $key => $value)
-			{
-				$matches2selectors .= $value.' ';
-			}
-
-			$htmlAttributes = trim($matches2selectors);
+			$htmlAttributes = implode(" ", $matches[0]);
 		}
-		else
-		{
+		else{
 			$htmlAttributes = NULL;
 		}
 
 		// Get the id selector
-		$re = "/ \#{1}(\S+)/";
+		$re = '/ #(\S+)/';
 		$idSelector = preg_match($re, $txt, $matches);
 
-		if ($idSelector !== 0 and $idSelector !== FALSE)
-		{
+		if ($idSelector !== 0 && $idSelector !== FALSE) {
 			$remove = preg_replace($re, '', $txt);
 			$txt = $remove;
 			$idSelector = $matches[1];
 		}
-		else
-		{
+		else{
 			$idSelector = NULL;
 		}
 
 		// Get all class selectors
-		$re = "/ \.{1}(\S+)/";
+		$re = "/ \.(\S+)/";
 		$clsSelectors = preg_match_all($re, $txt, $matches);
 
-		if ($clsSelectors !== 0 and $clsSelectors !== FALSE)
-		{
+		if ($clsSelectors !== 0 && $clsSelectors !== FALSE) {
 			$remove = preg_replace($re, '', $txt);
 			$txt = $remove;
-			$matches2selectors = '';
-
-			foreach ($matches[1] as $key => $value)
-			{
-				$matches2selectors .= $value.' ';
-			}
-
-			$clsSelectors = trim($matches2selectors);
+			$clsSelectors = implode(" ", $matches[1]);
 		}
-		else
-		{
+		else{
 			$clsSelectors = NULL;
 		}
 
 		// Get all quick attributes
-		$re = '/ ([\d]*)\$([^$]+);{1}| ([\d]*)\$(\S+)/';
+		$re = '/ ([\d]+)?\$(?:([^$;"]+);|(\S+)+)/';
 		$qkAttributes = preg_match_all($re, $txt, $matches, PREG_SET_ORDER);
 		$matches2selectors = [];
 
-		if ($qkAttributes !== 0 and $qkAttributes !== FALSE)
-		{
+		if ($qkAttributes !== 0 && $qkAttributes !== FALSE) {
 			$remove = preg_replace($re, '', $txt);
 			$txt = $remove;
 
-			foreach ($matches as $key => $value)
-			{
-				$selector = [];
-				$valLength = count($value);
+			foreach ($matches as $value) {
+				$paramVal = end($value);
 
-				foreach($value as $keyB => $qkAttrParam)
-				{
-					if (!empty($qkAttrParam) and $keyB !== 0)
-					{
-						$match = preg_match("/\d/", $qkAttrParam);
+				if (!empty($paramVal) && strtolower($paramVal) !== 'null') {
+					$selector = [];
 
-						// If quick attribute is without index
-						if($match === 1 and $keyB < $valLength)
-						{
-							$selector[] = $qkAttrParam;
-						}
-						else
-						{
-							array_unshift($selector, $qkAttrParam);
-						}
-					}
-				}
+					// If quick attribute is without index
+					$paramKey = is_numeric($value[1]) ? $value[1] : NULL;
 
-				if (!empty($selector))
-				{
-					$matches2selectors[] = $selector;
+					$matches2selectors[] = [
+						"key" => $paramKey,
+						"value" => $paramVal
+					];
 				}
 			}
 
 			$qkAttributes = $matches2selectors;
 		}
-		else
-		{
+		else{
 			$qkAttributes = NULL;
 		}
 
 		// Get the text
-		$getTxt = $this->getLnText($txt);
+		$getTxt = $this->getLnTxt($txt);
 		$txt = $getTxt;
 
 		// Split the txt to an array in oder to get the boolean attributes
@@ -250,27 +321,36 @@ class Compiler extends ElementsHelpers
 		$matches2selectors = "";
 
 		// Get boolean attributes
-		foreach ($txt2array as $key => $attribute)
-		{
-			if ($this->isBoolean($attribute) === TRUE)
-			{
+		foreach ($txt2array as $key => $attribute) {
+
+			if ($this->Elements->isBoolean($attribute) === TRUE) {
 				$remove = str_replace($attribute, '', $txt);
 				$txt = $remove;
 				$matches2selectors .= $attribute.' ';
 			}
-			else
-			{
+			else{
 				break;
 			}
 		}
 
-		if (strlen($matches2selectors) > 0)
+		$booleanAttributes = strlen($matches2selectors) > 0 ? $matches2selectors : NULL;
+
+		// Synchronize class selectors
+		$re = '/ class="([^"]+)+"| class=([\S]+)+/';
+		$htmlClsSelector = preg_match($re, $htmlAttributes, $matches);
+
+		if ($htmlClsSelector === 1 && $clsSelectors !== NULL)
 		{
-			$booleanAttributes = $matches2selectors;
+			$replacement = preg_replace($re, ' class="'.$matches[1].' '.$clsSelectors.'"', $htmlAttributes, 1);
+			$htmlAttributes = $replacement;
+
+			$clsSelectors = NULL;
 		}
-		else
+
+		// Synchronize id selectors
+		if ($idSelector !== NULL && preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes) === 1)
 		{
-			$booleanAttributes = NULL;
+			$idSelector = NULL;
 		}
 
 		// Return all attributes
@@ -285,137 +365,126 @@ class Compiler extends ElementsHelpers
 		];
 	}
 
-	// @param string $element
-	// @param int $lvl
-	// @param array $attributes
+	/**
+	 * @param string $element
+	 * @param int $lvl
+	 * @param array $attributes
+	 */
 	private function addOpenTag ($element, $lvl, $attributes)
 	{
-		$elementSettings = $this->findElement($element, "settings");
-		$openTag = '<'.$element;
+		$elementSettings = $this->Elements->findElement($element, "settings");
+		$match = preg_match_all('/[^'.self::STR_CONNECTORS.']+$/',$this->codeStorage);
+		$spacePrefix = $match === 1 ? " " : "";
 
-		if ($elementSettings['qkAttributes'] !== NULL and $attributes['qkAttributes'] !== NULL)
-		{
-			$usedParameters = [];
+		$openTag = $spacePrefix.'<'.$element;
 
-			// For each quick attribute in the array
-			// of recieved quick attributes from the actual line
-			// Only for quick attributes with an index before
-			foreach($attributes['qkAttributes'] as $key => $parameter)
-			{
-				if(count($parameter) === 2)
-				{
-					$qkAttributeKey = $parameter[1] - 1;
-					if(array_key_exists($qkAttributeKey, $elementSettings['qkAttributes']))
-					{
-						if (strtolower($parameter[0]) !== 'null' and strlen($parameter[0]) > 0)
-						{
-							$attribute = $elementSettings['qkAttributes'][$qkAttributeKey].'="'.$parameter[0].'"';
-							$openTag .= ' '.$attribute;
-							$usedParameters[] = $key;
-						}
+		if ($elementSettings['qkAttributes'] !== NULL && $attributes['qkAttributes'] !== NULL) {
+
+			$usedKeys = [];
+			$withoutKey = 0;
+
+			foreach ($attributes['qkAttributes'] as $key => $attribute) {
+				$unsetKey = NULL;
+				$newAttr = NULL;
+				if ($attribute["key"] !== NULL) {
+					$paramKey = $attribute['key']-1;
+
+					if (isset($elementSettings['qkAttributes'][$paramKey])) {
+						$newAttr = $elementSettings['qkAttributes'][$paramKey].'="'.$attribute['value'].'"';
+						$usedKeys[] = $paramKey;
 					}
+				}
+				elseif (!in_array($withoutKey, $usedKeys)) {
+						$newAttr = $elementSettings['qkAttributes'][$withoutKey].'="'.$attribute['value'].'"';
+						$withoutKey ++;
+					}
+
+				if ($newAttr !== NULL) {
+					$openTag .= ' '.$newAttr;
 				}
 			}
 
-			// For each quick attribute without an index before
-			foreach ($elementSettings['qkAttributes'] as $key => $attribute)
-			{
-				if (array_key_exists($key, $attributes['qkAttributes']) and !in_array($key, $usedParameters))
-				{
-					if (strtolower($attributes['qkAttributes'][$key][0]) !== 'null' and strlen($attributes['qkAttributes'][$key][0]) > 0)
-					{
-						$attribute = $elementSettings['qkAttributes'][$key].'="'.$attributes['qkAttributes'][$key][0].'"';
-						$openTag .= ' '.$attribute;
-					}
-				}
-			}
 		}
 
 		// Add the id attribute
-		if ($attributes['id'] !== NULL)
-		{
-			$openTag .= ' id="'.$attributes['id'].'"';
+		if ($attributes['id'] !== NULL) {
+			if (strtolower($attributes['id']) !== "null") {
+				$openTag .= ' id="'.$attributes['id'].'"';
+			}
 		}
 
 		// Add classes
-		if ($attributes['classes'] !== NULL)
-		{
+		if ($attributes['classes'] !== NULL) {
 			$openTag .= ' class="'.$attributes['classes'].'"';
 		}
 
 		// Add html attributes
-		if ($attributes['htmlAttributes'] !== NULL)
-		{
+		if ($attributes['htmlAttributes'] !== NULL) {
 			$openTag .= ' '.$attributes['htmlAttributes'];
 		}
 
 		// Add boolean attributes
-		if ($attributes['booleanAttributes'] !== NULL)
-		{
+		if ($attributes['booleanAttributes'] !== NULL) {
 			$openTag .= ' '.$attributes['booleanAttributes'];
 		}
 
 		// Close the open tag, add close tags if needed
-		$openTag .= ' >';
+		$openTag .= '>';
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
 		// Add txt
-		if ($attributes['txt'] !== NULL)
-		{
+		if ($attributes['txt'] !== NULL) {
 			$this->codeStorage .= $attributes['txt'];
 		}
 
 		// If the tag is paired add its close tag to the storage
-		if ($elementSettings['paired'] === TRUE)
-		{
+		if ($elementSettings['paired'] === TRUE) {
 			$closeTag = '</'.$element.'>';
 			$this->closeTags[] = [$lvl, $closeTag];
 		}
 	}
 
-	// @param int $lvl
+	/** @param int $lvl */
 	private function addCloseTags ($lvl)
 	{
 		$length = count($this->closeTags);
 		$lastTag = $length;
 
-		if ($length > 0)
-		{
-			for ($i = $length-1; $i >= 0; $i--)
-			{
-				if ($lvl <= $this->closeTags[$i][0])
-				{
+		if ($length > 0) {
+
+			for ($i = $length-1; $i >= 0; $i--) {
+
+				if ($lvl <= $this->closeTags[$i][0]) {
 					$this->codeStorage .= $this->closeTags[$i][1];
 					$lastTag = $i;
 				}
-				else
-				{
+				else{
 					break;
 				}
 			}
-
 			array_splice($this->closeTags, $lastTag);
 		}
 	}
-
-	// @param string $element
-	// @return bool $detected
+	/**
+	 * @param type $element
+	 * @return boolean
+	 */
 	private function detectNoCompileArea ($element)
 	{
-		$detected = FALSE;
+		$tagDetected = FALSE;
+
+		$areaClosed = $this->inNoCompileArea ? FALSE : NULL;
 
 		// For skip tag
-		$closeTag = '/'.$this->noCompileAreaTag;
+		$closeTag = '/'.self::AREA_TAG;
 
-		if ($element === $this->noCompileAreaTag)
-		{
-			$detected = TRUE;
+		if ($element === self::AREA_TAG) {
+			$tagDetected = TRUE;
 			$this->inNoCompileArea = TRUE;
 		}
-		elseif ($element === $closeTag)
-		{
-			$detected = TRUE;
+		elseif ($element === $closeTag) {
+			$tagDetected = TRUE;
 			$this->inNoCompileArea = FALSE;
 		}
 
@@ -424,13 +493,11 @@ class Compiler extends ElementsHelpers
 		$open = '<'.$tag;
 		$close = '</'.$tag.'>';
 
-		if ($element === $open.'>' or $element === $open)
-		{
-		    $this->inNoCompileArea = TRUE;
+		if ($element === $open.'>' || $element === $open) {
+			$this->inNoCompileArea = TRUE;
 		}
-		elseif ($element === $close)
-		{
-		    $this->inNoCompileArea = FALSE;
+		elseif ($element === $close) {
+			$this->inNoCompileArea = FALSE;
 		}
 
 		// For script tag
@@ -438,17 +505,31 @@ class Compiler extends ElementsHelpers
 		$open = '<'.$tag;
 		$close = '</'.$tag.'>';
 
-		if ($element === $open.'>' or $element === $open)
+		if ($element === $open.'>' || $element === $open) {
+			$this->inNoCompileArea = TRUE;
+		}
+		elseif ($element === $close) {
+			$this->inNoCompileArea = FALSE;
+		}
+
+		// For php
+		$open = "<?";
+		$close = "?>";
+
+		if ($element === $open."php" || $element === $open)
 		{
-		    $this->inNoCompileArea = TRUE;
+			$this->inNoCompileArea = TRUE;
 		}
 		elseif ($element === $close)
 		{
-		    $this->inNoCompileArea = FALSE;
+			$this->inNoCompileArea = FALSE;
 		}
 
-		// User defined or other tags...
+		// User defined or other tags
 
-		return $detected;
+		// Set and return
+		$this->noCompileAreaClosed = $areaClosed;
+
+		return $tagDetected;
 	}
 }

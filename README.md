@@ -5,10 +5,12 @@ For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
 
 ##Requirements
 Nette version 2.3 or newer.
+##Note to develop version
+May contain errors and bugs. Use Macdom from the Master branch for your projects.
 ##Installation
 1 - Download the Macdom using composer:
 ```
- composer require machy8/macdom:@dev
+ composer require machy8/macdom:dev-develop
 ```
 2 - Register the Macdom in the **config.neon** as an extension:
 ```
