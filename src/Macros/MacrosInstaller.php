@@ -25,7 +25,7 @@ class MacrosInstaller {
 
 	public function addCustomMacro($macroId, $function)
 	{
-		if ($macroId !== NULL && $function !== NULL) {
+		if ($macroId && $function) {
 			if (!in_array($macroId, $this->macros)) {
 				$this->macros[] = $macroId;
 				$this->macros[$macroId]['function'] = $function;

@@ -20,7 +20,6 @@ class Elements extends ElementsSettings
 	public function isBoolean ($attribute)
 	{
 		$is = in_array($attribute, $this->booleanAttributes);
-
 		return $is;
 	}
 
@@ -34,9 +33,7 @@ class Elements extends ElementsSettings
 	{
 		$exists = in_array($el, $this->elements);
 		$return = FALSE;
-
-		if ($exists === TRUE) {
-
+		if ($exists) {
 			switch ($method) {
 				case 'exists':
 					$return = TRUE;
@@ -46,7 +43,6 @@ class Elements extends ElementsSettings
 					break;
 			}
 		}
-
 		return $return;
 	}
 
@@ -59,22 +55,16 @@ class Elements extends ElementsSettings
 		$qkAttributes = NULL;
 		$paired = TRUE;
 		$settings = $this->elementsSettings;
-
 		if (isset($settings[$el])) {
 			$s = $settings[$el];
-
 			$paired = in_array('unpaired', $s) ? FALSE : TRUE;
-
 			if (isset($s['qkAttributes'])) {
-				if(count($s['qkAttributes']) >= 1)
-				{
+				if (count($s['qkAttributes'])) {
 					$qkAttributes = $s['qkAttributes'];
 				}
 			}
 		}
-
-		return
-		[
+		return [
 			'element' => $el,
 			'paired' => $paired,
 			'qkAttributes' => $qkAttributes
@@ -86,31 +76,23 @@ class Elements extends ElementsSettings
 	 */
 	public function addElements($elements)
 	{
-		if($elements !== NULL)
-		{
-			foreach($elements as $element => $settings)
-			{
+		if ($elements) {
+			foreach($elements as $element => $settings) {
 				$settingsExists = TRUE;
-
-				if(is_integer($element))
-				{
+				if (is_integer($element)) {
 					$settingsExists = FALSE;
 					$element = $settings;
 				}
 
-				if(!in_array($element, $this->elements))
-				{
+				if (!in_array($element, $this->elements)) {
 					$this->elements[] = $element;
 				}
 
-				if($settingsExists === TRUE)
-				{
-					if(!isset($this->elementsSettings[$element]))
-					{
+				if ($settingsExists) {
+					if (!isset($this->elementsSettings[$element])) {
 						$this->elementsSettings[] = $element;
 					}
-					if($settings !== NULL)
-					{
+					if ($settings) {
 						$this->elementsSettings[$element] = $settings;
 					}
 				}
@@ -123,10 +105,8 @@ class Elements extends ElementsSettings
 	 */
 	public function addBooleanAttributes ($attributes)
 	{
-		if($attributes !== NULL && gettype($attributes) === "array")
-		{
-			if(count($attributes) >= 1)
-			{
+		if ($attributes && gettype($attributes) === "array") {
+			if (count($attributes)) {
 				$merged = array_merge($this->booleanAttributes, $attributes);
 				$this->booleanAttributes = $merged;
 			}
