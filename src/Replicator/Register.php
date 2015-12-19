@@ -14,9 +14,7 @@ namespace Machy8\Macdom\Replicator;
 
 class Register {
 
-
 	const
-
 		/** @const regular expression */
 		REG_EXP = "\@([\S]*)",
 
@@ -37,25 +35,20 @@ class Register {
 	protected function deregisterLvl ($lvl, $element)
 	{
 		$unregistered = FALSE;
-
 		$match = preg_match("/\/".self::REG_EXP."/", $element, $matches);
-		if ($match === 1) {
+		if ($match) {
 			$selected = $lvl.self::SUFFIX;
-
 			if (!empty($matches[1])) {
 				$selected = $lvl.'-'.$matches[1];
-
 				if (isset($this->register[$selected])) {
 					unset($this->register[$selected]);
 					$unregistered = TRUE;
 				}
-			}
-			elseif (isset($this->register[$selected])) {
+			} elseif (isset($this->register[$selected])) {
 				unset($this->register[$selected]);
 				$unregistered = TRUE;
 			}
 		}
-
 		return $unregistered;
 	}
 
@@ -68,30 +61,23 @@ class Register {
 	 */
 	protected function isRegistered ($lvl, $element, $line, $registrationLine)
 	{
-		$registered = FALSE;
-		$key = FALSE;
+		$registered = $key = FALSE;
 		$registereId = NULL;
-
-		if ($registrationLine === 0) {
+		if (!$registrationLine) {
 			if (array_key_exists($lvl.'-'.$element, $this->register)) {
-				$key = TRUE;
-				$registered = TRUE;
+				$registered = $key = TRUE;
 				$registerId = $lvl.'-'.$element;
-			}
-			elseif (array_key_exists($lvl.self::SUFFIX, $this->register)) {
+			} elseif (array_key_exists($lvl.self::SUFFIX, $this->register)) {
 				$registered = TRUE;
 				$registerId = $lvl.self::SUFFIX;
 			}
 		}
-
-		if ($registered === FALSE || $registrationLine === 1) {
+		if (!$registered || $registrationLine) {
 			$registerLvl = $this->registerLvl($element, $line, $lvl);
 			$registered = $registerLvl['registered'];
 			$registerId = $registerLvl['registerId'];
 		}
-
-		return
-		[
+		return [
 			'registered' => $registered,
 			'key' => $key,
 			'registerId' => $registerId
@@ -109,23 +95,15 @@ class Register {
 	{
 		$registered = FALSE;
 		$registerId = NULL;
-
 		$match = preg_match("/".self::REG_EXP."/", $element, $matches);
-
-		if ($match === 1) {
-
+		if ($match) {
 			$newKey = $lvl;
 			$newKey .= !empty($matches[1]) ? '-'.$matches[1] : self::SUFFIX;
-
 			$this->register[$newKey] = $line;
-
 			$registered = TRUE;
 			$registerId = $newKey;
-
 		}
-
-		return
-		[
+		return [
 			'registered' => $registered,
 			'registerId' => $registerId
 		];

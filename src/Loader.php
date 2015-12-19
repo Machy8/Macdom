@@ -30,7 +30,6 @@ class Loader extends Setup
 		$content = parent::getContent($file);
 		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount);
 		$compiled = $compiler->compile($content);
-
 		return $compiled;
 	}
 }
