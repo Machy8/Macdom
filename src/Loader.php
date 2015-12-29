@@ -25,11 +25,27 @@ class Loader extends Setup
 		parent::__construct();
 	}
 
+	/**
+	 * @param string $file
+	 * @return string
+	 */
 	public function getContent ($file)
 	{
 		$content = parent::getContent($file);
+		$compiled = $this->compileContent($content);
+
+		return $compiled;
+	}
+
+	/**
+	 * @param sting $content
+	 * @return string
+	 */
+	public function compileContent ($content)
+	{
 		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount);
 		$compiled = $compiler->compile($content);
+
 		return $compiled;
 	}
 }
