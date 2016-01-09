@@ -10,7 +10,18 @@ Nette version 2.3 or newer.
 ```
  composer require machy8/macdom:@dev
 ```
-2 - Place the code bellow into your **base presenter**:
+2 - Usage:
+
+**Normal:**
+
+```
+$compiled = new \Machy8\Macdom\Loader($templateCode));
+```
+
+**Nette framework:**
+
+Place the code bellow into your *base presenter*.
+
 ```
 protected function createTemplate()
     {
@@ -21,4 +32,4 @@ protected function createTemplate()
 ```
 
 ##Examples
-See tests in the tests folder. Tests are also examples of how it all works. For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki).
+See tests in the tests folder. Tests are also examples of how it all works. For more information see [WIKI](https://github.com/Machy8/Macdom/wiki).
