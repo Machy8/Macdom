@@ -15,7 +15,8 @@ Nette version 2.3 or newer.
 **Normal:**
 
 ```
-$compiled = new \Machy8\Macdom\Loader($templateCode));
+$macdom = new \Machy8\Macdom\Loader;
+$compiled = $macdom->compileContent($content);
 ```
 
 **Nette framework:**
