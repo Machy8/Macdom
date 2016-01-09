@@ -1,4 +1,4 @@
-#Macdom for Nette
+#Macdom
 HTML Abstraction markup language.
 
 For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
