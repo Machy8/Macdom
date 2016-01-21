@@ -4,7 +4,10 @@ HTML Abstraction markup language.
 For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
 
 ##Requirements
-Nette version 2.3 or newer.
+
+- php 5.3+
+- If you are using Nette Framework: Nette v2.3 or newer.
+
 ##Installation
 1 - Download the Macdom using composer:
 ```
