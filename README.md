@@ -1,5 +1,5 @@
 #Macdom
-HTML Abstraction markup language.
+HTML and template preprocessor.
 
 For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
 
