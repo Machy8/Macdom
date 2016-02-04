@@ -7,7 +7,7 @@
     "license": "New BSD License",
     "require": {
         "php": ">=5.3.0",
-        "machy8/macdom": "dev-master"
+        "machy8/macdom": "@dev"
     },
     "authors": [
         {
