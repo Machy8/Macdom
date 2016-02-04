@@ -3,6 +3,7 @@
     "description": "HTML and template preprocessor",
     "keywords": ["macdom", "html", "preprocessor", "markup language"],
     "license": "New BSD License",
+    "version": "dev-master",
     "require": {
         "php": ">=5.3.0",
     },
