@@ -12,11 +12,12 @@
 
 namespace Machy8\Macdom;
 
+use Latte\Loaders\FileLoader;
 use Machy8\Macdom\Elements\Elements;
 use Machy8\Macdom\Macros\Macros;
 
-class Setup {
-
+class SetupLatte extends FileLoader {
+	
 	/** @var Elements */
 	protected $elements;
 
