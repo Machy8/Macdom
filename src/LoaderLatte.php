@@ -38,7 +38,7 @@ class LoaderLatte extends SetupLatte
 		return $compiled;
 	}
 	
-	private function compileContent ($content)
+	public function compileContent ($content)
 	{
 		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount);
 		$compiled = $compiler->compile($content);
