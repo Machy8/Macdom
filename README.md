@@ -30,7 +30,7 @@ Place the code bellow into your *base presenter*.
 protected function createTemplate()
     {
         $template = parent::createTemplate();
-        $template->getLatte()->setLoader(new \Machy8\Macdom\Loader($this));
+        $template->getLatte()->setLoader(new \Machy8\Macdom\LoaderLatte($this));
         return $template;
     }
 ```
