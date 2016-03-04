@@ -14,14 +14,13 @@ namespace Machy8\Macdom;
 
 use Machy8\Macdom\Replicator\Replicator;
 
-class Loader extends Setup
-{
+class Loader extends Setup {
+
 	/**
 	 * @param string $file
 	 * @return string $compiled
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
 	}
 
@@ -29,11 +28,11 @@ class Loader extends Setup
 	 * @param sting $content
 	 * @return string
 	 */
-	public function compileContent ($content)
-	{
+	public function compileContent($content) {
 		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount);
 		$compiled = $compiler->compile($content);
 
 		return $compiled;
 	}
+
 }

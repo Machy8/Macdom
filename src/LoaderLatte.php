@@ -14,15 +14,13 @@ namespace Machy8\Macdom;
 
 use Machy8\Macdom\Replicator\Replicator;
 
-class LoaderLatte extends SetupLatte
-{
+class LoaderLatte extends SetupLatte {
 
 	/**
 	 * @param string $file
 	 * @return string $compiled
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
 	}
 
@@ -30,19 +28,18 @@ class LoaderLatte extends SetupLatte
 	 * @param string $file
 	 * @return string
 	 */
-	public function getContent ($file)
-	{
+	public function getContent($file) {
 		$content = parent::getContent($file);
 		$compiled = $this->compileContent($content);
 
 		return $compiled;
 	}
-	
-	public function compileContent ($content)
-	{
+
+	public function compileContent($content) {
 		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount);
 		$compiled = $compiler->compile($content);
 
 		return $compiled;
 	}
+
 }

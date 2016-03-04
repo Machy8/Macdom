@@ -14,12 +14,10 @@ namespace Machy8\Macdom\Elements;
 
 use Machy8\Macdom\Elements\BooleanAttributes;
 
-class ElementsList extends BooleanAttributes
-{
+class ElementsList extends BooleanAttributes {
 
 	/** @var array */
-	protected $elements =
-	[
+	protected $elements = [
 		// Document metadata
 		'html',
 		'base',
@@ -28,7 +26,6 @@ class ElementsList extends BooleanAttributes
 		'meta',
 		'style',
 		'title',
-
 		// Content sectioning
 		'address',
 		'article',
@@ -44,7 +41,6 @@ class ElementsList extends BooleanAttributes
 		'hgroup',
 		'nav',
 		'section',
-
 		// Text content
 		'dd',
 		'div',
@@ -60,7 +56,6 @@ class ElementsList extends BooleanAttributes
 		'li',
 		'p',
 		'pre',
-
 		// Inline text semantic
 		'a',
 		'abbr',
@@ -92,7 +87,6 @@ class ElementsList extends BooleanAttributes
 		'u',
 		'var',
 		'wbr',
-
 		// Multimedia
 		'area',
 		'audio',
@@ -100,23 +94,19 @@ class ElementsList extends BooleanAttributes
 		'map',
 		'track',
 		'video',
-
 		// Embedded content
 		'embed',
 		'iframe',
 		'object',
 		'param',
 		'source',
-
 		// Scripting
 		'canvas',
 		'noscript',
 		'script',
-
 		// Demarcating edits
 		'del',
 		'ins',
-
 		// Table content
 		'caption',
 		'col',
@@ -128,7 +118,6 @@ class ElementsList extends BooleanAttributes
 		'th',
 		'thead',
 		'tr',
-
 		// Forms
 		'button',
 		'datalist',
@@ -144,7 +133,6 @@ class ElementsList extends BooleanAttributes
 		'progress',
 		'select',
 		'textarea',
-
 		// Interactive elements
 		'details',
 		'dialog',
@@ -152,7 +140,7 @@ class ElementsList extends BooleanAttributes
 		'menuitem',
 		'summary'
 
-		// User defined elements
-
+			// User defined elements
 	];
+
 }
