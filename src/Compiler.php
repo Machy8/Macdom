@@ -4,7 +4,7 @@
  *
  * This file is part of the Macdom
  *
- * Copyright (c) 2015 Vladimír Macháček
+ * Copyright (c) 2015-2016 Vladimír Macháček
  *
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  *
@@ -94,7 +94,6 @@ class Compiler {
 					$element = FALSE;
 				}
 			}
-
 			if ($this->Elements->findElement($element, 'exists') && !$this->inNoCompileArea) {
 				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
 				$attributes = $this->getLnAttributes($clearedText);

@@ -4,7 +4,7 @@
  *
  * This file is part of the Macdom
  *
- * Copyright (c) 2015 Vladimír Macháček
+ * Copyright (c) 2015-2016 Vladimír Macháček
  *
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  *
@@ -16,7 +16,7 @@ class Register {
 
 	const
 	/** @const regular expression */
-			REG_EXP = '\@([\S]*)',
+			REG_EXP = '^\@([\S]*)',
 			/** @const string */
 			SUFFIX = '-x';
 
