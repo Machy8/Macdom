@@ -23,6 +23,9 @@ class Setup {
 	/** @var Macros */
 	protected $macros;
 
+	/** @var boolean */
+	protected $compressCode;
+
 	/** @var integer */
 	protected $indentMethod;
 
@@ -40,6 +43,12 @@ class Setup {
 	 */
 	public function spacesPerIndent($count) {
 		$this->spacesCount = $count;
+		return $this;
+	}
+
+	/** @return \Machy8\Macdom\Setup */
+	public function compressCode() {
+		$this->compressCode = TRUE;
 		return $this;
 	}
 

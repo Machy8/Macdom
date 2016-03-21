@@ -19,9 +19,7 @@ class Compiler {
 	 * The skip are tag
 	 * @const string
 	 */
-			AREA_TAG = 'SKIP',
-			/** @const string connectors reg exp */
-			STR_CONNECTORS = '\+=<>\|\-_\/\\&:\*';
+			AREA_TAG = 'SKIP';
 
 	/**
 	 * 1 = only spaces
@@ -30,6 +28,9 @@ class Compiler {
 	 * @var integer
 	 */
 	private $indentMethod;
+	
+	/** @var integer */
+	private $lnBreak;
 
 	/**
 	 *  For 1. and 3. method
@@ -62,9 +63,10 @@ class Compiler {
 	 * @param Macros $Macros
 	 * @param Elements $Elements
 	 */
-	public function __construct($Elements, $Macros, $Replicator, $indentMethod = NULL, $spacesPerIndent = NULL) {
+	public function __construct($Elements, $Macros, $Replicator, $indentMethod, $spacesPerIndent, $compressCode) {
 		$this->indentMethod = $indentMethod ? : 3;
 		$this->spacesPerIndent = $spacesPerIndent ? : 4;
+		$this->lnBreak = $compressCode ? "" : "\n";
 		$this->Elements = $Elements;
 		$this->Macros = $Macros;
 		$this->Replicator = $Replicator;
@@ -77,8 +79,7 @@ class Compiler {
 	public function compile($content) {
 		$lns = preg_split('/\n/', $content);
 
-		foreach ($lns as $key => $value) {
-			$ln = $value;
+		foreach ($lns as $key => $ln) {
 			$lvl = $this->getLnLvl($ln);
 			$txt = $this->getLnTxt($ln);
 			$element = $this->getElement($txt);
@@ -106,18 +107,14 @@ class Compiler {
 							$macro = $this->Macros->replace($element, $txt);
 							$macroExists = $macro['exists'];
 							if (!$macroExists) {
-								$match1 = preg_match('/[^' . self::STR_CONNECTORS . ']+$/', $this->codeStorage);
-								$match2 = preg_match('/^[^' . self::STR_CONNECTORS . ']+/', $txt);
-								$spacePrefix = $match1 && $match2 ? ' ' : '';
-								$this->codeStorage .= $spacePrefix . $txt;
+								$this->codeStorage .= $txt . $this->lnBreak;
 							} elseif ($macroExists) {
-								$this->codeStorage .= $macro['replacement'];
+								$this->codeStorage .= $macro['replacement'] . $this->lnBreak;
 							}
 						}
 					} elseif ($this->inNoCompileArea) {
-						if (!$noCompileAreaTag) {
-							$this->codeStorage .= $txt . '\n';
-						}
+						if (!$noCompileAreaTag)
+							$this->codeStorage .= $txt . "\n";
 					}
 				}
 			}
@@ -156,8 +153,8 @@ class Compiler {
 		$spacesRe = '/ {' . $this->spacesPerIndent . '}/';
 		$spaces = 0;
 		$tabulators = 0;
-		preg_match_all('/^\s+/', $ln, $matches);
-		$whites = implode('', $matches[0]);
+		preg_match('/^\s+/', $ln, $matches);
+		$whites = implode('', $matches);
 
 		// Only for spaces and combined method
 		If ($method === 1 || $method === 3) {
@@ -178,7 +175,7 @@ class Compiler {
 	 */
 	private function getLnTxt($ln) {
 		$line = ltrim($ln) ? : NULL;
-		return $line === NULL ? NULL : ltrim(preg_replace('/\t/', ' ', $line));
+		return $line === NULL ? NULL : ltrim($line);
 	}
 
 	/**
@@ -186,6 +183,18 @@ class Compiler {
 	 *  @return array
 	 */
 	private function getLnAttributes($txt) {
+		
+		// Store the text from the first tag to the end of the line
+		$re = '/\<.*$/';
+		$txtFromTag2End = preg_match($re, $txt, $match);
+		if($txtFromTag2End) {
+			$replaced = preg_replace($re, '', $txt);
+			$txt = $replaced;
+			$txtFromTag2End = $match[0];
+		} else {
+			$txtFromTag2End = '';
+		}
+		
 		// Replace n$*; for n:href=""
 		$re = '/ n\$(.+);/';
 		$nHref = preg_match($re, $txt, $matches);
@@ -247,7 +256,8 @@ class Compiler {
 
 		// Get the text
 		$getTxt = $this->getLnTxt($txt);
-		$txt = $getTxt;
+		$txt = $getTxt.$txtFromTag2End;
+		unset($txtFromTag2End);
 
 		// Split the txt to an array in oder to get the boolean attributes
 		$txt2array = explode(' ', $txt);
@@ -297,9 +307,7 @@ class Compiler {
 	 */
 	private function addOpenTag($element, $lvl, $attributes) {
 		$elementSettings = $this->Elements->findElement($element, 'settings');
-		$match = preg_match_all('/[^' . self::STR_CONNECTORS . ']+$/', $this->codeStorage);
-		$spacePrefix = $match ? ' ' : '';
-		$openTag = $spacePrefix . '<' . $element;
+		$openTag = '<' . $element;
 		if ($elementSettings['qkAttributes'] && $attributes['qkAttributes']) {
 			$usedKeys = [];
 			$withoutKey = 0;
@@ -345,7 +353,7 @@ class Compiler {
 		}
 
 		// Close the open tag, add close tags if needed
-		$openTag .= '>';
+		$openTag .= '>' . $this->lnBreak;
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
@@ -368,7 +376,7 @@ class Compiler {
 		if ($length > 0) {
 			for ($i = $length - 1; $i >= 0; $i--) {
 				if ($lvl <= $this->closeTags[$i][0]) {
-					$this->codeStorage .= $this->closeTags[$i][1];
+					$this->codeStorage .= $this->lnBreak . $this->closeTags[$i][1] . $this->lnBreak;
 					$lastTag = $i;
 				} else {
 					break;

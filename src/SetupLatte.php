@@ -24,6 +24,9 @@ class SetupLatte extends FileLoader {
 	/** @var Macros */
 	protected $macros;
 
+	/** @var boolean */
+	protected $compressCode;
+
 	/** @var integer */
 	protected $indentMethod;
 
@@ -33,6 +36,12 @@ class SetupLatte extends FileLoader {
 	public function __construct() {
 		$this->elements = new Elements;
 		$this->macros = new Macros;
+	}
+
+	/** @return \Machy8\Macdom\SetupLatte */
+	public function compressCode() {
+		$this->compressCode = TRUE;
+		return $this;
 	}
 
 	/**

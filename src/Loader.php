@@ -29,7 +29,7 @@ class Loader extends Setup {
 	 * @return string
 	 */
 	public function compileContent($content) {
-		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount);
+		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount, $this->compressCode);
 		$compiled = $compiler->compile($content);
 
 		return $compiled;
