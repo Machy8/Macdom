@@ -4,7 +4,7 @@
  *
  * This file is part of the Macdom
  *
- * Copyright (c) 2015 Vladimír Macháček
+ * Copyright (c) 2015-2016 Vladimír Macháček
  *
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  *
@@ -14,68 +14,84 @@ namespace Machy8\Macdom\Elements;
 
 use Machy8\Macdom\Elements\BooleanAttributes;
 
-class ElementsList extends BooleanAttributes
-{
+class ElementsList extends BooleanAttributes {
 
 	/** @var array */
-	protected $elements =
-	[
-		// Document metadata
-		'html',
-		'base',
-		'head',
-		'link',
-		'meta',
-		'style',
-		'title',
-
-		// Content sectioning
+	protected $elements = [
+		'a',
+		'abbr',
 		'address',
+		'area',
 		'article',
+		'aside',
+		'audio',
+		'b',
+		'base',
+		'bdi',
+		'bdo',
+		'blockquote',
 		'body',
+		'br',
+		'button',
+		'canvas',
+		'caption',
+		'cite',
+		'code',
+		'col',
+		'colgroup',
+		'data',
+		'datalist',
+		'dd',
+		'del',
+		'dfn',
+		'div',
+		'dl',
+		'dt',
+		'element',
+		'em',
+		'embed',
+		'fieldset',
+		'figcaption',
+		'figure',
 		'footer',
-		'header',
+		'form',
 		'h1',
 		'h2',
 		'h3',
 		'h4',
 		'h5',
 		'h6',
-		'hgroup',
-		'nav',
-		'section',
-
-		// Text content
-		'dd',
-		'div',
-		'aside',
-		'dl',
-		'dt',
-		'figcaption',
-		'figure',
+		'head',
+		'header',
 		'hr',
-		'main',
-		'ol',
-		'ul',
-		'li',
-		'p',
-		'pre',
-
-		// Inline text semantic
-		'a',
-		'abbr',
-		'b',
+		'html',
 		'i',
-		'bdi',
-		'bdo',
-		'br',
-		'cite',
-		'code',
-		'data',
-		'dfn',
-		'em',
+		'iframe',
+		'img',
+		'input',
+		'ins',
 		'kbd',
+		'label',
+		'legend',
+		'li',
+		'link',
+		'main',
+		'map',
 		'mark',
+		'meta',
+		'meter',
+		'nav',
+		'noframes',
+		'noscript',
+		'object',
+		'ol',
+		'optgroup',
+		'option',
+		'output',
+		'p',
+		'param',
+		'pre',
+		'progress',
 		'q',
 		'rp',
 		'rt',
@@ -83,76 +99,46 @@ class ElementsList extends BooleanAttributes
 		'ruby',
 		's',
 		'samp',
+		'script',
+		'section',
+		'select',
+		'shadow',
 		'small',
+		'source',
 		'span',
 		'strong',
+		'style',
 		'sub',
 		'sup',
-		'time',
-		'u',
-		'var',
-		'wbr',
-
-		// Multimedia
-		'area',
-		'audio',
-		'img',
-		'map',
-		'track',
-		'video',
-
-		// Embedded content
-		'embed',
-		'iframe',
-		'object',
-		'param',
-		'source',
-
-		// Scripting
-		'canvas',
-		'noscript',
-		'script',
-
-		// Demarcating edits
-		'del',
-		'ins',
-
-		// Table content
-		'caption',
-		'col',
-		'colgroup',
 		'table',
 		'tbody',
 		'td',
+		'template',
+		'textarea',
 		'tfoot',
 		'th',
 		'thead',
+		'time',
+		'title',
 		'tr',
-
-		// Forms
-		'button',
-		'datalist',
-		'fieldset',
-		'form',
-		'input',
-		'label',
-		'legend',
-		'meter',
-		'optgroup',
-		'option',
-		'output',
-		'progress',
-		'select',
-		'textarea',
-
-		// Interactive elements
+		'track',
+		'u',
+		'ul',
+		'var',
+		'video',
+		'wbr',
+		//Experimental and not standardized API elements
+		'bgsound',
 		'details',
 		'dialog',
+		'hgroup',
+		'image',
 		'menu',
 		'menuitem',
+		'multicol',
+		'nobr',
+		'picture',
 		'summary'
-
-		// User defined elements
-
 	];
+
 }

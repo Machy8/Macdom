@@ -11,7 +11,7 @@ For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
 ##Installation
 1 - Download the Macdom using composer:
 ```
- composer require machy8/macdom:@dev
+ composer require machy8/macdom:@dev-develop
 ```
 2 - Usage:
 
@@ -30,7 +30,7 @@ Place the code bellow into your *base presenter*.
 protected function createTemplate()
     {
         $template = parent::createTemplate();
-        $template->getLatte()->setLoader(new \Machy8\Macdom\Loader($this));
+        $template->getLatte()->setLoader(new \Machy8\Macdom\LoaderLatte($this));
         return $template;
     }
 ```

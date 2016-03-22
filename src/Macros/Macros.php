@@ -4,7 +4,7 @@
  *
  * This file is part of the Macdom
  *
- * Copyright (c) 2015 Vladimír Macháček
+ * Copyright (c) 2015-2016 Vladimír Macháček
  *
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  *
@@ -21,18 +21,17 @@ class Macros extends CoreMacros {
 	 * @param string $line
 	 * @return array [exists, replacement]
 	 */
-	public function replace ($macro, $ln)
-	{
+	public function replace($macro, $ln) {
 		$replacement = NULL;
 		$exists = FALSE;
 
 		if (isset($this->macros[$macro])) {
-			$line = trim(strstr($ln, " "));
+			$line = trim(strstr($ln, ' '));
 			if (isset($this->macros[$macro]['function'])) {
 				$replacement = call_user_func($this->macros[$macro]['function'], $line);
 			} else {
 				$fn = ucfirst($this->macros[$macro]);
-				$replacement = $this->{'macro'.$fn}($line);
+				$replacement = $this->{'macro' . $fn}($line);
 			}
 			$exists = TRUE;
 		}
@@ -41,4 +40,5 @@ class Macros extends CoreMacros {
 			'replacement' => $replacement
 		];
 	}
+
 }

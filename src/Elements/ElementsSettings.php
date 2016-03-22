@@ -4,7 +4,7 @@
  *
  * This file is part of the Macdom
  *
- * Copyright (c) 2015 Vladimír Macháček
+ * Copyright (c) 2015-2016 Vladimír Macháček
  *
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  *
@@ -18,166 +18,127 @@ class ElementsSettings extends ElementsList {
 
 	/** @var array */
 	protected $elementsSettings = [
-		// Document metadata
-		'html' => [
-			'qkAttributes' => ['lang']
-		],
-
-		'meta' => [
-			'unpaired',
-			'qkAttributes' => ['name', 'content']
-		],
-
-		'link' => [
-			'unpaired',
-			'qkAttributes' => ['href', 'rel', 'title']
-		],
-
-		'style' => [
-			'qkAttributes' => ['type']
-		],
-
-		// Text content
-		'hr' => [
-			'unpaired'
-		],
-
-		'ol' => [
-			'qkAttributes' => ['type', 'start', 'reversed']
-		],
-
-		// Inline text semantic
 		'a' => [
 			'qkAttributes' => ['href', 'target', 'role']
 		],
-
 		'abbr' => [
 			'qkAttributes' => ['title']
 		],
-
-		'bdo' => [
-			'qkAttributes' => ['dir']
-		],
-
-		'br' => [
-			'unpaired'
-		],
-
-		'data' => [
-			'qkAttributes' => ['value']
-		],
-
-		'q' => [
-			'qkAttributes' => ['cite']
-		],
-
-		'wbr' => [
-			'unpaired'
-		],
-
-		// Image and multimedia
-		'img' => [
+		'area' => [
 			'unpaired',
-			'qkAttributes' => ['src', 'alt']
 		],
-
 		'audio' => [
 			'qkAttributes' => ['src']
 		],
-
-		'track' => [
-			'unpaired',
-			'qkAttributes' => ['src', 'srclang', 'kind']
+		'base' => [
+			'unpaired'
 		],
-
-		'track' => [
-			'qkAttributes' => ['src']
+		'bdo' => [
+			'qkAttributes' => ['dir']
 		],
-
-		// Embedded content
-		'embed' => [
-			'unpaired',
-			'qkAttributes' => ['src', 'type', 'width', 'height']
+		'br' => [
+			'unpaired'
 		],
-
-		'iframe' => [
-			'qkAttributes' => ['src', 'frameborder', 'width', 'height']
+		'button' => [
+			'qkAttributes' => ['type', 'value']
 		],
-
-		'object' => [
-			'qkAttributes' => ['data', 'type']
-		],
-
-		'param' => [
-			'unpaired',
-			'qkAttributes' => ['name', 'value']
-		],
-
-		'source' => [
-			'unpaired',
-			'qkAttributes' => ['src', 'type']
-		],
-
-		// Scripting
 		'canvas' => [
 			'qkAttributes' => ['width', 'height']
 		],
-
-		'script' => [
-			'qkAttributes' => ['src', 'type']
-		],
-
-		// Table content
 		'col' => [
 			'unpaired',
 			'qkAttributes' => ['span']
 		],
-
-		'td' => [
-			'qkAttributes' => ['rowspan', 'colspan']
+		'data' => [
+			'qkAttributes' => ['value']
 		],
-
-		// Forms
-		'button' => [
-			'qkAttributes' => ['type', 'value']
+		'embed' => [
+			'unpaired',
+			'qkAttributes' => ['src', 'type', 'width', 'height']
 		],
-
 		'form' => [
 			'qkAttributes' => ['method']
 		],
-
+		'hr' => [
+			'unpaired'
+		],
+		'html' => [
+			'qkAttributes' => ['lang']
+		],
+		'iframe' => [
+			'qkAttributes' => ['src', 'frameborder', 'width', 'height']
+		],
+		'img' => [
+			'unpaired',
+			'qkAttributes' => ['src', 'alt']
+		],
 		'input' => [
 			'unpaired',
 			'qkAttributes' => ['type', 'value', 'placeholder']
 		],
-
-		'textarea' => [
-			'qkAttributes' => ['placeholder']
-		],
-
 		'label' => [
 			'qkAttributes' => ['for']
 		],
-
-		'progress' => [
-			'qkAttributes' => ['value', 'max']
+		'link' => [
+			'unpaired',
+			'qkAttributes' => ['href', 'rel', 'title']
 		],
-
+		'meta' => [
+			'unpaired',
+			'qkAttributes' => ['name', 'content']
+		],
+		'object' => [
+			'qkAttributes' => ['data', 'type']
+		],
+		'ol' => [
+			'qkAttributes' => ['type', 'start', 'reversed']
+		],
 		'optgroup' => [
 			'qkAttributes' => ['label']
 		],
-
 		'option' => [
 			'qkAttributes' => ['value']
 		],
-
-		// Interactive elements
+		'param' => [
+			'unpaired',
+			'qkAttributes' => ['name', 'value']
+		],
+		'progress' => [
+			'qkAttributes' => ['value', 'max']
+		],
+		'q' => [
+			'qkAttributes' => ['cite']
+		],
+		'script' => [
+			'qkAttributes' => ['src', 'type']
+		],
+		'source' => [
+			'unpaired',
+			'qkAttributes' => ['src', 'type']
+		],
+		'style' => [
+			'qkAttributes' => ['type']
+		],
+		'td' => [
+			'qkAttributes' => ['rowspan', 'colspan']
+		],
+		'textarea' => [
+			'qkAttributes' => ['placeholder']
+		],
+		'track' => [
+			'unpaired',
+			'qkAttributes' => ['src', 'srclang', 'kind']
+		],
+		'wbr' => [
+			'unpaired'
+		],
+		//Experimental and not standardized API elements
 		'menu' => [
 			'qkAttributes' => ['type', 'label']
 		],
-
 		'menuitem' => [
 			'qkAttributes' => ['type']
-		]
+		],
 	];
+
 }

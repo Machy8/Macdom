@@ -12,10 +12,11 @@
 
 namespace Machy8\Macdom;
 
+use Latte\Loaders\FileLoader;
 use Machy8\Macdom\Elements\Elements;
 use Machy8\Macdom\Macros\Macros;
 
-class Setup {
+class SetupLatte extends FileLoader {
 
 	/** @var Elements */
 	protected $elements;
@@ -37,18 +38,18 @@ class Setup {
 		$this->macros = new Macros;
 	}
 
+	/** @return \Machy8\Macdom\SetupLatte */
+	public function compressCode() {
+		$this->compressCode = TRUE;
+		return $this;
+	}
+
 	/**
 	 * @param integer $count
 	 * @return \Machy8\Macdom\Setup
 	 */
 	public function spacesPerIndent($count) {
 		$this->spacesCount = $count;
-		return $this;
-	}
-
-	/** @return \Machy8\Macdom\Setup */
-	public function compressCode() {
-		$this->compressCode = TRUE;
 		return $this;
 	}
 
