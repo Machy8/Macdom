@@ -28,7 +28,7 @@ class Compiler {
 	 * @var integer
 	 */
 	private $indentMethod;
-	
+
 	/** @var integer */
 	private $lnBreak;
 
@@ -66,7 +66,7 @@ class Compiler {
 	public function __construct($Elements, $Macros, $Replicator, $indentMethod, $spacesPerIndent, $compressCode) {
 		$this->indentMethod = $indentMethod ? : 3;
 		$this->spacesPerIndent = $spacesPerIndent ? : 4;
-		$this->lnBreak = $compressCode ? "" : "\n";
+		$this->lnBreak = $compressCode ? '' : "\n";
 		$this->Elements = $Elements;
 		$this->Macros = $Macros;
 		$this->Replicator = $Replicator;
@@ -157,9 +157,9 @@ class Compiler {
 		$whites = implode('', $matches);
 
 		// Only for spaces and combined method
-		If ($method === 1 || $method === 3) {
+		If ($method === 1 || $method === 3)
 			$spaces = preg_match_all($spacesRe, $whites);
-		}
+
 
 		// Only for tabulators and combined method
 		if ($method === 2 || $method === 3) {
@@ -174,8 +174,7 @@ class Compiler {
 	 * @return string
 	 */
 	private function getLnTxt($ln) {
-		$line = ltrim($ln) ? : NULL;
-		return $line === NULL ? NULL : ltrim($line);
+		return ltrim($ln);
 	}
 
 	/**
@@ -183,18 +182,18 @@ class Compiler {
 	 *  @return array
 	 */
 	private function getLnAttributes($txt) {
-		
+
 		// Store the text from the first tag to the end of the line
 		$re = '/\<.*$/';
 		$txtFromTag2End = preg_match($re, $txt, $match);
-		if($txtFromTag2End) {
+		if ($txtFromTag2End) {
 			$replaced = preg_replace($re, '', $txt);
 			$txt = $replaced;
 			$txtFromTag2End = $match[0];
 		} else {
 			$txtFromTag2End = '';
 		}
-		
+
 		// Replace n$*; for n:href=""
 		$re = '/ n\$(.+);/';
 		$nHref = preg_match($re, $txt, $matches);
@@ -211,7 +210,7 @@ class Compiler {
 		if ($htmlAttributes) {
 			$remove = preg_replace($re, '', $txt);
 			$txt = $remove;
-			$htmlAttributes = implode(' ', $matches[0]);
+			$htmlAttributes = implode('', $matches[0]);
 		}
 
 		// Get the id selector
@@ -256,7 +255,7 @@ class Compiler {
 
 		// Get the text
 		$getTxt = $this->getLnTxt($txt);
-		$txt = $getTxt.$txtFromTag2End;
+		$txt = $getTxt . $txtFromTag2End;
 		unset($txtFromTag2End);
 
 		// Split the txt to an array in oder to get the boolean attributes
@@ -266,7 +265,7 @@ class Compiler {
 			if ($this->Elements->isBoolean($attribute)) {
 				$remove = str_replace($attribute, '', $txt);
 				$txt = $remove;
-				$matches2selectors .= $attribute . ' ';
+				$matches2selectors .= ' ' . $attribute;
 			} else {
 				break;
 			}
@@ -284,18 +283,16 @@ class Compiler {
 		}
 
 		// Synchronize id selectors
-		if ($idSelector && preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes)) {
-			$idSelector = NULL;
-		}
+		if ($idSelector && preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes)) $idSelector = NULL;
 
 		// Return all attributes
 		return
 				[
-					'id' => $idSelector ? : NULL,
-					'classes' => $clsSelectors ? : NULL,
-					'qkAttributes' => $qkAttributes ? : NULL,
-					'htmlAttributes' => $htmlAttributes ? : NULL,
-					'booleanAttributes' => $booleanAttributes ? : NULL,
+					'id' => $idSelector,
+					'classes' => $clsSelectors,
+					'qkAttributes' => $qkAttributes,
+					'htmlAttributes' => $htmlAttributes,
+					'booleanAttributes' => $booleanAttributes,
 					'txt' => $txt
 		];
 	}
@@ -324,43 +321,37 @@ class Compiler {
 					$newAttr = $elementSettings['qkAttributes'][$withoutKey] . '="' . $attribute['value'] . '"';
 					$withoutKey ++;
 				}
-				if ($newAttr) {
-					$openTag .= ' ' . $newAttr;
-				}
+				if ($newAttr) $openTag .= ' ' . $newAttr;
 			}
 		}
 
 		// Add the id attribute
-		if ($attributes['id']) {
-			if (strtolower($attributes['id']) !== 'null') {
+		if ($attributes['id'] && strtolower($attributes['id']) !== 'null')
 				$openTag .= ' id="' . $attributes['id'] . '"';
-			}
-		}
 
 		// Add classes
-		if ($attributes['classes']) {
+		if ($attributes['classes']) 
 			$openTag .= ' class="' . $attributes['classes'] . '"';
-		}
+
 
 		// Add html attributes
-		if ($attributes['htmlAttributes']) {
-			$openTag .= ' ' . $attributes['htmlAttributes'];
-		}
+		if ($attributes['htmlAttributes']) 
+			$openTag .= $attributes['htmlAttributes'];
+
 
 		// Add boolean attributes
-		if ($attributes['booleanAttributes']) {
-			$openTag .= ' ' . $attributes['booleanAttributes'];
-		}
+		if ($attributes['booleanAttributes']) 
+			$openTag .= $attributes['booleanAttributes'];
 
 		// Close the open tag, add close tags if needed
-		$openTag .= '>' . $this->lnBreak;
+		$selfClosing = $elementSettings['paired'] ? '' : ' /';
+		$openTag .= $selfClosing . '>' . $this->lnBreak;
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
 		// Add txt
-		if ($attributes['txt']) {
+		if ($attributes['txt'] && $elementSettings['paired']) 
 			$this->codeStorage .= $attributes['txt'];
-		}
 
 		// If the tag is paired add its close tag to the storage
 		if ($elementSettings['paired']) {

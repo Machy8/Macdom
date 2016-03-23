@@ -39,8 +39,8 @@ class SetupLatte extends FileLoader {
 	}
 
 	/** @return \Machy8\Macdom\SetupLatte */
-	public function compressCode() {
-		$this->compressCode = TRUE;
+	public function compressCode($value = NULL) {
+		$this->compressCode = $value ?: TRUE;
 		return $this;
 	}
 

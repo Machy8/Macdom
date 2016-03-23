@@ -68,7 +68,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroUtf8() {
-		return '<meta charset="utf-8">';
+		return '<meta charset="utf-8" />';
 	}
 
 	/**
@@ -136,7 +136,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroCss($line) {
-		return '<link rel="stylesheet" type="text/css" href="' . $line . '">';
+		return '<link rel="stylesheet" type="text/css" href="' . $line . '" />';
 	}
 
 	/**
@@ -144,7 +144,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroFavicon($line) {
-		return '<link rel="shortcut icon" href="' . $line . '">';
+		return '<link rel="shortcut icon" href="' . $line . '" />';
 	}
 
 	/**
