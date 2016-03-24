@@ -11,7 +11,7 @@ For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
 ##Installation
 1 - Download the Macdom using composer:
 ```
- composer require machy8/macdom:@dev-develop
+ composer require machy8/macdom:@dev
 ```
 2 - Usage:
 
