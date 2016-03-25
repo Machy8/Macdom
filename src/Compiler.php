@@ -106,11 +106,7 @@ class Compiler {
 						if (!$noCompileAreaTag) {
 							$macro = $this->Macros->replace($element, $txt);
 							$macroExists = $macro['exists'];
-							if (!$macroExists) {
-								$this->codeStorage .= $txt . $this->lnBreak;
-							} elseif ($macroExists) {
-								$this->codeStorage .= $macro['replacement'] . $this->lnBreak;
-							}
+							$this->codeStorage .= $macroExists ? $macro['replacement'] . $this->lnBreak : $txt . $this->lnBreak;
 						}
 					} elseif ($this->inNoCompileArea) {
 						if (!$noCompileAreaTag)
@@ -150,22 +146,18 @@ class Compiler {
 	 */
 	private function getLnLvl($ln) {
 		$method = $this->indentMethod;
-		$spacesRe = '/ {' . $this->spacesPerIndent . '}/';
-		$spaces = 0;
-		$tabulators = 0;
 		preg_match('/^\s+/', $ln, $matches);
 		$whites = implode('', $matches);
 
-		// Only for spaces and combined method
-		If ($method === 1 || $method === 3)
-			$spaces = preg_match_all($spacesRe, $whites);
-
+		// Only for spaces and combined method	
+		$spaces = $method === 1 || $method === 3 ? preg_match_all('/ {' . $this->spacesPerIndent . '}/', $whites) : 0;
 
 		// Only for tabulators and combined method
-		if ($method === 2 || $method === 3) {
-			$r = '/\t/';
-			$tabulators = $method === 3 ? preg_match_all($r, $whites) * 2 : preg_match_all($r, $whites);
-		}
+		$tabulators = $method === 2 || $method === 3 ? preg_match_all('/\t/', $whites) : 0;
+
+		if ($method === 3)
+			$tabulators *= 2;
+
 		return ($spaces + $tabulators);
 	}
 
@@ -185,13 +177,11 @@ class Compiler {
 
 		// Store the text from the first tag to the end of the line
 		$re = '/\<.*$/';
-		$txtFromTag2End = preg_match($re, $txt, $match);
-		if ($txtFromTag2End) {
-			$replaced = preg_replace($re, '', $txt);
-			$txt = $replaced;
-			$txtFromTag2End = $match[0];
-		} else {
-			$txtFromTag2End = '';
+		$txtFromTag2End = '';
+		$matchedText = preg_match($re, $txt, $match);
+		if ($matchedText) {
+			$txt = preg_replace($re, '', $txt);
+			$txtFromTag2End .= $match[0];
 		}
 
 		// Replace n$*; for n:href=""
@@ -200,16 +190,14 @@ class Compiler {
 		if ($nHref) {
 			$value = $matches[1] ? : $matches[2];
 			$newHref = ' n:href="' . $value . '"';
-			$replaced = preg_replace($re, $newHref, $txt);
-			$txt = $replaced;
+			$txt = preg_replace($re, $newHref, $txt);
 		}
 
 		// Get all html attributes
 		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\S+/';
 		$htmlAttributes = preg_match_all($re, $txt, $matches);
 		if ($htmlAttributes) {
-			$remove = preg_replace($re, '', $txt);
-			$txt = $remove;
+			$txt = preg_replace($re, '', $txt);
 			$htmlAttributes = implode('', $matches[0]);
 		}
 
@@ -217,8 +205,7 @@ class Compiler {
 		$re = '/ #(\S+)/';
 		$idSelector = preg_match($re, $txt, $matches);
 		if ($idSelector) {
-			$remove = preg_replace($re, '', $txt);
-			$txt = $remove;
+			$txt = preg_replace($re, '', $txt);
 			$idSelector = $matches[1];
 		}
 
@@ -226,74 +213,66 @@ class Compiler {
 		$re = '/ \.(\S+)/';
 		$clsSelectors = preg_match_all($re, $txt, $matches);
 		if ($clsSelectors) {
-			$remove = preg_replace($re, '', $txt);
-			$txt = $remove;
+			$txt = preg_replace($re, '', $txt);
 			$clsSelectors = implode(' ', $matches[1]);
 		}
 
 		// Get all quick attributes
 		$re = '/ ([\d]+)?\$(?:([^$;"]+);|(\S+)+)/';
-		$qkAttributes = preg_match_all($re, $txt, $matches, PREG_SET_ORDER);
-		$matches2selectors = [];
-		if ($qkAttributes) {
-			$remove = preg_replace($re, '', $txt);
-			$txt = $remove;
+		$matched = preg_match_all($re, $txt, $matches, PREG_SET_ORDER);
+		$qkAttributes = [];
+		if ($matched) {
+			$txt = preg_replace($re, '', $txt);
 			foreach ($matches as $value) {
 				$paramVal = end($value);
 				if (!empty($paramVal) && strtolower($paramVal) !== 'null') {
 
 					// If quick attribute is without index
 					$paramKey = is_numeric($value[1]) ? $value[1] : NULL;
-					$matches2selectors[] = [
+					$qkAttributes[] = [
 						'key' => $paramKey,
 						'value' => $paramVal
 					];
 				}
 			}
-			$qkAttributes = $matches2selectors;
 		}
 
 		// Get the text
 		$getTxt = $this->getLnTxt($txt);
 		$txt = $getTxt . $txtFromTag2End;
-		unset($txtFromTag2End);
 
 		// Split the txt to an array in oder to get the boolean attributes
 		$txt2array = explode(' ', $txt);
-		$matches2selectors = '';
+		$booleanAttributes = '';
 		foreach ($txt2array as $key => $attribute) {
 			if ($this->Elements->isBoolean($attribute)) {
-				$remove = str_replace($attribute, '', $txt);
-				$txt = $remove;
-				$matches2selectors .= ' ' . $attribute;
+				$txt = str_replace($attribute, '', $txt);
+				$booleanAttributes .= ' ' . $attribute;
 			} else {
 				break;
 			}
 		}
 
-		$booleanAttributes = strlen($matches2selectors) ? $matches2selectors : NULL;
-
 		// Synchronize class selectors
 		$re = '/ class="([^"]+)+"| class=([\S]+)+/';
 		$htmlClsSelector = preg_match($re, $htmlAttributes, $matches);
 		if ($clsSelectors && $htmlClsSelector) {
-			$replacement = preg_replace($re, ' class="' . $matches[1] . ' ' . $clsSelectors . '"', $htmlAttributes);
-			$htmlAttributes = $replacement;
+			$htmlAttributes = preg_replace($re, ' class="' . $matches[1] . ' ' . $clsSelectors . '"', $htmlAttributes);
 			$clsSelectors = NULL;
 		}
 
 		// Synchronize id selectors
-		if ($idSelector && preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes)) $idSelector = NULL;
+		if ($idSelector && preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes))
+			$idSelector = NULL;
 
 		// Return all attributes
-		return
-				[
-					'id' => $idSelector,
-					'classes' => $clsSelectors,
-					'qkAttributes' => $qkAttributes,
-					'htmlAttributes' => $htmlAttributes,
-					'booleanAttributes' => $booleanAttributes,
-					'txt' => $txt
+		return [
+			'id' => $idSelector,
+			'classes' => $clsSelectors,
+			'qkAttributes' => $qkAttributes,
+			'htmlAttributes' => $htmlAttributes,
+			'booleanAttributes' => $booleanAttributes,
+			'txt' => $txt
 		];
 	}
 
@@ -321,26 +300,27 @@ class Compiler {
 					$newAttr = $elementSettings['qkAttributes'][$withoutKey] . '="' . $attribute['value'] . '"';
 					$withoutKey ++;
 				}
-				if ($newAttr) $openTag .= ' ' . $newAttr;
+				if ($newAttr)
+					$openTag .= ' ' . $newAttr;
 			}
 		}
 
 		// Add the id attribute
 		if ($attributes['id'] && strtolower($attributes['id']) !== 'null')
-				$openTag .= ' id="' . $attributes['id'] . '"';
+			$openTag .= ' id="' . $attributes['id'] . '"';
 
 		// Add classes
-		if ($attributes['classes']) 
+		if ($attributes['classes'])
 			$openTag .= ' class="' . $attributes['classes'] . '"';
 
 
 		// Add html attributes
-		if ($attributes['htmlAttributes']) 
+		if ($attributes['htmlAttributes'])
 			$openTag .= $attributes['htmlAttributes'];
 
 
 		// Add boolean attributes
-		if ($attributes['booleanAttributes']) 
+		if ($attributes['booleanAttributes'])
 			$openTag .= $attributes['booleanAttributes'];
 
 		// Close the open tag, add close tags if needed
@@ -349,12 +329,10 @@ class Compiler {
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
-		// Add txt
-		if ($attributes['txt'] && $elementSettings['paired']) 
-			$this->codeStorage .= $attributes['txt'];
-
 		// If the tag is paired add its close tag to the storage
 		if ($elementSettings['paired']) {
+			if ($attributes['txt'])
+				$this->codeStorage .= $attributes['txt'];
 			$closeTag = '</' . $element . '>';
 			$this->closeTags[] = [$lvl, $closeTag];
 		}

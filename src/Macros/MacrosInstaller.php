@@ -17,9 +17,8 @@ class MacrosInstaller {
 	protected $macros = [];
 
 	protected function addMacro($fnName, $macroId) {
-		if (!in_array($macroId, $this->macros)) {
+		if (!in_array($macroId, $this->macros))
 			$this->macros[$macroId] = $fnName;
-		}
 	}
 
 	public function addCustomMacro($macroId, $function) {

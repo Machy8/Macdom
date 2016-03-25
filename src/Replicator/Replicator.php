@@ -45,7 +45,9 @@ class Replicator extends Register {
 				$replicate = TRUE;
 				// If the first word on line is also the part of the key in the register
 				$key = $isRegistered['key'];
-				$replacement = $key === TRUE ? $this->replicate($isRegistered['registerId'], $line, $element, $key) : $this->replicate($isRegistered['registerId'], $line);
+				$replacement = $key === TRUE
+						? $this->replicate($isRegistered['registerId'], $line, $element, $key)
+						: $this->replicate($isRegistered['registerId'], $line);
 			}
 		} else {
 			$clearLine = TRUE;
@@ -71,7 +73,9 @@ class Replicator extends Register {
 			$removeKey = preg_replace('/' . $element . '/', '', $line, 1);
 			$line = $removeKey;
 		}
-		$replicatedline = $contentArrays ? $this->synchronizeLines($line, $registerId, $matches[1]) : $this->synchronizeLines($line, $registerId);
+		$replicatedline = $contentArrays
+				? $this->synchronizeLines($line, $registerId, $matches[1])
+				: $this->synchronizeLines($line, $registerId);
 
 		return $replicatedline;
 	}
@@ -88,18 +92,15 @@ class Replicator extends Register {
 			foreach ($matches as $key => $match) {
 				$exists = preg_match(self::REG_EXP_B, $registeredLine);
 				if ($exists) {
-					$synchronizeLine = preg_replace(self::REG_EXP_B, $match, $registeredLine, 1);
-					$clearLine = str_replace('[' . $match . ']', '', $line);
-					$registeredLine = $synchronizeLine;
-					$line = $clearLine;
+					$registeredLine = preg_replace(self::REG_EXP_B, $match, $registeredLine, 1);
+					$line = ltrim(str_replace('[' . $match . ']', '', $line));
 				} else {
 					break;
 				}
 			}
 		}
-		$clearedRegisteredLine = preg_replace(self::REG_EXP_B, '', $registeredLine);
-		$synchronizedLine = trim($clearedRegisteredLine . ' ' . $line);
-		return $synchronizedLine;
+		$clear = preg_replace(self::REG_EXP_B, '', $registeredLine);
+		return trim($clear.$line);
 	}
 
 }

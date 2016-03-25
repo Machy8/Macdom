@@ -30,8 +30,8 @@ class CoreMacros extends MacrosInstaller {
 		$this->addMacro('viewport', 'viewport');
 
 		// Twitter + Facebook
-		$this->addMacro('facebook', 'fb-');
-		$this->addMacro('twitter', 'tw-');
+		$this->addMacro('facebook', 'fb');
+		$this->addMacro('twitter', 'tw');
 
 		// Stylesheet
 		$this->addMacro('css', 'css');
@@ -152,7 +152,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroJs($line) {
-		return '<script language="javascript" type="text/javascript" src="' . $line . '"></script>';
+		return '<script type="text/javascript" src="' . $line . '"></script>';
 	}
 
 	/**
@@ -160,7 +160,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroJsAsync($line) {
-		return '<script language="javascript" type="text/javascript" src="' . $line . '" async></script>';
+		return '<script type="text/javascript" src="' . $line . '" async></script>';
 	}
 
 	/**
