@@ -34,6 +34,3 @@ protected function createTemplate()
         return $template;
     }
 ```
-
-##Examples
-See tests in the tests folder. Tests are also examples of how it all works. For more information see [WIKI](https://github.com/Machy8/Macdom/wiki).
