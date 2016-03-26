@@ -140,5 +140,4 @@ class ElementsList extends BooleanAttributes {
 		'picture',
 		'summary'
 	];
-
 }

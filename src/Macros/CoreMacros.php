@@ -30,8 +30,8 @@ class CoreMacros extends MacrosInstaller {
 		$this->addMacro('viewport', 'viewport');
 
 		// Twitter + Facebook
-		$this->addMacro('facebook', 'fb-');
-		$this->addMacro('twitter', 'tw-');
+		$this->addMacro('facebook', 'fb');
+		$this->addMacro('twitter', 'tw');
 
 		// Stylesheet
 		$this->addMacro('css', 'css');
@@ -68,7 +68,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroUtf8() {
-		return '<meta charset="utf-8">';
+		return '<meta charset="utf-8" />';
 	}
 
 	/**
@@ -136,7 +136,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroCss($line) {
-		return '<link rel="stylesheet" type="text/css" href="' . $line . '">';
+		return '<link rel="stylesheet" type="text/css" href="' . $line . '" />';
 	}
 
 	/**
@@ -144,7 +144,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroFavicon($line) {
-		return '<link rel="shortcut icon" href="' . $line . '">';
+		return '<link rel="shortcut icon" href="' . $line . '" />';
 	}
 
 	/**
@@ -152,7 +152,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroJs($line) {
-		return '<script language="javascript" type="text/javascript" src="' . $line . '"></script>';
+		return '<script type="text/javascript" src="' . $line . '"></script>';
 	}
 
 	/**
@@ -160,7 +160,7 @@ class CoreMacros extends MacrosInstaller {
 	 * @return sring
 	 */
 	public function macroJsAsync($line) {
-		return '<script language="javascript" type="text/javascript" src="' . $line . '" async></script>';
+		return '<script type="text/javascript" src="' . $line . '" async></script>';
 	}
 
 	/**
@@ -184,5 +184,4 @@ class CoreMacros extends MacrosInstaller {
 	public function macroCloseHtmlComment() {
 		return '-->';
 	}
-
 }

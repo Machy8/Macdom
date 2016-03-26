@@ -16,30 +16,23 @@ use Machy8\Macdom\Elements\ElementsSettings;
 
 class Elements extends ElementsSettings {
 
+	/**
+	 * @param string $attribute
+	 * @return bool
+	 */
 	public function isBoolean($attribute) {
-		$is = in_array($attribute, $this->booleanAttributes);
-		return $is;
+		return in_array($attribute, $this->booleanAttributes);
 	}
 
 	/**
 	 * @param string $el
-	 * @param string $method
-	 * @return boolean
-	 * @return array $settings
+	 * @param string $returnSettings
+	 * @return bool|array
 	 */
-	public function findElement($el, $method) {
-		$exists = in_array($el, $this->elements);
+	public function findElement($el, $returnSettings) {
 		$return = FALSE;
-		if ($exists) {
-			switch ($method) {
-				case 'exists':
-					$return = TRUE;
-					break;
-				case 'settings':
-					$return = $this->getElementSettings($el);
-					break;
-			}
-		}
+		if (in_array($el, $this->elements))
+			$return = $returnSettings ? $this->getElementSettings($el) : TRUE;
 		return $return;
 	}
 
@@ -55,9 +48,8 @@ class Elements extends ElementsSettings {
 			$s = $settings[$el];
 			$paired = in_array('unpaired', $s) ? FALSE : TRUE;
 			if (isset($s['qkAttributes'])) {
-				if (count($s['qkAttributes'])) {
+				if (count($s['qkAttributes']))
 					$qkAttributes = $s['qkAttributes'];
-				}
 			}
 		}
 		return [
@@ -67,9 +59,7 @@ class Elements extends ElementsSettings {
 		];
 	}
 
-	/**
-	 * @param array $elements
-	 */
+	/** @param array $elements */
 	public function addElements($elements) {
 		if ($elements) {
 			foreach ($elements as $element => $settings) {
@@ -79,32 +69,27 @@ class Elements extends ElementsSettings {
 					$element = $settings;
 				}
 
-				if (!in_array($element, $this->elements)) {
+				if (!in_array($element, $this->elements))
 					$this->elements[] = $element;
-				}
 
 				if ($settingsExists) {
-					if (!isset($this->elementsSettings[$element])) {
+					if (!isset($this->elementsSettings[$element]))
 						$this->elementsSettings[] = $element;
-					}
-					if ($settings) {
+
+					if ($settings)
 						$this->elementsSettings[$element] = $settings;
-					}
 				}
 			}
 		}
 	}
 
-	/**
-	 * @param array $attributes
-	 */
+	/** @param array $attributes */
 	public function addBooleanAttributes($attributes) {
-		if ($attributes && gettype($attributes) === 'array') {
+		if ($attributes && is_array($attributes)) {
 			if (count($attributes)) {
 				$merged = array_merge($this->booleanAttributes, $attributes);
 				$this->booleanAttributes = $merged;
 			}
 		}
 	}
-
 }

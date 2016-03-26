@@ -15,27 +15,24 @@ namespace Machy8\Macdom;
 class Compiler {
 
 	const
-	/**
-	 * The skip are tag
-	 * @const string
-	 */
+			/**
+			 * The skip are tag
+			 * @const string
+			 */
 			AREA_TAG = 'SKIP';
 
 	/**
 	 * 1 = only spaces
 	 * 2 = only tabulators
-	 * 3 = combined - Default
-	 * @var integer
+	 * 3 = combined - default
+	 * @var int
 	 */
 	private $indentMethod;
-	
-	/** @var integer */
+
+	/** @var string */
 	private $lnBreak;
 
-	/**
-	 *  For 1. and 3. method
-	 *  @var integer
-	 */
+	/** @var int */
 	private $spacesPerIndent;
 
 	/** @var Elements\Elements */
@@ -60,13 +57,17 @@ class Compiler {
 	private $noCompileAreaClosed = NULL;
 
 	/**
-	 * @param Macros $Macros
-	 * @param Elements $Elements
+	 * @param Elements\Elements $Elements
+	 * @param Macros\Macros $Macros
+	 * @param Replicator\Replicator $Replicator
+	 * @param int $indentMethod
+	 * @param int $spacesPerIndent
+	 * @param bool $compressCode
 	 */
 	public function __construct($Elements, $Macros, $Replicator, $indentMethod, $spacesPerIndent, $compressCode) {
 		$this->indentMethod = $indentMethod ? : 3;
 		$this->spacesPerIndent = $spacesPerIndent ? : 4;
-		$this->lnBreak = $compressCode ? "" : "\n";
+		$this->lnBreak = $compressCode ? '' : "\n";
 		$this->Elements = $Elements;
 		$this->Macros = $Macros;
 		$this->Replicator = $Replicator;
@@ -74,7 +75,7 @@ class Compiler {
 
 	/**
 	 * @param string $content
-	 * @return string $this->codeStorage
+	 * @return string
 	 */
 	public function compile($content) {
 		$lns = preg_split('/\n/', $content);
@@ -84,7 +85,7 @@ class Compiler {
 			$txt = $this->getLnTxt($ln);
 			$element = $this->getElement($txt);
 			$noCompileAreaTag = $this->detectNoCompileArea($element);
-			if (!$this->inNoCompileArea && !$noCompileAreaTag && $this->noCompileAreaClosed === NULL && !$this->Elements->findElement($element, 'exists') && strlen(ltrim($txt)) && !preg_match('/^[<*]+/', trim($txt)) && $txt) {
+			if (!$this->inNoCompileArea && !$noCompileAreaTag && $this->noCompileAreaClosed === NULL && !$this->Elements->findElement($element, FALSE) && strlen(ltrim($txt)) && !preg_match('/^[<*]+/', trim($txt)) && $txt) {
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
 				if ($replicatorResult['replicate']) {
 					$txt = $this->getLnTxt($replicatorResult['line']);
@@ -95,7 +96,7 @@ class Compiler {
 					$element = FALSE;
 				}
 			}
-			if ($this->Elements->findElement($element, 'exists') && !$this->inNoCompileArea) {
+			if ($this->Elements->findElement($element, FALSE) && !$this->inNoCompileArea) {
 				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
 				$attributes = $this->getLnAttributes($clearedText);
 				$this->addOpenTag($element, $lvl, $attributes);
@@ -106,11 +107,7 @@ class Compiler {
 						if (!$noCompileAreaTag) {
 							$macro = $this->Macros->replace($element, $txt);
 							$macroExists = $macro['exists'];
-							if (!$macroExists) {
-								$this->codeStorage .= $txt . $this->lnBreak;
-							} elseif ($macroExists) {
-								$this->codeStorage .= $macro['replacement'] . $this->lnBreak;
-							}
+							$this->codeStorage .= $macroExists ? $macro['replacement'] . $this->lnBreak : $txt . $this->lnBreak;
 						}
 					} elseif ($this->inNoCompileArea) {
 						if (!$noCompileAreaTag)
@@ -125,7 +122,7 @@ class Compiler {
 
 	/**
 	 * @param string $txt
-	 * @return string $element
+	 * @return string
 	 */
 	private function getElement($txt) {
 		$element = explode(' ', trim($txt));
@@ -140,32 +137,28 @@ class Compiler {
 	 * 	  you have in your editor setted as "spaces per indent"
 	 * method 2 = tabulators
 	 * method 3 = combined
-	 * 	- is better to set up the tab size twice bigger then spaces have
+	 * 	- tabulators are always twice bigger
 	 * 	- Example:
 	 * 	  - spaces per indent = 4 => tab size = 8
 	 * 	  - spaces per indent = 8 => tab size = 16
 	 * 	  - etc...
 	 * @param string $ln
-	 * @return integer $lvl
+	 * @return int
 	 */
 	private function getLnLvl($ln) {
 		$method = $this->indentMethod;
-		$spacesRe = '/ {' . $this->spacesPerIndent . '}/';
-		$spaces = 0;
-		$tabulators = 0;
 		preg_match('/^\s+/', $ln, $matches);
 		$whites = implode('', $matches);
 
-		// Only for spaces and combined method
-		If ($method === 1 || $method === 3) {
-			$spaces = preg_match_all($spacesRe, $whites);
-		}
+		// Only for spaces and combined method	
+		$spaces = $method === 1 || $method === 3 ? preg_match_all('/ {' . $this->spacesPerIndent . '}/', $whites) : 0;
 
 		// Only for tabulators and combined method
-		if ($method === 2 || $method === 3) {
-			$r = '/\t/';
-			$tabulators = $method === 3 ? preg_match_all($r, $whites) * 2 : preg_match_all($r, $whites);
-		}
+		$tabulators = $method === 2 || $method === 3 ? preg_match_all('/\t/', $whites) : 0;
+
+		if ($method === 3)
+			$tabulators *= 2;
+
 		return ($spaces + $tabulators);
 	}
 
@@ -174,8 +167,7 @@ class Compiler {
 	 * @return string
 	 */
 	private function getLnTxt($ln) {
-		$line = ltrim($ln) ? : NULL;
-		return $line === NULL ? NULL : ltrim($line);
+		return ltrim($ln);
 	}
 
 	/**
@@ -183,43 +175,38 @@ class Compiler {
 	 *  @return array
 	 */
 	private function getLnAttributes($txt) {
-		
+
 		// Store the text from the first tag to the end of the line
 		$re = '/\<.*$/';
-		$txtFromTag2End = preg_match($re, $txt, $match);
-		if($txtFromTag2End) {
-			$replaced = preg_replace($re, '', $txt);
-			$txt = $replaced;
-			$txtFromTag2End = $match[0];
-		} else {
-			$txtFromTag2End = '';
+		$txtFromTag2End = '';
+		$matchedText = preg_match($re, $txt, $match);
+		if ($matchedText) {
+			$txt = preg_replace($re, '', $txt);
+			$txtFromTag2End .= $match[0];
 		}
-		
+
 		// Replace n$*; for n:href=""
 		$re = '/ n\$(.+);/';
 		$nHref = preg_match($re, $txt, $matches);
 		if ($nHref) {
 			$value = $matches[1] ? : $matches[2];
 			$newHref = ' n:href="' . $value . '"';
-			$replaced = preg_replace($re, $newHref, $txt);
-			$txt = $replaced;
+			$txt = preg_replace($re, $newHref, $txt);
 		}
 
 		// Get all html attributes
 		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\S+/';
 		$htmlAttributes = preg_match_all($re, $txt, $matches);
 		if ($htmlAttributes) {
-			$remove = preg_replace($re, '', $txt);
-			$txt = $remove;
-			$htmlAttributes = implode(' ', $matches[0]);
+			$txt = preg_replace($re, '', $txt);
+			$htmlAttributes = implode('', $matches[0]);
 		}
 
 		// Get the id selector
 		$re = '/ #(\S+)/';
 		$idSelector = preg_match($re, $txt, $matches);
 		if ($idSelector) {
-			$remove = preg_replace($re, '', $txt);
-			$txt = $remove;
+			$txt = preg_replace($re, '', $txt);
 			$idSelector = $matches[1];
 		}
 
@@ -227,76 +214,66 @@ class Compiler {
 		$re = '/ \.(\S+)/';
 		$clsSelectors = preg_match_all($re, $txt, $matches);
 		if ($clsSelectors) {
-			$remove = preg_replace($re, '', $txt);
-			$txt = $remove;
+			$txt = preg_replace($re, '', $txt);
 			$clsSelectors = implode(' ', $matches[1]);
 		}
 
 		// Get all quick attributes
 		$re = '/ ([\d]+)?\$(?:([^$;"]+);|(\S+)+)/';
-		$qkAttributes = preg_match_all($re, $txt, $matches, PREG_SET_ORDER);
-		$matches2selectors = [];
-		if ($qkAttributes) {
-			$remove = preg_replace($re, '', $txt);
-			$txt = $remove;
+		$matched = preg_match_all($re, $txt, $matches, PREG_SET_ORDER);
+		$qkAttributes = [];
+		if ($matched) {
+			$txt = preg_replace($re, '', $txt);
 			foreach ($matches as $value) {
 				$paramVal = end($value);
 				if (!empty($paramVal) && strtolower($paramVal) !== 'null') {
 
 					// If quick attribute is without index
 					$paramKey = is_numeric($value[1]) ? $value[1] : NULL;
-					$matches2selectors[] = [
+					$qkAttributes[] = [
 						'key' => $paramKey,
 						'value' => $paramVal
 					];
 				}
 			}
-			$qkAttributes = $matches2selectors;
 		}
 
 		// Get the text
 		$getTxt = $this->getLnTxt($txt);
-		$txt = $getTxt.$txtFromTag2End;
-		unset($txtFromTag2End);
+		$txt = $getTxt . $txtFromTag2End;
 
 		// Split the txt to an array in oder to get the boolean attributes
 		$txt2array = explode(' ', $txt);
-		$matches2selectors = '';
+		$booleanAttributes = '';
 		foreach ($txt2array as $key => $attribute) {
 			if ($this->Elements->isBoolean($attribute)) {
-				$remove = str_replace($attribute, '', $txt);
-				$txt = $remove;
-				$matches2selectors .= $attribute . ' ';
+				$txt = str_replace($attribute, '', $txt);
+				$booleanAttributes .= ' ' . $attribute;
 			} else {
 				break;
 			}
 		}
 
-		$booleanAttributes = strlen($matches2selectors) ? $matches2selectors : NULL;
-
 		// Synchronize class selectors
 		$re = '/ class="([^"]+)+"| class=([\S]+)+/';
 		$htmlClsSelector = preg_match($re, $htmlAttributes, $matches);
 		if ($clsSelectors && $htmlClsSelector) {
-			$replacement = preg_replace($re, ' class="' . $matches[1] . ' ' . $clsSelectors . '"', $htmlAttributes);
-			$htmlAttributes = $replacement;
+			$htmlAttributes = preg_replace($re, ' class="' . $matches[1] . ' ' . $clsSelectors . '"', $htmlAttributes);
 			$clsSelectors = NULL;
 		}
 
 		// Synchronize id selectors
-		if ($idSelector && preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes)) {
+		if ($idSelector && preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes))
 			$idSelector = NULL;
-		}
 
 		// Return all attributes
-		return
-				[
-					'id' => $idSelector ? : NULL,
-					'classes' => $clsSelectors ? : NULL,
-					'qkAttributes' => $qkAttributes ? : NULL,
-					'htmlAttributes' => $htmlAttributes ? : NULL,
-					'booleanAttributes' => $booleanAttributes ? : NULL,
-					'txt' => $txt
+		return [
+			'id' => $idSelector,
+			'classes' => $clsSelectors,
+			'qkAttributes' => $qkAttributes,
+			'htmlAttributes' => $htmlAttributes,
+			'booleanAttributes' => $booleanAttributes,
+			'txt' => $txt
 		];
 	}
 
@@ -306,7 +283,7 @@ class Compiler {
 	 * @param array $attributes
 	 */
 	private function addOpenTag($element, $lvl, $attributes) {
-		$elementSettings = $this->Elements->findElement($element, 'settings');
+		$elementSettings = $this->Elements->findElement($element, TRUE);
 		$openTag = '<' . $element;
 		if ($elementSettings['qkAttributes'] && $attributes['qkAttributes']) {
 			$usedKeys = [];
@@ -324,46 +301,37 @@ class Compiler {
 					$newAttr = $elementSettings['qkAttributes'][$withoutKey] . '="' . $attribute['value'] . '"';
 					$withoutKey ++;
 				}
-				if ($newAttr) {
+				if ($newAttr)
 					$openTag .= ' ' . $newAttr;
-				}
 			}
 		}
 
 		// Add the id attribute
-		if ($attributes['id']) {
-			if (strtolower($attributes['id']) !== 'null') {
-				$openTag .= ' id="' . $attributes['id'] . '"';
-			}
-		}
+		if ($attributes['id'] && strtolower($attributes['id']) !== 'null')
+			$openTag .= ' id="' . $attributes['id'] . '"';
 
 		// Add classes
-		if ($attributes['classes']) {
+		if ($attributes['classes'])
 			$openTag .= ' class="' . $attributes['classes'] . '"';
-		}
 
 		// Add html attributes
-		if ($attributes['htmlAttributes']) {
-			$openTag .= ' ' . $attributes['htmlAttributes'];
-		}
+		if ($attributes['htmlAttributes'])
+			$openTag .= $attributes['htmlAttributes'];
 
 		// Add boolean attributes
-		if ($attributes['booleanAttributes']) {
-			$openTag .= ' ' . $attributes['booleanAttributes'];
-		}
+		if ($attributes['booleanAttributes'])
+			$openTag .= $attributes['booleanAttributes'];
 
 		// Close the open tag, add close tags if needed
-		$openTag .= '>' . $this->lnBreak;
+		$selfClosing = $elementSettings['paired'] ? '' : ' /';
+		$openTag .= $selfClosing . '>' . $this->lnBreak;
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
-		// Add txt
-		if ($attributes['txt']) {
-			$this->codeStorage .= $attributes['txt'];
-		}
-
 		// If the tag is paired add its close tag to the storage
 		if ($elementSettings['paired']) {
+			if ($attributes['txt'])
+				$this->codeStorage .= $attributes['txt'];
 			$closeTag = '</' . $element . '>';
 			$this->closeTags[] = [$lvl, $closeTag];
 		}
@@ -387,8 +355,8 @@ class Compiler {
 	}
 
 	/**
-	 * @param type $element
-	 * @return boolean
+	 * @param string $element
+	 * @return bool
 	 */
 	private function detectNoCompileArea($element) {
 		$tagDetected = FALSE;
@@ -433,10 +401,8 @@ class Compiler {
 			$this->inNoCompileArea = FALSE;
 		}
 
-		// User defined or other tags
 		// Set and return
 		$this->noCompileAreaClosed = $areaClosed;
 		return $tagDetected;
 	}
-
 }

@@ -18,21 +18,17 @@ class Macros extends CoreMacros {
 
 	/**
 	 * @param string $macro
-	 * @param string $line
-	 * @return array [exists, replacement]
+	 * @param string $ln
+	 * @return array
 	 */
 	public function replace($macro, $ln) {
 		$replacement = NULL;
 		$exists = FALSE;
-
 		if (isset($this->macros[$macro])) {
 			$line = trim(strstr($ln, ' '));
-			if (isset($this->macros[$macro]['function'])) {
-				$replacement = call_user_func($this->macros[$macro]['function'], $line);
-			} else {
-				$fn = ucfirst($this->macros[$macro]);
-				$replacement = $this->{'macro' . $fn}($line);
-			}
+			$replacement = isset($this->macros[$macro]['function'])
+					? call_user_func($this->macros[$macro]['function'], $line)
+					: $this->{'macro' . ucfirst($this->macros[$macro])}($line);
 			$exists = TRUE;
 		}
 		return [
@@ -40,5 +36,4 @@ class Macros extends CoreMacros {
 			'replacement' => $replacement
 		];
 	}
-
 }
