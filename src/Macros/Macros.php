@@ -18,13 +18,12 @@ class Macros extends CoreMacros {
 
 	/**
 	 * @param string $macro
-	 * @param string $line
-	 * @return array [exists, replacement]
+	 * @param string $ln
+	 * @return array
 	 */
 	public function replace($macro, $ln) {
 		$replacement = NULL;
 		$exists = FALSE;
-
 		if (isset($this->macros[$macro])) {
 			$line = trim(strstr($ln, ' '));
 			$replacement = isset($this->macros[$macro]['function'])
@@ -37,5 +36,4 @@ class Macros extends CoreMacros {
 			'replacement' => $replacement
 		];
 	}
-
 }

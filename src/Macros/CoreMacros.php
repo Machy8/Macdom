@@ -184,5 +184,4 @@ class CoreMacros extends MacrosInstaller {
 	public function macroCloseHtmlComment() {
 		return '-->';
 	}
-
 }

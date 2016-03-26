@@ -15,21 +15,21 @@ namespace Machy8\Macdom\Replicator;
 class Register {
 
 	const
-	/** @const regular expression */
+			/** @const regular expression */
 			REG_EXP = '^\@([\S]*)',
 			/** @const string */
 			SUFFIX = '-x';
 
-	/** @var regular expression */
+	/** @var REGEXP */
 	protected $regExp;
 
 	/** @var array */
 	private $register = [];
 
 	/**
-	 * @param integer $lvl
+	 * @param int $lvl
 	 * @param string $element
-	 * @return boolean $unregistered
+	 * @return bool
 	 */
 	protected function deregisterLvl($lvl, $element) {
 		$unregistered = FALSE;
@@ -51,11 +51,11 @@ class Register {
 	}
 
 	/**
-	 * @param integer $lvl
+	 * @param int $lvl
 	 * @param string $element
 	 * @param string $line
-	 * @param integer $registrationLine
-	 * @return array [registered, registerId]
+	 * @param int $registrationLine
+	 * @return array
 	 */
 	protected function isRegistered($lvl, $element, $line, $registrationLine) {
 		$registered = $key = FALSE;
@@ -84,19 +84,18 @@ class Register {
 	/**
 	 * @param string $element
 	 * @param string $line
-	 * @param integer $lvl
-	 * @return array [registered, registerId]
+	 * @param int $lvl
+	 * @return array
 	 */
 	private function registerLvl($element, $line, $lvl) {
 		$registered = FALSE;
 		$registerId = NULL;
 		$match = preg_match('/' . self::REG_EXP . '/', $element, $matches);
 		if ($match) {
-			$newKey = $lvl;
-			$newKey .=!empty($matches[1]) ? '-' . $matches[1] : self::SUFFIX;
-			$this->register[$newKey] = $line;
+			$registerId = $lvl;
+			$registerId .=!empty($matches[1]) ? '-' . $matches[1] : self::SUFFIX;
+			$this->register[$registerId] = $line;
 			$registered = TRUE;
-			$registerId = $newKey;
 		}
 		return [
 			'registered' => $registered,
@@ -111,5 +110,4 @@ class Register {
 	protected function getRegisteredLine($registerId) {
 		return $this->register[$registerId];
 	}
-
 }

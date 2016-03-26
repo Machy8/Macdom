@@ -140,5 +140,4 @@ class ElementsSettings extends ElementsList {
 			'qkAttributes' => ['type']
 		],
 	];
-
 }

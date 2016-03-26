@@ -31,7 +31,6 @@ class LoaderLatte extends SetupLatte {
 	public function getContent($file) {
 		$content = parent::getContent($file);
 		$compiled = $this->compileContent($content);
-
 		return $compiled;
 	}
 
@@ -42,8 +41,6 @@ class LoaderLatte extends SetupLatte {
 	public function compileContent($content) {
 		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount, $this->compressCode);
 		$compiled = $compiler->compile($content);
-
 		return $compiled;
 	}
-
 }

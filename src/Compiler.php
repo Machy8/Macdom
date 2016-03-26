@@ -15,27 +15,24 @@ namespace Machy8\Macdom;
 class Compiler {
 
 	const
-	/**
-	 * The skip are tag
-	 * @const string
-	 */
+			/**
+			 * The skip are tag
+			 * @const string
+			 */
 			AREA_TAG = 'SKIP';
 
 	/**
 	 * 1 = only spaces
 	 * 2 = only tabulators
-	 * 3 = combined - Default
-	 * @var integer
+	 * 3 = combined - default
+	 * @var int
 	 */
 	private $indentMethod;
 
-	/** @var integer */
+	/** @var string */
 	private $lnBreak;
 
-	/**
-	 *  For 1. and 3. method
-	 *  @var integer
-	 */
+	/** @var int */
 	private $spacesPerIndent;
 
 	/** @var Elements\Elements */
@@ -60,8 +57,12 @@ class Compiler {
 	private $noCompileAreaClosed = NULL;
 
 	/**
-	 * @param Macros $Macros
-	 * @param Elements $Elements
+	 * @param Elements\Elements $Elements
+	 * @param Macros\Macros $Macros
+	 * @param Replicator\Replicator $Replicator
+	 * @param int $indentMethod
+	 * @param int $spacesPerIndent
+	 * @param bool $compressCode
 	 */
 	public function __construct($Elements, $Macros, $Replicator, $indentMethod, $spacesPerIndent, $compressCode) {
 		$this->indentMethod = $indentMethod ? : 3;
@@ -74,7 +75,7 @@ class Compiler {
 
 	/**
 	 * @param string $content
-	 * @return string $this->codeStorage
+	 * @return string
 	 */
 	public function compile($content) {
 		$lns = preg_split('/\n/', $content);
@@ -84,7 +85,7 @@ class Compiler {
 			$txt = $this->getLnTxt($ln);
 			$element = $this->getElement($txt);
 			$noCompileAreaTag = $this->detectNoCompileArea($element);
-			if (!$this->inNoCompileArea && !$noCompileAreaTag && $this->noCompileAreaClosed === NULL && !$this->Elements->findElement($element, 'exists') && strlen(ltrim($txt)) && !preg_match('/^[<*]+/', trim($txt)) && $txt) {
+			if (!$this->inNoCompileArea && !$noCompileAreaTag && $this->noCompileAreaClosed === NULL && !$this->Elements->findElement($element, FALSE) && strlen(ltrim($txt)) && !preg_match('/^[<*]+/', trim($txt)) && $txt) {
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
 				if ($replicatorResult['replicate']) {
 					$txt = $this->getLnTxt($replicatorResult['line']);
@@ -95,7 +96,7 @@ class Compiler {
 					$element = FALSE;
 				}
 			}
-			if ($this->Elements->findElement($element, 'exists') && !$this->inNoCompileArea) {
+			if ($this->Elements->findElement($element, FALSE) && !$this->inNoCompileArea) {
 				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
 				$attributes = $this->getLnAttributes($clearedText);
 				$this->addOpenTag($element, $lvl, $attributes);
@@ -121,7 +122,7 @@ class Compiler {
 
 	/**
 	 * @param string $txt
-	 * @return string $element
+	 * @return string
 	 */
 	private function getElement($txt) {
 		$element = explode(' ', trim($txt));
@@ -136,13 +137,13 @@ class Compiler {
 	 * 	  you have in your editor setted as "spaces per indent"
 	 * method 2 = tabulators
 	 * method 3 = combined
-	 * 	- is better to set up the tab size twice bigger then spaces have
+	 * 	- tabulators are always twice bigger
 	 * 	- Example:
 	 * 	  - spaces per indent = 4 => tab size = 8
 	 * 	  - spaces per indent = 8 => tab size = 16
 	 * 	  - etc...
 	 * @param string $ln
-	 * @return integer $lvl
+	 * @return int
 	 */
 	private function getLnLvl($ln) {
 		$method = $this->indentMethod;
@@ -282,7 +283,7 @@ class Compiler {
 	 * @param array $attributes
 	 */
 	private function addOpenTag($element, $lvl, $attributes) {
-		$elementSettings = $this->Elements->findElement($element, 'settings');
+		$elementSettings = $this->Elements->findElement($element, TRUE);
 		$openTag = '<' . $element;
 		if ($elementSettings['qkAttributes'] && $attributes['qkAttributes']) {
 			$usedKeys = [];
@@ -313,11 +314,9 @@ class Compiler {
 		if ($attributes['classes'])
 			$openTag .= ' class="' . $attributes['classes'] . '"';
 
-
 		// Add html attributes
 		if ($attributes['htmlAttributes'])
 			$openTag .= $attributes['htmlAttributes'];
-
 
 		// Add boolean attributes
 		if ($attributes['booleanAttributes'])
@@ -356,8 +355,8 @@ class Compiler {
 	}
 
 	/**
-	 * @param type $element
-	 * @return boolean
+	 * @param string $element
+	 * @return bool
 	 */
 	private function detectNoCompileArea($element) {
 		$tagDetected = FALSE;
@@ -402,10 +401,8 @@ class Compiler {
 			$this->inNoCompileArea = FALSE;
 		}
 
-		// User defined or other tags
 		// Set and return
 		$this->noCompileAreaClosed = $areaClosed;
 		return $tagDetected;
 	}
-
 }

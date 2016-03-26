@@ -18,19 +18,19 @@ use Machy8\Macdom\Macros\Macros;
 
 class SetupLatte extends FileLoader {
 
-	/** @var Elements */
+	/** @var Elements\Elements */
 	protected $elements;
 
-	/** @var Macros */
+	/** @var Macros\Macros */
 	protected $macros;
 
-	/** @var boolean */
+	/** @var bool */
 	protected $compressCode;
 
-	/** @var integer */
+	/** @var int */
 	protected $indentMethod;
 
-	/** @var integer */
+	/** @var int */
 	protected $spacesCount;
 
 	public function __construct() {
@@ -38,14 +38,17 @@ class SetupLatte extends FileLoader {
 		$this->macros = new Macros;
 	}
 
-	/** @return \Machy8\Macdom\SetupLatte */
-	public function compressCode($value = NULL) {
-		$this->compressCode = $value ?: TRUE;
+	/**
+	 * @param bool $value
+	 * @return \Machy8\Macdom\SetupLatte 
+	 */
+	public function compressCode($compress = NULL) {
+		$this->compressCode = $compress ?: TRUE;
 		return $this;
 	}
 
 	/**
-	 * @param integer $count
+	 * @param int $count
 	 * @return \Machy8\Macdom\Setup
 	 */
 	public function spacesPerIndent($count) {
@@ -54,7 +57,7 @@ class SetupLatte extends FileLoader {
 	}
 
 	/**
-	 * @param integer $id
+	 * @param int $id
 	 * @return \Machy8\Macdom\Setup
 	 */
 	public function indentMethod($id) {
@@ -63,7 +66,7 @@ class SetupLatte extends FileLoader {
 	}
 
 	/**
-	 * @param integer $elements
+	 * @param array $elements
 	 * @return \Machy8\Macdom\Setup
 	 */
 	public function addElements($elements) {
@@ -89,5 +92,4 @@ class SetupLatte extends FileLoader {
 		$this->macros->addCustomMacro($macroId, $function);
 		return $this;
 	}
-
 }

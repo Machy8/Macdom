@@ -30,5 +30,4 @@ class BooleanAttributes {
 		'contentEditable',
 		'n:ifcontent'
 	];
-
 }

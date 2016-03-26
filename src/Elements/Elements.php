@@ -16,28 +16,23 @@ use Machy8\Macdom\Elements\ElementsSettings;
 
 class Elements extends ElementsSettings {
 
+	/**
+	 * @param string $attribute
+	 * @return bool
+	 */
 	public function isBoolean($attribute) {
 		return in_array($attribute, $this->booleanAttributes);
 	}
 
 	/**
 	 * @param string $el
-	 * @param string $method
-	 * @return boolean
-	 * @return array $settings
+	 * @param string $returnSettings
+	 * @return bool|array
 	 */
-	public function findElement($el, $method) {
+	public function findElement($el, $returnSettings) {
 		$return = FALSE;
-		if (in_array($el, $this->elements)) {
-			switch ($method) {
-				case 'exists':
-					$return = TRUE;
-					break;
-				case 'settings':
-					$return = $this->getElementSettings($el);
-					break;
-			}
-		}
+		if (in_array($el, $this->elements))
+			$return = $returnSettings ? $this->getElementSettings($el) : TRUE;
 		return $return;
 	}
 
@@ -53,9 +48,8 @@ class Elements extends ElementsSettings {
 			$s = $settings[$el];
 			$paired = in_array('unpaired', $s) ? FALSE : TRUE;
 			if (isset($s['qkAttributes'])) {
-				if (count($s['qkAttributes'])) {
+				if (count($s['qkAttributes']))
 					$qkAttributes = $s['qkAttributes'];
-				}
 			}
 		}
 		return [
@@ -65,9 +59,7 @@ class Elements extends ElementsSettings {
 		];
 	}
 
-	/**
-	 * @param array $elements
-	 */
+	/** @param array $elements */
 	public function addElements($elements) {
 		if ($elements) {
 			foreach ($elements as $element => $settings) {
@@ -91,9 +83,7 @@ class Elements extends ElementsSettings {
 		}
 	}
 
-	/**
-	 * @param array $attributes
-	 */
+	/** @param array $attributes */
 	public function addBooleanAttributes($attributes) {
 		if ($attributes && is_array($attributes)) {
 			if (count($attributes)) {
@@ -102,5 +92,4 @@ class Elements extends ElementsSettings {
 			}
 		}
 	}
-
 }

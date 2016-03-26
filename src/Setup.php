@@ -23,13 +23,13 @@ class Setup {
 	/** @var Macros */
 	protected $macros;
 
-	/** @var boolean */
+	/** @var bool */
 	protected $compressCode;
 
-	/** @var integer */
+	/** @var int */
 	protected $indentMethod;
 
-	/** @var integer */
+	/** @var int */
 	protected $spacesCount;
 
 	public function __construct() {
@@ -38,7 +38,16 @@ class Setup {
 	}
 
 	/**
-	 * @param integer $count
+	 * @param bool $value
+	 * @return \Machy8\Macdom\SetupLatte 
+	 */
+	public function compressCode($compress = NULL) {
+		$this->compressCode = $compress ? : TRUE;
+		return $this;
+	}
+
+	/**
+	 * @param int $count
 	 * @return \Machy8\Macdom\Setup
 	 */
 	public function spacesPerIndent($count) {
@@ -46,14 +55,8 @@ class Setup {
 		return $this;
 	}
 
-	/** @return \Machy8\Macdom\Setup */
-	public function compressCode() {
-		$this->compressCode = TRUE;
-		return $this;
-	}
-
 	/**
-	 * @param integer $id
+	 * @param int $id
 	 * @return \Machy8\Macdom\Setup
 	 */
 	public function indentMethod($id) {
@@ -62,7 +65,7 @@ class Setup {
 	}
 
 	/**
-	 * @param integer $elements
+	 * @param array $elements
 	 * @return \Machy8\Macdom\Setup
 	 */
 	public function addElements($elements) {
