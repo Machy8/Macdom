@@ -1,7 +1,10 @@
-<?php 
+<?php
+
 use Tester\Assert;
 
 require '../bootstrap.php';
 
-Assert::same('<div id="id" class="class" data-label=label></div>', $o->compileContent('div id="id" class="class" data-label=label'));
-Assert::same('<div data-mix=;+=´´)ú¨§ů-.,-*/+_:\\()[]@&|\# id=mix class="class"></div>', $o->compileContent('div data-mix=;+=´´)ú¨§ů-.,-*/+_:\\()[]@&|\# id=mix class="class"'));
+$tested = file_get_contents("../test-templates/html-attributes-a.html");
+$result = file_get_contents("../test-templates/html-attributes-b.html");
+
+Assert::same($result, $o->compileContent($tested));

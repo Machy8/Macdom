@@ -14,5 +14,3 @@ $o->indentMethod(3);
 Assert::same("<div><div></div></div>", $o->compileContent("div\n    div"));
 Assert::same("<div><div></div></div>", $o->compileContent("div\n\tdiv"));
 Assert::same("<div><div><div></div></div></div>", $o->compileContent("div\n    div\n    \tdiv"));
-
-

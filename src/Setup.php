@@ -42,7 +42,7 @@ class Setup {
 	 * @return \Machy8\Macdom\SetupLatte 
 	 */
 	public function compressCode($compress = NULL) {
-		$this->compressCode = $compress ? : TRUE;
+		$this->compressCode = $compress ?: TRUE;
 		return $this;
 	}
 

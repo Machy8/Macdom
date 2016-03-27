@@ -3,8 +3,7 @@
 use Tester\Assert;
 
 require 'bootstrap.php';
+$tested = file_get_contents("test-templates/macros-a.html");
+$result = file_get_contents("test-templates/macros-b.html");
 
-Assert::same('<meta name="viewport" content="width=device-width" />', $o->compileContent("viewport width=device-width"));
-Assert::same('<link rel="shortcut icon" href="favicon.ico" />', $o->compileContent("favicon favicon.ico"));
-Assert::same('<link rel="shortcut icon" href="+=´´)ú¨§ů-.,-*/+_:\\()[]@&|\#" />', $o->compileContent("favicon +=´´)ú¨§ů-.,-*/+_:\\()[]@&|\#"));
-Assert::same('<meta name="twitter:author" content="@8machy" />', $o->compileContent("tw author @8machy"));
+Assert::same($result, $o->compileContent($tested));
