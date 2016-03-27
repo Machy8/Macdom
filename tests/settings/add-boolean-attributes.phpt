@@ -9,5 +9,3 @@ $o->addBooleanAttributes([
 ]);
 
 Assert::same('<input type="text" beer steak muhehe />', $o->compileContent('input $text beer steak muhehe'));
-
-

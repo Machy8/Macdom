@@ -6,8 +6,8 @@ require '../bootstrap.php';
 
 $o->addElements([
 	'svg' => [
-      'qkAttributes' => ['width', 'height']
-   ],
+		'qkAttributes' => ['width', 'height']
+	],
 	'elementxy' => [
 		'unpaired',
 		'qkAttributes' => ['data-somedata']

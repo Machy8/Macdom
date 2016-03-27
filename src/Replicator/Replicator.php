@@ -32,10 +32,10 @@ class Replicator extends Register {
 	public function detect($lvl, $element, $line) {
 		$replicate = $clearLine = FALSE;
 		$replacement = NULL;
-		$registrationLine = preg_match('/' . parent::REG_EXP . '/', $line);
+		$registrationLine = preg_match('/^' . parent::REG_EXP . '/', $line);
 		if ($registrationLine) {
 			$clearLine = TRUE;
-			$line = preg_replace('/\\' . $element . '/', '', $line, 1);
+			$line = preg_replace('/' . preg_quote($element) . '/', '', $line, 1);
 		}
 		$deregister = $this->deregisterLvl($lvl, $element);
 		if (!$deregister && strlen($line)) {
@@ -68,7 +68,7 @@ class Replicator extends Register {
 	private function replicate($registerId, $line, $element = NULL, $key = FALSE) {
 		$contentArrays = preg_match_all(self::REG_EXP_A, $line, $matches);
 		if ($key)
-			$line = preg_replace('/' . $element . '/', '', $line, 1);
+			$line = preg_replace('/' . preg_quote($element) . '/', '', $line, 1);
 		$replicatedline = $contentArrays
 							? $this->synchronizeLines($line, $registerId, $matches[1])
 							: $this->synchronizeLines($line, $registerId);

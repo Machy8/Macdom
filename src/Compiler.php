@@ -14,12 +14,11 @@ namespace Machy8\Macdom;
 
 class Compiler {
 
-	const
-			/**
-			 * The skip are tag
-			 * @const string
-			 */
-			AREA_TAG = 'SKIP';
+	/**
+	 * The skip are tag
+	 * @const string
+	 */
+	const AREA_TAG = 'SKIP';
 
 	/**
 	 * 1 = only spaces
@@ -65,8 +64,8 @@ class Compiler {
 	 * @param bool $compressCode
 	 */
 	public function __construct($Elements, $Macros, $Replicator, $indentMethod, $spacesPerIndent, $compressCode) {
-		$this->indentMethod = $indentMethod ? : 3;
-		$this->spacesPerIndent = $spacesPerIndent ? : 4;
+		$this->indentMethod = $indentMethod ?: 3;
+		$this->spacesPerIndent = $spacesPerIndent ?: 4;
 		$this->lnBreak = $compressCode ? '' : "\n";
 		$this->Elements = $Elements;
 		$this->Macros = $Macros;
@@ -189,7 +188,7 @@ class Compiler {
 		$re = '/ n\$(.+);/';
 		$nHref = preg_match($re, $txt, $matches);
 		if ($nHref) {
-			$value = $matches[1] ? : $matches[2];
+			$value = $matches[1] ?: $matches[2];
 			$newHref = ' n:href="' . $value . '"';
 			$txt = preg_replace($re, $newHref, $txt);
 		}

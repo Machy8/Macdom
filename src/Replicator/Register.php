@@ -16,7 +16,7 @@ class Register {
 
 	const
 			/** @const regular expression */
-			REG_EXP = '^\@([\S]*)',
+			REG_EXP = '@([\S]*)',
 			/** @const string */
 			SUFFIX = '-x';
 
@@ -33,7 +33,7 @@ class Register {
 	 */
 	protected function deregisterLvl($lvl, $element) {
 		$unregistered = FALSE;
-		$match = preg_match('/\/' . self::REG_EXP . '/', $element, $matches);
+		$match = preg_match('/^\/' . self::REG_EXP . '/', $element, $matches);
 		if ($match) {
 			$selected = $lvl . self::SUFFIX;
 			if (!empty($matches[1])) {
@@ -90,7 +90,7 @@ class Register {
 	private function registerLvl($element, $line, $lvl) {
 		$registered = FALSE;
 		$registerId = NULL;
-		$match = preg_match('/' . self::REG_EXP . '/', $element, $matches);
+		$match = preg_match('/^' . self::REG_EXP . '/', $element, $matches);
 		if ($match) {
 			$registerId = $lvl;
 			$registerId .=!empty($matches[1]) ? '-' . $matches[1] : self::SUFFIX;
