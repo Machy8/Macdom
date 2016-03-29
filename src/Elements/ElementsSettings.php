@@ -12,8 +12,6 @@
 
 namespace Machy8\Macdom\Elements;
 
-use Machy8\Macdom\Elements\ElementsList;
-
 class ElementsSettings extends ElementsList {
 
 	/** @var array */

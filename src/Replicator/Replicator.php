@@ -12,8 +12,6 @@
 
 namespace Machy8\Macdom\Replicator;
 
-use Machy8\Macdom\Replicator\Register;
-
 class Replicator extends Register {
 
 	const

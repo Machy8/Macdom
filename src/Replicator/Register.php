@@ -59,7 +59,7 @@ class Register {
 	 */
 	protected function isRegistered($lvl, $element, $line, $registrationLine) {
 		$registered = $key = FALSE;
-		$registereId = NULL;
+		$registerId = NULL;
 		if (!$registrationLine) {
 			if (array_key_exists($lvl . '-' . $element, $this->register)) {
 				$registered = $key = TRUE;

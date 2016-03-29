@@ -132,12 +132,12 @@ class Compiler {
 	 *  HOW LEVELS WORKS
 	 *
 	 * method 1 = spaces
-	 * 	- is better to set the number of the constant SPACES_PER_INDENT on the number
-	 * 	  you have in your editor setted as "spaces per indent"
+	 * 	- is better to set the number of $spacesPerIndent on the same number
+	 * 	  as you have setted in your editor as "spaces per indent"
 	 * method 2 = tabulators
 	 * method 3 = combined
 	 * 	- tabulators are always twice bigger
-	 * 	- Example:
+	 * 	- example:
 	 * 	  - spaces per indent = 4 => tab size = 8
 	 * 	  - spaces per indent = 8 => tab size = 16
 	 * 	  - etc...

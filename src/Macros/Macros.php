@@ -12,8 +12,6 @@
 
 namespace Machy8\Macdom\Macros;
 
-use Machy8\Macdom\Macros\CoreMacros;
-
 class Macros extends CoreMacros {
 
 	/**

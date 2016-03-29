@@ -15,17 +15,13 @@ namespace Machy8\Macdom;
 use Machy8\Macdom\Replicator\Replicator;
 
 class Loader extends Setup {
-
-	/**
-	 * @param string $file
-	 * @return string $compiled
-	 */
+	
 	public function __construct() {
 		parent::__construct();
 	}
 
 	/**
-	 * @param sting $content
+	 * @param string $content
 	 * @return string
 	 */
 	public function compileContent($content) {

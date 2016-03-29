@@ -15,11 +15,7 @@ namespace Machy8\Macdom;
 use Machy8\Macdom\Replicator\Replicator;
 
 class LoaderLatte extends SetupLatte {
-
-	/**
-	 * @param string $file
-	 * @return string $compiled
-	 */
+	
 	public function __construct() {
 		parent::__construct();
 	}
