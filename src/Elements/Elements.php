@@ -12,15 +12,15 @@
 
 namespace Machy8\Macdom\Elements;
 
-use Machy8\Macdom\Elements\ElementsSettings;
-
-class Elements extends ElementsSettings {
+class Elements extends ElementsSettings
+{
 
 	/**
 	 * @param string $attribute
 	 * @return bool
 	 */
-	public function isBoolean($attribute) {
+	public function isBoolean($attribute)
+	{
 		return in_array($attribute, $this->booleanAttributes);
 	}
 
@@ -29,7 +29,8 @@ class Elements extends ElementsSettings {
 	 * @param string $returnSettings
 	 * @return bool|array
 	 */
-	public function findElement($el, $returnSettings) {
+	public function findElement($el, $returnSettings)
+	{
 		$return = FALSE;
 		if (in_array($el, $this->elements))
 			$return = $returnSettings ? $this->getElementSettings($el) : TRUE;
@@ -40,7 +41,8 @@ class Elements extends ElementsSettings {
 	 * @param string $el
 	 * @return array
 	 */
-	private function getElementSettings($el) {
+	private function getElementSettings($el)
+	{
 		$qkAttributes = NULL;
 		$paired = TRUE;
 		$settings = $this->elementsSettings;
@@ -60,7 +62,8 @@ class Elements extends ElementsSettings {
 	}
 
 	/** @param array $elements */
-	public function addElements($elements) {
+	public function addElements($elements)
+	{
 		if ($elements) {
 			foreach ($elements as $element => $settings) {
 				$settingsExists = TRUE;
@@ -84,7 +87,8 @@ class Elements extends ElementsSettings {
 	}
 
 	/** @param array $attributes */
-	public function addBooleanAttributes($attributes) {
+	public function addBooleanAttributes($attributes)
+	{
 		if ($attributes && is_array($attributes)) {
 			if (count($attributes)) {
 				$merged = array_merge($this->booleanAttributes, $attributes);

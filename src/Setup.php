@@ -15,7 +15,8 @@ namespace Machy8\Macdom;
 use Machy8\Macdom\Elements\Elements;
 use Machy8\Macdom\Macros\Macros;
 
-class Setup {
+class Setup
+{
 
 	/** @var Elements */
 	protected $elements;
@@ -32,64 +33,73 @@ class Setup {
 	/** @var int */
 	protected $spacesCount;
 
-	public function __construct() {
+	/**
+	 * Setup constructor
+	 */
+	public function __construct()
+	{
 		$this->elements = new Elements;
 		$this->macros = new Macros;
 	}
 
 	/**
-	 * @param bool $value
-	 * @return \Machy8\Macdom\SetupLatte 
+	 * @param bool|null $compress
+	 * @return Setup
 	 */
-	public function compressCode($compress = NULL) {
+	public function compressCode($compress = NULL)
+	{
 		$this->compressCode = $compress ?: TRUE;
 		return $this;
 	}
 
 	/**
 	 * @param int $count
-	 * @return \Machy8\Macdom\Setup
+	 * @return Setup
 	 */
-	public function spacesPerIndent($count) {
+	public function spacesPerIndent($count)
+	{
 		$this->spacesCount = $count;
 		return $this;
 	}
 
 	/**
 	 * @param int $id
-	 * @return \Machy8\Macdom\Setup
+	 * @return Setup
 	 */
-	public function indentMethod($id) {
+	public function indentMethod($id)
+	{
 		$this->indentMethod = $id;
 		return $this;
 	}
 
 	/**
 	 * @param array $elements
-	 * @return \Machy8\Macdom\Setup
+	 * @return Setup
 	 */
-	public function addElements($elements) {
+	public function addElements($elements)
+	{
 		$this->elements->addElements($elements);
 		return $this;
 	}
 
 	/**
 	 * @param array $attributes
-	 * @return \Machy8\Macdom\Setup
+	 * @return Setup
 	 */
-	public function addBooleanAttributes($attributes) {
+	public function addBooleanAttributes($attributes)
+	{
 		$this->elements->addBooleanAttributes($attributes);
 		return $this;
 	}
 
 	/**
 	 * @param string $macroId
-	 * @param function $function
-	 * @return \Machy8\Macdom\Setup
+	 * @param callable $function
+	 * @return Setup
 	 */
-	public function addMacro($macroId, $function) {
+	public function addMacro($macroId, $function)
+	{
 		$this->macros->addCustomMacro($macroId, $function);
 		return $this;
 	}
-
 }

@@ -12,7 +12,8 @@
 
 namespace Machy8\Macdom\Elements;
 
-class BooleanAttributes {
+class BooleanAttributes
+{
 
 	/** @var array */
 	protected $booleanAttributes = [
