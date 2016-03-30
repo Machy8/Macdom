@@ -12,9 +12,14 @@
 
 namespace Machy8\Macdom\Macros;
 
-class CoreMacros extends MacrosInstaller {
+class CoreMacros extends MacrosInstaller
+{
 
-	public function __construct() {
+	/**
+	 * CoreMacros constructor
+	 */
+	public function __construct()
+	{
 		// Doctype
 		$this->addMacro('doctype5', '!5');
 		$this->addMacro('doctype', '!DOCTYPE');
@@ -50,7 +55,8 @@ class CoreMacros extends MacrosInstaller {
 	/**
 	 * @return string
 	 */
-	public function macroDoctype5() {
+	public function macroDoctype5()
+	{
 		return '<!DOCTYPE html>';
 	}
 
@@ -58,14 +64,16 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroDoctype($line) {
+	public function macroDoctype($line)
+	{
 		return '<!DOCTYPE ' . $line . '>';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function macroUtf8() {
+	public function macroUtf8()
+	{
 		return '<meta charset="utf-8" />';
 	}
 
@@ -73,7 +81,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroCharset($line) {
+	public function macroCharset($line)
+	{
 		return '<meta charset="' . $line . '" />';
 	}
 
@@ -81,7 +90,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroKeywords($line) {
+	public function macroKeywords($line)
+	{
 		return '<meta name="Keywords" content="' . $line . '" />';
 	}
 
@@ -89,7 +99,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroDescription($line) {
+	public function macroDescription($line)
+	{
 		return '<meta name="Description" content="' . $line . '" />';
 	}
 
@@ -97,7 +108,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroAuthor($line) {
+	public function macroAuthor($line)
+	{
 		return '<meta name="Author" content="' . $line . '" />';
 	}
 
@@ -105,7 +117,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroViewport($line) {
+	public function macroViewport($line)
+	{
 		return '<meta name="viewport" content="' . $line . '" />';
 	}
 
@@ -113,7 +126,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroFacebook($line) {
+	public function macroFacebook($line)
+	{
 		$selected = strtok($line, " ");
 		$content = preg_replace("/" . $selected . " /", "", $line);
 		return '<meta property="og:' . $selected . '" content="' . $content . '" />';
@@ -123,7 +137,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroTwitter($line) {
+	public function macroTwitter($line)
+	{
 		$selected = strtok($line, " ");
 		$content = trim(preg_replace("/" . $selected . "/", "", $line));
 		return '<meta name="twitter:' . $selected . '" content="' . $content . '" />';
@@ -133,7 +148,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroCss($line) {
+	public function macroCss($line)
+	{
 		return '<link rel="stylesheet" type="text/css" href="' . $line . '" />';
 	}
 
@@ -141,7 +157,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroFavicon($line) {
+	public function macroFavicon($line)
+	{
 		return '<link rel="shortcut icon" href="' . $line . '" />';
 	}
 
@@ -149,7 +166,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroJs($line) {
+	public function macroJs($line)
+	{
 		return '<script type="text/javascript" src="' . $line . '"></script>';
 	}
 
@@ -157,7 +175,8 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroJsAsync($line) {
+	public function macroJsAsync($line)
+	{
 		return '<script type="text/javascript" src="' . $line . '" async></script>';
 	}
 
@@ -165,21 +184,24 @@ class CoreMacros extends MacrosInstaller {
 	 * @param string $line
 	 * @return string
 	 */
-	public function macroInlineHtmlComment($line) {
+	public function macroInlineHtmlComment($line)
+	{
 		return '<!--' . $line . '-->';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function macroOpenHtmlComment() {
+	public function macroOpenHtmlComment()
+	{
 		return '<!--';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function macroCloseHtmlComment() {
+	public function macroCloseHtmlComment()
+	{
 		return '-->';
 	}
 }

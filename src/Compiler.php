@@ -12,7 +12,8 @@
 
 namespace Machy8\Macdom;
 
-class Compiler {
+class Compiler
+{
 
 	/**
 	 * The skip are tag
@@ -63,7 +64,8 @@ class Compiler {
 	 * @param int $spacesPerIndent
 	 * @param bool $compressCode
 	 */
-	public function __construct($Elements, $Macros, $Replicator, $indentMethod, $spacesPerIndent, $compressCode) {
+	public function __construct($Elements, $Macros, $Replicator, $indentMethod, $spacesPerIndent, $compressCode)
+	{
 		$this->indentMethod = $indentMethod ?: 3;
 		$this->spacesPerIndent = $spacesPerIndent ?: 4;
 		$this->lnBreak = $compressCode ? '' : "\n";
@@ -76,7 +78,8 @@ class Compiler {
 	 * @param string $content
 	 * @return string
 	 */
-	public function compile($content) {
+	public function compile($content)
+	{
 		$lns = preg_split('/\n/', $content);
 
 		foreach ($lns as $key => $ln) {
@@ -120,31 +123,21 @@ class Compiler {
 	}
 
 	/**
-	 * @param string $txt
-	 * @return string
-	 */
-	private function getElement($txt) {
-		$element = explode(' ', trim($txt));
-		return $element[0];
-	}
-
-	/**
 	 *  HOW LEVELS WORKS
 	 *
 	 * method 1 = spaces
-	 * 	- is better to set the number of $spacesPerIndent on the same number
-	 * 	  as you have setted in your editor as "spaces per indent"
 	 * method 2 = tabulators
 	 * method 3 = combined
-	 * 	- tabulators are always twice bigger
-	 * 	- example:
-	 * 	  - spaces per indent = 4 => tab size = 8
-	 * 	  - spaces per indent = 8 => tab size = 16
-	 * 	  - etc...
+	 *    - tabulators are always twice bigger
+	 *    - example:
+	 *      - spaces per indent = 4 => tab size = 8
+	 *      - spaces per indent = 8 => tab size = 16
+	 *      - etc...
 	 * @param string $ln
 	 * @return int
 	 */
-	private function getLnLvl($ln) {
+	private function getLnLvl($ln)
+	{
 		$method = $this->indentMethod;
 		preg_match('/^\s+/', $ln, $matches);
 		$whites = implode('', $matches);
@@ -165,15 +158,80 @@ class Compiler {
 	 * @param string $ln
 	 * @return string
 	 */
-	private function getLnTxt($ln) {
+	private function getLnTxt($ln)
+	{
 		return ltrim($ln);
 	}
 
 	/**
-	 *  @param string $txt
-	 *  @return array
+	 * @param string $txt
+	 * @return string
 	 */
-	private function getLnAttributes($txt) {
+	private function getElement($txt)
+	{
+		$element = explode(' ', trim($txt));
+		return $element[0];
+	}
+
+	/**
+	 * @param string $element
+	 * @return bool
+	 */
+	private function detectNoCompileArea($element)
+	{
+		$tagDetected = FALSE;
+		$areaClosed = $this->inNoCompileArea ? FALSE : NULL;
+
+		// For skip tag
+		$closeTag = '/' . self::AREA_TAG;
+		if ($element === self::AREA_TAG) {
+			$tagDetected = TRUE;
+			$this->inNoCompileArea = TRUE;
+		} elseif ($element === $closeTag) {
+			$tagDetected = TRUE;
+			$this->inNoCompileArea = FALSE;
+		}
+
+		// For style tag
+		$tag = 'style';
+		$open = '<' . $tag;
+		$close = '</' . $tag . '>';
+		if ($element === $open . '>' || $element === $open) {
+			$this->inNoCompileArea = TRUE;
+		} elseif ($element === $close) {
+			$this->inNoCompileArea = FALSE;
+		}
+
+		// For script tag
+		$tag = 'script';
+		$open = '<' . $tag;
+		$close = '</' . $tag . '>';
+		if ($element === $open . '>' || $element === $open) {
+			$this->inNoCompileArea = TRUE;
+		} elseif ($element === $close) {
+			$this->inNoCompileArea = FALSE;
+		}
+
+		// For php
+		$open = '<?';
+		$close = '?>';
+		if ($element === $open . 'php' || $element === $open) {
+			$this->inNoCompileArea = TRUE;
+		} elseif ($element === $close) {
+			$this->inNoCompileArea = FALSE;
+		}
+
+		// Set and return
+		$this->noCompileAreaClosed = $areaClosed;
+		return $tagDetected;
+	}
+
+	/**
+	 * @param string $txt
+	 * @return array
+	 */
+	private function getLnAttributes($txt)
+	{
 
 		// Store the text from the first tag to the end of the line
 		$re = '/\<.*$/';
@@ -281,7 +339,8 @@ class Compiler {
 	 * @param int $lvl
 	 * @param array $attributes
 	 */
-	private function addOpenTag($element, $lvl, $attributes) {
+	private function addOpenTag($element, $lvl, $attributes)
+	{
 		$elementSettings = $this->Elements->findElement($element, TRUE);
 		$openTag = '<' . $element;
 		if ($elementSettings['qkAttributes'] && $attributes['qkAttributes']) {
@@ -298,7 +357,7 @@ class Compiler {
 					}
 				} elseif (!in_array($withoutKey, $usedKeys)) {
 					$newAttr = $elementSettings['qkAttributes'][$withoutKey] . '="' . $attribute['value'] . '"';
-					$withoutKey ++;
+					$withoutKey++;
 				}
 				if ($newAttr)
 					$openTag .= ' ' . $newAttr;
@@ -337,7 +396,8 @@ class Compiler {
 	}
 
 	/** @param int $lvl */
-	private function addCloseTags($lvl) {
+	private function addCloseTags($lvl)
+	{
 		$length = count($this->closeTags);
 		$lastTag = $length;
 		if ($length > 0) {
@@ -351,57 +411,5 @@ class Compiler {
 			}
 			array_splice($this->closeTags, $lastTag);
 		}
-	}
-
-	/**
-	 * @param string $element
-	 * @return bool
-	 */
-	private function detectNoCompileArea($element) {
-		$tagDetected = FALSE;
-		$areaClosed = $this->inNoCompileArea ? FALSE : NULL;
-
-		// For skip tag
-		$closeTag = '/' . self::AREA_TAG;
-		if ($element === self::AREA_TAG) {
-			$tagDetected = TRUE;
-			$this->inNoCompileArea = TRUE;
-		} elseif ($element === $closeTag) {
-			$tagDetected = TRUE;
-			$this->inNoCompileArea = FALSE;
-		}
-
-		// For style tag
-		$tag = 'style';
-		$open = '<' . $tag;
-		$close = '</' . $tag . '>';
-		if ($element === $open . '>' || $element === $open) {
-			$this->inNoCompileArea = TRUE;
-		} elseif ($element === $close) {
-			$this->inNoCompileArea = FALSE;
-		}
-
-		// For script tag
-		$tag = 'script';
-		$open = '<' . $tag;
-		$close = '</' . $tag . '>';
-		if ($element === $open . '>' || $element === $open) {
-			$this->inNoCompileArea = TRUE;
-		} elseif ($element === $close) {
-			$this->inNoCompileArea = FALSE;
-		}
-
-		// For php
-		$open = '<?';
-		$close = '?>';
-		if ($element === $open . 'php' || $element === $open) {
-			$this->inNoCompileArea = TRUE;
-		} elseif ($element === $close) {
-			$this->inNoCompileArea = FALSE;
-		}
-
-		// Set and return
-		$this->noCompileAreaClosed = $areaClosed;
-		return $tagDetected;
 	}
 }
