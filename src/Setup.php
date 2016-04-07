@@ -12,94 +12,47 @@
 
 namespace Machy8\Macdom;
 
-use Machy8\Macdom\Elements\Elements;
-use Machy8\Macdom\Macros\Macros;
-
 class Setup
 {
-
-	/** @var Elements */
-	protected $elements;
-
-	/** @var Macros */
-	protected $macros;
-
 	/** @var bool */
-	protected $compressCode;
+	public $compressCode = FALSE;
 
 	/** @var int */
-	protected $indentMethod;
+	public $indentMethod = 3;
 
 	/** @var int */
-	protected $spacesCount;
+	public $spacesPerIndent = 4;
 
-	/**
-	 * Setup constructor
-	 */
-	public function __construct()
-	{
-		$this->elements = new Elements;
-		$this->macros = new Macros;
-	}
+	/** @var string */
+	public $addElements = "";
 
-	/**
-	 * @param bool|null $compress
-	 * @return Setup
-	 */
-	public function compressCode($compress = NULL)
-	{
-		$this->compressCode = $compress ?: TRUE;
-		return $this;
-	}
+	/** @var string */
+	public $removeElements = "";
 
-	/**
-	 * @param int $count
-	 * @return Setup
-	 */
-	public function spacesPerIndent($count)
-	{
-		$this->spacesCount = $count;
-		return $this;
-	}
+	/** @var string */
+	public $addBooleanAttributes = "";
 
-	/**
-	 * @param int $id
-	 * @return Setup
-	 */
-	public function indentMethod($id)
-	{
-		$this->indentMethod = $id;
-		return $this;
-	}
+	/** @var string */
+	public $removeBooleanAtributes = "";
 
-	/**
-	 * @param array $elements
-	 * @return Setup
-	 */
-	public function addElements($elements)
-	{
-		$this->elements->addElements($elements);
-		return $this;
-	}
+	/** @var string */
+	public $removeMacros = "";
 
-	/**
-	 * @param array $attributes
-	 * @return Setup
-	 */
-	public function addBooleanAttributes($attributes)
-	{
-		$this->elements->addBooleanAttributes($attributes);
-		return $this;
-	}
+	/*** @var array */
+	public $addMacros = [];
 
-	/**
-	 * @param string $macroId
-	 * @param callable $function
-	 * @return Setup
-	 */
-	public function addMacro($macroId, $function)
-	{
-		$this->macros->addCustomMacro($macroId, $function);
-		return $this;
-	}
+	/** @var array */
+	public $changeQkAttributes = [];
+
+	/** @var array */
+	public $ncaOpenTags = [];
+
+	/** @var array */
+	public $ncaCloseTags = [];
+
+	/** @var array */
+	public $ncaRegExpInlineTags = [];
+
+	/** @var array */
+	public $ncaRegExpOpenTags = [];
 }

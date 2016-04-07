@@ -15,9 +15,7 @@ namespace Machy8\Macdom\Macros;
 class CoreMacros extends MacrosInstaller
 {
 
-	/**
-	 * CoreMacros constructor
-	 */
+	/** CoreMacros constructor */
 	public function __construct()
 	{
 		// Doctype
@@ -48,13 +46,11 @@ class CoreMacros extends MacrosInstaller
 
 		// Html comments
 		$this->addMacro('inlineHtmlComment', '//');
-		$this->addMacro('openHtmlComment', '/');
-		$this->addMacro('closeHtmlComment', '\\');
+		$this->addMacro('openHtmlComment', '/*');
+		$this->addMacro('closeHtmlComment', '*/');
 	}
 
-	/**
-	 * @return string
-	 */
+	/** @return string */
 	public function macroDoctype5()
 	{
 		return '<!DOCTYPE html>';

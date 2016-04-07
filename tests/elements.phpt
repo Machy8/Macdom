@@ -4,6 +4,15 @@ use Tester\Assert;
 
 require 'bootstrap.php';
 
-Assert::same("<html></html>", $o->compileContent('html'));
-Assert::same("<input />", $o->compileContent('input'));
-Assert::same("<html></html><input />", $o->compileContent("html\ninput"));
+$testedA = 'html';
+$resultA = '<html></html>';
+
+$testedB = 'input';
+$resultB = '<input />';
+
+$testedC = "html\ninput";
+$resultC = "<html></html><input />";
+
+Assert::same($resultA, $o->compileContent($testedA));
+Assert::same($resultB, $o->compileContent($testedB));
+Assert::same($resultC, $o->compileContent($testedC));

@@ -12,17 +12,15 @@
 
 namespace Machy8\Macdom;
 
-use Machy8\Macdom\Replicator\Replicator;
-
-class Loader extends Setup
+class Loader implements ILoader
 {
+	/** @var \Machy8\Macdom\Setup */
+	public $setup;
 
-	/**
-	 * Loader constructor
-	 */
+	/** Loader constructor */
 	public function __construct()
 	{
-		parent::__construct();
+		$this->setup = new Setup;
 	}
 
 	/**
@@ -31,7 +29,7 @@ class Loader extends Setup
 	 */
 	public function compileContent($content)
 	{
-		$compiler = new Compiler($this->elements, $this->macros, new Replicator, $this->indentMethod, $this->spacesCount, $this->compressCode);
+		$compiler = new Compiler($this->setup);
 		$compiled = $compiler->compile($content);
 		return $compiled;
 	}
