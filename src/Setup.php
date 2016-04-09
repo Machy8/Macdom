@@ -17,6 +17,9 @@ class Setup
 	/** @var bool */
 	public $compressCode = FALSE;
 
+	/** @var bool */
+	public $structureHtmlSkeleton = TRUE;
+
 	/** @var int */
 	public $indentMethod = 3;
 

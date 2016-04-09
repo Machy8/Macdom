@@ -10,8 +10,8 @@ $resultA = '<html></html>';
 $testedB = 'input';
 $resultB = '<input />';
 
-$testedC = "html\ninput";
-$resultC = "<html></html><input />";
+$testedC = "div\ninput";
+$resultC = "<div></div><input />";
 
 Assert::same($resultA, $o->compileContent($testedA));
 Assert::same($resultB, $o->compileContent($testedB));

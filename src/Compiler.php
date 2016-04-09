@@ -25,6 +25,9 @@ class Compiler
 	/** @var int */
 	private $indentMethod;
 
+	/** @var bool */
+	private $structureHtmlSkeleton;
+
 	/** @var string */
 	private $lnBreak;
 
@@ -80,6 +83,7 @@ class Compiler
 		$this->indentMethod = $setup->indentMethod;
 		$this->spacesPerIndent = $setup->spacesPerIndent;
 		$this->lnBreak = $setup->compressCode ? '' : "\n";
+		$this->structureHtmlSkeleton = $setup->structureHtmlSkeleton;
 
 		$this->ncaOpenTags = $setup->ncaOpenTags;
 		$this->ncaCloseTags = $setup->ncaCloseTags;
@@ -109,6 +113,13 @@ class Compiler
 			$txt = $this->getLnTxt($ln);
 			$element = $this->getElement($txt);
 			$noCompileAreaTag = $this->detectNoCompileArea($txt);
+
+			if ($this->structureHtmlSkeleton && $element === "html") {
+				$lvl = 0;
+			} elseif ($this->structureHtmlSkeleton && $element !== "html") {
+				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
+			}
+
 			if (!$this->inNoCompileArea && !$this->skipRow && !$noCompileAreaTag && $this->noCompileAreaClosed === NULL && !$this->Elements->findElement($element, FALSE) && strlen(ltrim($txt)) && !preg_match('/^[<*]+/', trim($txt)) && $txt) {
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
 				if ($replicatorResult['replicate']) {
@@ -120,6 +131,7 @@ class Compiler
 					$element = FALSE;
 				}
 			}
+
 			if ($this->Elements->findElement($element, FALSE) && !$this->inNoCompileArea && !$this->skipRow) {
 				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
 				$attributes = $this->getLnAttributes($clearedText);
@@ -137,6 +149,7 @@ class Compiler
 				}
 			}
 		}
+		
 		$this->addCloseTags(0);
 		return $this->codeStorage;
 	}
