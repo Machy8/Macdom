@@ -120,7 +120,7 @@ class Compiler
 				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
 			}
 
-			if (!$this->inNoCompileArea && !$this->skipRow && !$noCompileAreaTag && $this->noCompileAreaClosed === NULL && !$this->Elements->findElement($element, FALSE) && strlen(ltrim($txt)) && !preg_match('/^[<*]+/', trim($txt)) && $txt) {
+			if ($txt && strlen(ltrim($txt)) && !$noCompileAreaTag && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed === NULL && !$this->Elements->findElement($element, FALSE) && !preg_match('/^[<*]+/', trim($txt))) {
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
 				if ($replicatorResult['replicate']) {
 					$txt = $this->getLnTxt($replicatorResult['line']);
@@ -162,7 +162,7 @@ class Compiler
 	{
 		$method = $this->indentMethod;
 		preg_match('/^\s+/', $ln, $matches);
-		$whites = implode('', $matches);
+		$whites = $matches[0];
 
 		// Only for spaces and combined method	
 		$spaces = $method === 1 || $method === 3 ? preg_match_all('/ {' . $this->spacesPerIndent . '}/', $whites) : 0;
@@ -173,7 +173,7 @@ class Compiler
 		if ($method === 3)
 			$tabulators *= 2;
 
-		return ($spaces + $tabulators);
+		return $spaces + $tabulators;
 	}
 
 	/**
@@ -203,9 +203,9 @@ class Compiler
 	{
 		$txt = trim($txt);
 		if ($this->skipRow) {
-			$this->skipRow = FALSE;
-			$this->inNoCompileArea = FALSE;
+			$this->skipRow = $this->inNoCompileArea = FALSE;
 		}
+		
 		$areaClosed = $this->inNoCompileArea ? FALSE : NULL;
 
 		$skipTagClose = '/' . self::AREA_TAG;
@@ -250,7 +250,7 @@ class Compiler
 			}
 		}
 
-		$tagDetected = $txt === self::AREA_TAG || $txt === $skipTagClose ? TRUE : FALSE;
+		$tagDetected = ($txt === self::AREA_TAG || $txt === $skipTagClose);
 
 		// Set and return
 		$this->noCompileAreaClosed = $areaClosed;
@@ -290,7 +290,7 @@ class Compiler
 		// Get the id selector
 		$re = '/ #(\S+)/';
 		$idSelector = preg_match($re, $txt, $matches);
-		if (!preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes) && $idSelector)
+		if ($idSelector && !preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes))
 			$htmlAttributes .= ' id="' . $matches[1] . '"';
 
 		if ($idSelector)

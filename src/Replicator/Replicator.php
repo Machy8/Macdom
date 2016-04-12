@@ -70,10 +70,10 @@ class Replicator extends Register
 		$contentArrays = preg_match_all(self::REG_EXP_A, $line, $matches);
 		if ($key)
 			$line = preg_replace('/' . preg_quote($element) . '/', '', $line, 1);
-		$replicatedline = $contentArrays
+		$replicatedLine = $contentArrays
 			? $this->synchronizeLines($line, $registerId, $matches[1])
 			: $this->synchronizeLines($line, $registerId);
-		return $replicatedline;
+		return $replicatedLine;
 	}
 
 	/**
@@ -85,8 +85,8 @@ class Replicator extends Register
 	private function synchronizeLines($line, $registerId, $matches = NULL)
 	{
 		$registeredLine = $this->getRegisteredLine($registerId);
-		if ($matches !== NULL) {
-			foreach ($matches as $key => $match) {
+		if ($matches) {
+			foreach ($matches as $match) {
 				$exists = preg_match(self::REG_EXP_B, $registeredLine);
 				if ($exists) {
 					$registeredLine = preg_replace(self::REG_EXP_B, $match, $registeredLine, 1);
