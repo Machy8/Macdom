@@ -106,6 +106,8 @@ class Compiler
 	 */
 	public function compile($content)
 	{
+		if (!$content) return false;
+
 		$lns = preg_split('/\n/', $content);
 
 		foreach ($lns as $key => $ln) {
@@ -149,7 +151,7 @@ class Compiler
 				}
 			}
 		}
-		
+
 		$this->addCloseTags(0);
 		return $this->codeStorage;
 	}
@@ -202,10 +204,9 @@ class Compiler
 	private function detectNoCompileArea($txt)
 	{
 		$txt = trim($txt);
-		if ($this->skipRow) {
+		if ($this->skipRow)
 			$this->skipRow = $this->inNoCompileArea = FALSE;
-		}
-		
+
 		$areaClosed = $this->inNoCompileArea ? FALSE : NULL;
 
 		$skipTagClose = '/' . self::AREA_TAG;
@@ -373,7 +374,7 @@ class Compiler
 				$newAttr = NULL;
 				if ($attribute['key']) {
 					$paramKey = $attribute['key'] - 1;
-					if (isset($elementSettings['qkAttributes'][$paramKey])) {
+					if ($elementSettings['qkAttributes'][$paramKey]) {
 						$newAttr = $elementSettings['qkAttributes'][$paramKey] . '="' . $attribute['value'] . '"';
 						$usedKeys[] = $paramKey;
 					}

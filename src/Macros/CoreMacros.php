@@ -18,186 +18,76 @@ class CoreMacros extends MacrosInstaller
 	/** CoreMacros constructor */
 	public function __construct()
 	{
-		// Doctype
-		$this->addMacro('doctype5', '!5');
-		$this->addMacro('doctype', '!DOCTYPE');
+		$this->addMacro('!5', function () {
+			return '<!DOCTYPE html>';
+		});
 
-		// Meta tags
-		$this->addMacro('charset', 'charset');
-		$this->addMacro('utf8', 'utf-8');
-		$this->addMacro('keywords', 'keywords');
-		$this->addMacro('description', 'description');
-		$this->addMacro('author', 'author');
-		$this->addMacro('viewport', 'viewport');
+		$this->addMacro('!DOCTYPE', function ($line) {
+			return '<!DOCTYPE ' . $line . '>';
+		});
 
-		// Twitter + Facebook
-		$this->addMacro('facebook', 'fb');
-		$this->addMacro('twitter', 'tw');
+		$this->addMacro('charset', function ($line) {
+			return '<meta charset="' . $line . '" />';
+		});
 
-		// Stylesheet
-		$this->addMacro('css', 'css');
+		$this->addMacro('utf-8', function () {
+			return '<meta charset="utf-8" />';
+		});
 
-		// Favicon
-		$this->addMacro('favicon', 'favicon');
+		$this->addMacro('keywords', function ($line) {
+			return '<meta name="Keywords" content="' . $line . '" />';
+		});
 
-		// Javascript
-		$this->addMacro('js', 'js');
-		$this->addMacro('jsAsync', 'js-async');
+		$this->addMacro('description', function ($line) {
+			return '<meta name="Description" content="' . $line . '" />';
+		});
 
-		// Html comments
-		$this->addMacro('inlineHtmlComment', '//');
-		$this->addMacro('openHtmlComment', '/*');
-		$this->addMacro('closeHtmlComment', '*/');
-	}
+		$this->addMacro('author', function ($line) {
+			return '<meta name="Author" content="' . $line . '" />';
+		});
 
-	/** @return string */
-	public function macroDoctype5()
-	{
-		return '<!DOCTYPE html>';
-	}
+		$this->addMacro('viewport', function ($line) {
+			return '<meta name="viewport" content="' . $line . '" />';
+		});
 
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroDoctype($line)
-	{
-		return '<!DOCTYPE ' . $line . '>';
-	}
+		$this->addMacro('fb', function ($line) {
+			$selected = strtok($line, " ");
+			$content = preg_replace("/" . $selected . " /", "", $line);
+			return '<meta property="og:' . $selected . '" content="' . $content . '" />';
+		});
 
-	/**
-	 * @return string
-	 */
-	public function macroUtf8()
-	{
-		return '<meta charset="utf-8" />';
-	}
+		$this->addMacro('tw', function ($line) {
+			$selected = strtok($line, " ");
+			$content = trim(preg_replace("/" . $selected . "/", "", $line));
+			return '<meta name="twitter:' . $selected . '" content="' . $content . '" />';
+		});
 
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroCharset($line)
-	{
-		return '<meta charset="' . $line . '" />';
-	}
+		$this->addMacro('css', function ($line) {
+			return '<link rel="stylesheet" type="text/css" href="' . $line . '" />';
+		});
 
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroKeywords($line)
-	{
-		return '<meta name="Keywords" content="' . $line . '" />';
-	}
+		$this->addMacro('favicon', function ($line) {
+			return '<link rel="shortcut icon" href="' . $line . '" />';
+		});
 
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroDescription($line)
-	{
-		return '<meta name="Description" content="' . $line . '" />';
-	}
+		$this->addMacro('js', function ($line) {
+			return '<script type="text/javascript" src="' . $line . '"></script>';
+		});
 
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroAuthor($line)
-	{
-		return '<meta name="Author" content="' . $line . '" />';
-	}
+		$this->addMacro('js-async', function ($line) {
+			return '<script type="text/javascript" src="' . $line . '" async></script>';
+		});
 
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroViewport($line)
-	{
-		return '<meta name="viewport" content="' . $line . '" />';
-	}
+		$this->addMacro('//', function ($line) {
+			return '<!--' . $line . '-->';
+		});
 
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroFacebook($line)
-	{
-		$selected = strtok($line, " ");
-		$content = preg_replace("/" . $selected . " /", "", $line);
-		return '<meta property="og:' . $selected . '" content="' . $content . '" />';
-	}
+		$this->addMacro('/*', function () {
+			return '<!--';
+		});
 
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroTwitter($line)
-	{
-		$selected = strtok($line, " ");
-		$content = trim(preg_replace("/" . $selected . "/", "", $line));
-		return '<meta name="twitter:' . $selected . '" content="' . $content . '" />';
-	}
-
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroCss($line)
-	{
-		return '<link rel="stylesheet" type="text/css" href="' . $line . '" />';
-	}
-
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroFavicon($line)
-	{
-		return '<link rel="shortcut icon" href="' . $line . '" />';
-	}
-
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroJs($line)
-	{
-		return '<script type="text/javascript" src="' . $line . '"></script>';
-	}
-
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroJsAsync($line)
-	{
-		return '<script type="text/javascript" src="' . $line . '" async></script>';
-	}
-
-	/**
-	 * @param string $line
-	 * @return string
-	 */
-	public function macroInlineHtmlComment($line)
-	{
-		return '<!--' . $line . '-->';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function macroOpenHtmlComment()
-	{
-		return '<!--';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function macroCloseHtmlComment()
-	{
-		return '-->';
+		$this->addMacro('*/', function () {
+			return '-->';
+		});
 	}
 }

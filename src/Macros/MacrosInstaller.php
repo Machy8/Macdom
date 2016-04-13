@@ -22,13 +22,21 @@ class MacrosInstaller
 	public function addCustomMacros($macros)
 	{
 		if ($macros && is_array($macros)) {
-			foreach ($macros as $macroId => $function) {
-				if (is_callable($function)) {
-					if (!in_array($macroId, $this->macros))
-						$this->macros[$macroId]['function'] = $function;
-				}
+			foreach ($macros as $macro => $function) {
+				if (is_callable($function))
+					$this->addMacro($macro, $function);
 			}
 		}
+	}
+
+	/**
+	 * @param string $macro
+	 * @param callable $function
+	 */
+	protected function addMacro($macro, $function)
+	{
+		if (!array_key_exists($macro, $this->macros))
+			$this->macros[$macro] = $function;
 	}
 
 	/** @param array $macros */
@@ -38,15 +46,5 @@ class MacrosInstaller
 			$macros = explode(" ", $macros);
 			$this->macros = array_diff_key($this->macros, array_flip($macros));
 		}
-	}
-
-	/**
-	 * @param string $fnName
-	 * @param string $macroId
-	 */
-	protected function addMacro($fnName, $macroId)
-	{
-		if (!in_array($macroId, $this->macros))
-			$this->macros[$macroId] = $fnName;
 	}
 }
