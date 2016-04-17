@@ -49,10 +49,7 @@ class Elements extends ElementsSettings
 		if (isset($settings[$el])) {
 			$s = $settings[$el];
 			$paired = in_array('unpaired', $s) ? FALSE : TRUE;
-			if (isset($s['qkAttributes'])) {
-				if (count($s['qkAttributes']))
-					$qkAttributes = $s['qkAttributes'];
-			}
+			$qkAttributes = isset($s['qkAttributes']) && count($s['qkAttributes']) ? $s['qkAttributes'] : NULL;
 		}
 		return [
 			'element' => $el,
@@ -64,7 +61,7 @@ class Elements extends ElementsSettings
 	/** @param array $elements */
 	public function addElements($elements)
 	{
-		if ($elements) {
+		if ($elements && is_array($elements)) {
 			foreach ($elements as $element => $settings) {
 				$settingsExists = TRUE;
 				if (is_integer($element)) {
@@ -86,14 +83,53 @@ class Elements extends ElementsSettings
 		}
 	}
 
+	/** @param array $elements */
+	public function removeElements($elements)
+	{
+		if ($elements && is_string($elements)) {
+			$elements = explode(" ", $elements);
+			$this->elements = array_diff($this->elements, $elements);
+		}
+	}
+
+	/** @param array $elements */
+	public function changeQkAttributes($elements)
+	{
+		if ($elements && is_array($elements) && !empty($elements)) {
+			$removeAttributes = [];
+			foreach ($elements as $element => $attributes) {
+				foreach ($attributes as $actAttribute => $newAttribute) {
+					if (array_key_exists($element, $this->elementsSettings) && array_key_exists("qkAttributes", $this->elementsSettings[$element]) && in_array($actAttribute, $this->elementsSettings[$element]["qkAttributes"])) {
+						if ($newAttribute) {
+							$attrKey = array_search($actAttribute, $this->elementsSettings[$element]["qkAttributes"]);
+							$this->elementsSettings[$element]["qkAttributes"][$attrKey] = $newAttribute;
+						} else {
+							$removeAttributes[] = $actAttribute;
+						}
+					}
+				}
+				if ($removeAttributes) {
+					$this->elementsSettings[$element]["qkAttributes"] = array_diff($this->elementsSettings[$element]["qkAttributes"], $removeAttributes);
+				}
+			}
+		}
+	}
+
 	/** @param array $attributes */
 	public function addBooleanAttributes($attributes)
 	{
-		if ($attributes && is_array($attributes)) {
-			if (count($attributes)) {
-				$merged = array_merge($this->booleanAttributes, $attributes);
-				$this->booleanAttributes = $merged;
-			}
+		if ($attributes && is_string($attributes)) {
+			$attributes = explode(" ", $attributes);
+			$this->booleanAttributes = array_merge($this->booleanAttributes, $attributes);
+		}
+	}
+
+	/** @param array $attributes */
+	public function removeBooleanAttributes($attributes)
+	{
+		if ($attributes && is_string($attributes)) {
+			$attributes = explode(" ", $attributes);
+			$this->booleanAttributes = array_diff($this->booleanAttributes, $attributes);
 		}
 	}
 }

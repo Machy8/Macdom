@@ -4,7 +4,13 @@ use Tester\Assert;
 
 require '../bootstrap.php';
 
-$o->addElements([
+$testedA = 'svg $100 $100 Inner text';
+$resultA = '<svg width="100" height="100">Inner text</svg>';
+
+$testedB = 'elementxy $Some data content;';
+$resultB = '<elementxy data-somedata="Some data content">';
+
+$o->setup->addElements = [
 	'svg' => [
 		'qkAttributes' => ['width', 'height']
 	],
@@ -12,7 +18,8 @@ $o->addElements([
 		'unpaired',
 		'qkAttributes' => ['data-somedata']
 	]
-]);
+];
+$o->setup->compressCode = TRUE;
 
-Assert::same('<svg width="100" height="100">Inner text</svg>', $o->compileContent("svg $100 $100 Inner text"));
-Assert::same('<elementxy data-somedata="Some data content" />', $o->compileContent('elementxy $Some data content;'));
+Assert::same($resultA, $o->compileContent($testedA));
+Assert::same($resultB, $o->compileContent($testedB));

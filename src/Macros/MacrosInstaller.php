@@ -15,32 +15,36 @@ namespace Machy8\Macdom\Macros;
 class MacrosInstaller
 {
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	protected $macros = [];
 
-	/**
-	 * @param string $macroId
-	 * @param callable $function
-	 */
-	public function addCustomMacro($macroId, $function)
+	/** @param array $macros */
+	public function addCustomMacros($macros)
 	{
-		if ($macroId && $function) {
-			if (!in_array($macroId, $this->macros)) {
-				$this->macros[] = $macroId;
-				$this->macros[$macroId]['function'] = $function;
+		if ($macros && is_array($macros)) {
+			foreach ($macros as $macro => $function) {
+				if (is_callable($function))
+					$this->addMacro($macro, $function);
 			}
 		}
 	}
 
 	/**
-	 * @param string $fnName
-	 * @param string $macroId
+	 * @param string $macro
+	 * @param callable $function
 	 */
-	protected function addMacro($fnName, $macroId)
+	protected function addMacro($macro, $function)
 	{
-		if (!in_array($macroId, $this->macros))
-			$this->macros[$macroId] = $fnName;
+		if (!array_key_exists($macro, $this->macros))
+			$this->macros[$macro] = $function;
+	}
+
+	/** @param array $macros */
+	public function removeMacros($macros)
+	{
+		if ($macros && is_string($macros)) {
+			$macros = explode(" ", $macros);
+			$this->macros = array_diff_key($this->macros, array_flip($macros));
+		}
 	}
 }
