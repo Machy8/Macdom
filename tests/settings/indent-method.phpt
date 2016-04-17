@@ -25,7 +25,7 @@ $resultF = '<div><div></div></div>';
 $testedG = "div\n    div\n    \tdiv";
 $resultG = '<div><div><div></div></div></div>';
 
-
+$o->setup->compressCode = TRUE;
 $o->setup->indentMethod = 1;
 Assert::same($resultA, $o->compileContent($testedA));
 Assert::same($resultB, $o->compileContent($testedB));

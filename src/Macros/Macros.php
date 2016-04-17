@@ -24,7 +24,7 @@ class Macros extends CoreMacros
 	{
 		$replacement = NULL;
 		$exists = FALSE;
-		if ($this->macros[$macro]) {
+		if (isset($this->macros[$macro])) {
 			$line = trim(strstr($ln, ' '));
 			$replacement = call_user_func($this->macros[$macro], $line);
 			$exists = TRUE;

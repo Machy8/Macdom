@@ -18,30 +18,14 @@ use Machy8\Macdom\Replicator\Replicator;
 
 class Compiler
 {
-
 	/** @const string */
 	const AREA_TAG = 'SKIP';
 
-	/** @var int */
-	private $indentMethod;
+	/** @var bool */
+	private $booleansWithValue;
 
 	/** @var bool */
-	private $structureHtmlSkeleton;
-
-	/** @var string */
-	private $lnBreak;
-
-	/** @var int */
-	private $spacesPerIndent;
-
-	/** @var Elements */
-	private $Elements;
-
-	/** @var Macros */
-	private $Macros;
-
-	/** @var Replicator */
-	private $Replicator;
+	private $closeSelfClosingTags;
 
 	/** @var string */
 	private $codeStorage;
@@ -49,26 +33,50 @@ class Compiler
 	/** @var array */
 	private $closeTags = [];
 
+	/** @var Elements */
+	private $Elements;
+
+	/** @var int */
+	private $indentMethod;
+
 	/** @var bool */
 	private $inNoCompileArea = FALSE;
 
-	/** @var bool */
-	private $skipRow = FALSE;
+	/** @var string */
+	private $lnBreak;
+
+	/** @var string */
+	private $lvlTabs;
+
+	/** @var Macros */
+	private $Macros;
 
 	/** @var bool */
 	private $noCompileAreaClosed = NULL;
 
 	/** @var array */
-	private $ncaOpenTags = [];
+	private $ncaOpenTags;
 
 	/** @var array */
-	private $ncaCloseTags = [];
+	private $ncaCloseTags;
 
 	/** @var array */
-	private $ncaRegExpInlineTags = [];
+	private $ncaRegExpInlineTags;
 
 	/** @var array */
-	private $ncaRegExpOpenTags = [];
+	private $ncaRegExpOpenTags;
+
+	/** @var Replicator */
+	private $Replicator;
+
+	/** @var bool */
+	private $structureHtmlSkeleton;
+
+	/** @var int */
+	private $spacesPerIndent;
+
+	/** @var bool */
+	private $skipRow = FALSE;
 
 	/**
 	 * Compiler constructor.
@@ -80,10 +88,19 @@ class Compiler
 		$this->Macros = new Macros;
 		$this->Replicator = new Replicator;
 
+		$closeSelfClosingTags = $setup->closeSelfClosingTags;
+		$booleansWithValue = $setup->booleansWithValue;
+
+		if ($setup->preferXhtml === TRUE) {
+			$closeSelfClosingTags = $booleansWithValue = TRUE;
+		}
+
 		$this->indentMethod = $setup->indentMethod;
 		$this->spacesPerIndent = $setup->spacesPerIndent;
 		$this->lnBreak = $setup->compressCode ? '' : "\n";
 		$this->structureHtmlSkeleton = $setup->structureHtmlSkeleton;
+		$this->closeSelfClosingTags = $closeSelfClosingTags;
+		$this->booleansWithValue = $booleansWithValue;
 
 		$this->ncaOpenTags = $setup->ncaOpenTags;
 		$this->ncaCloseTags = $setup->ncaCloseTags;
@@ -110,11 +127,18 @@ class Compiler
 
 		$lns = preg_split('/\n/', $content);
 
-		foreach ($lns as $key => $ln) {
+		foreach ($lns as $ln) {
 			$lvl = $this->getLnLvl($ln);
 			$txt = $this->getLnTxt($ln);
 			$element = $this->getElement($txt);
 			$noCompileAreaTag = $this->detectNoCompileArea($txt);
+
+			if ($this->lnBreak) {
+				$this->lvlTabs = '';
+				for ($i = 0; $i < $lvl; $i++) {
+					$this->lvlTabs .= "\t";
+				}
+			}
 
 			if ($this->structureHtmlSkeleton && $element === "html") {
 				$lvl = 0;
@@ -136,7 +160,7 @@ class Compiler
 
 			if ($this->Elements->findElement($element, FALSE) && !$this->inNoCompileArea && !$this->skipRow) {
 				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
-				$attributes = $this->getLnAttributes($clearedText);
+				$attributes = $this->processLnAttributes($clearedText);
 				$this->addOpenTag($element, $lvl, $attributes);
 			} else {
 				if ($txt) {
@@ -144,9 +168,9 @@ class Compiler
 					if (!$this->inNoCompileArea && !$noCompileAreaTag && !$this->skipRow) {
 						$macro = $this->Macros->replace($element, $txt);
 						$macroExists = $macro['exists'];
-						$this->codeStorage .= $macroExists ? $macro['replacement'] . $this->lnBreak : $txt . $this->lnBreak;
+						$this->codeStorage .= $macroExists ? $this->lvlTabs . $macro['replacement'] . $this->lnBreak : $this->lvlTabs . $txt . $this->lnBreak;
 					} elseif ($this->inNoCompileArea || $this->skipRow) {
-						$this->codeStorage .= !$noCompileAreaTag ? $this->lnBreak . $txt . $this->lnBreak : "";
+						$this->codeStorage .= !$noCompileAreaTag ? $this->lvlTabs . $txt . $this->lnBreak : "";
 					}
 				}
 			}
@@ -164,9 +188,8 @@ class Compiler
 	{
 		$method = $this->indentMethod;
 		preg_match('/^\s+/', $ln, $matches);
-		$whites = $matches[0];
-
-		// Only for spaces and combined method	
+		$whites = $matches ? $matches[0] : 0;
+		// Only for spaces and combined method
 		$spaces = $method === 1 || $method === 3 ? preg_match_all('/ {' . $this->spacesPerIndent . '}/', $whites) : 0;
 
 		// Only for tabulators and combined method
@@ -251,7 +274,7 @@ class Compiler
 			}
 		}
 
-		$tagDetected = ($txt === self::AREA_TAG || $txt === $skipTagClose);
+		$tagDetected = $txt === self::AREA_TAG || $txt === $skipTagClose;
 
 		// Set and return
 		$this->noCompileAreaClosed = $areaClosed;
@@ -262,7 +285,7 @@ class Compiler
 	 * @param string $txt
 	 * @return array
 	 */
-	private function getLnAttributes($txt)
+	private function processLnAttributes($txt)
 	{
 		// Store the text from the first tag to the end of the line
 		$re = '/\<.*$/';
@@ -280,8 +303,14 @@ class Compiler
 			$txt = preg_replace($re, $newHref, $txt);
 		}
 
+		$re = '/ (-[\w-]+)=/';
+		if (preg_match_all($re, $txt, $matches)) {
+			foreach ($matches[1] as $match) {
+				$txt = preg_replace($re, " data" . $match . "=", $txt, 1);
+			}
+		}
 		// Get all html attributes
-		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\S+/';
+		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\'[^\']*\'| [\w:-]+=\S+/';
 		$htmlAttributes = '';
 		if (preg_match_all($re, $txt, $matches)) {
 			$txt = preg_replace($re, '', $txt);
@@ -306,10 +335,10 @@ class Compiler
 		}
 
 		// Synchronize class selectors
-		$re = '/ class="([^"]+)+"| class=([\S]+)+/';
+		$re = '/ class="([^"]+)+"| class=\'([^\']+)+\'| class=([\S]+)/';
 		$htmlClsSelector = preg_match($re, $htmlAttributes, $matches);
 		if ($clsSelectors && $htmlClsSelector) {
-			$htmlAttributes = preg_replace($re, ' class="' . $matches[1] . ' ' . $clsSelectors . '"', $htmlAttributes);
+			$htmlAttributes = preg_replace($re, ' class="' . end($matches) . ' ' . $clsSelectors . '"', $htmlAttributes);
 		} elseif ($clsSelectors) {
 			$htmlAttributes .= ' class="' . $clsSelectors . '"';
 		}
@@ -340,10 +369,11 @@ class Compiler
 		// Split the txt to an array in oder to get the boolean attributes
 		$txt2array = explode(' ', $txt);
 		$booleanAttributes = '';
-		foreach ($txt2array as $key => $attribute) {
+		foreach ($txt2array as $attribute) {
 			if ($this->Elements->isBoolean($attribute)) {
 				$txt = str_replace($attribute, '', $txt);
 				$booleanAttributes .= ' ' . $attribute;
+				$booleanAttributes .= $this->booleansWithValue ? '="' . $attribute . '"' : '';
 			} else {
 				break;
 			}
@@ -365,16 +395,17 @@ class Compiler
 	 */
 	private function addOpenTag($element, $lvl, $attributes)
 	{
+		$tabs = $this->lvlTabs;
 		$elementSettings = $this->Elements->findElement($element, TRUE);
-		$openTag = '<' . $element;
+		$openTag = $tabs . '<' . $element;
 		if ($elementSettings['qkAttributes'] && $attributes['qkAttributes']) {
 			$usedKeys = [];
 			$withoutKey = 0;
-			foreach ($attributes['qkAttributes'] as $key => $attribute) {
+			foreach ($attributes['qkAttributes'] as $attribute) {
 				$newAttr = NULL;
 				if ($attribute['key']) {
 					$paramKey = $attribute['key'] - 1;
-					if ($elementSettings['qkAttributes'][$paramKey]) {
+					if (isset($elementSettings['qkAttributes'][$paramKey])) {
 						$newAttr = $elementSettings['qkAttributes'][$paramKey] . '="' . $attribute['value'] . '"';
 						$usedKeys[] = $paramKey;
 					}
@@ -390,15 +421,16 @@ class Compiler
 		$openTag .= $attributes['htmlAttributes'] . $attributes['booleanAttributes'];
 
 		// Close the open tag, add close tags if needed
-		$selfClosing = $elementSettings['paired'] ? '' : ' /';
+		$selfClosing = $elementSettings['paired'] || $this->closeSelfClosingTags === FALSE ? '' : ' /';
 		$openTag .= $selfClosing . '>' . $this->lnBreak;
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
 		// If the tag is paired add its close tag to the storage
 		if ($elementSettings['paired']) {
-			$this->codeStorage .= $attributes['txt'] ? $attributes['txt'] : "";
-			$closeTag = '</' . $element . '>';
+			$textTabs = $tabs ? $tabs . "\t" : "";
+			$this->codeStorage .= $attributes['txt'] ? $textTabs . $attributes['txt'] . $this->lnBreak : "";
+			$closeTag = $tabs . '</' . $element . '>' . $this->lnBreak;
 			$this->closeTags[] = [$lvl, $closeTag];
 		}
 	}
@@ -410,7 +442,7 @@ class Compiler
 		if ($length > 0) {
 			for ($i = $length - 1; $i >= 0; $i--) {
 				if ($lvl <= $this->closeTags[$i][0]) {
-					$this->codeStorage .= $this->lnBreak . $this->closeTags[$i][1] . $this->lnBreak;
+					$this->codeStorage .= $this->closeTags[$i][1];
 					$lastTag = $i;
 				} else {
 					break;

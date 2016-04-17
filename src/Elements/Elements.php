@@ -102,7 +102,7 @@ class Elements extends ElementsSettings
 					if (array_key_exists($element, $this->elementsSettings) && array_key_exists("qkAttributes", $this->elementsSettings[$element]) && in_array($actAttribute, $this->elementsSettings[$element]["qkAttributes"])) {
 						if ($newAttribute) {
 							$attrKey = array_search($actAttribute, $this->elementsSettings[$element]["qkAttributes"]);
-							$this->elementsSettings["$element"]["qkAttributes"][$attrKey] = $newAttribute;
+							$this->elementsSettings[$element]["qkAttributes"][$attrKey] = $newAttribute;
 						} else {
 							$removeAttributes[] = $actAttribute;
 						}

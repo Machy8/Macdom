@@ -9,7 +9,7 @@ $resultA = '<a target="google.com" href="blank">Some text</a>';
 
 $testedB = 'a $google.com $blank Some text';
 $resultB = '<a>Some text</a>';
-
+$o->setup->compressCode = TRUE;
 $o->setup->changeQkAttributes = [
 	'a' => [
 		'target' => 'href',
@@ -24,4 +24,5 @@ $o->setup->changeQkAttributes = [
 		'href' => NULL
 	]
 ];
+
 Assert::same($resultB, $o->compileContent($testedB));

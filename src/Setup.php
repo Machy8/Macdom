@@ -20,6 +20,15 @@ class Setup
 	/** @var bool */
 	public $structureHtmlSkeleton = TRUE;
 
+	/** @var bool */
+	public $closeSelfClosingTags = FALSE;
+
+	/** @var bool */
+	public $preferXhtml = FALSE;
+
+	/** @var bool */
+	public $booleansWithValue = FALSE;
+
 	/** @var int */
 	public $indentMethod = 3;
 
@@ -27,19 +36,19 @@ class Setup
 	public $spacesPerIndent = 4;
 
 	/** @var string */
-	public $addElements = "";
+	public $addElements = '';
 
 	/** @var string */
-	public $removeElements = "";
+	public $removeElements = '';
 
 	/** @var string */
-	public $addBooleanAttributes = "";
+	public $addBooleanAttributes = '';
 
 	/** @var string */
-	public $removeBooleanAtributes = "";
+	public $removeBooleanAtributes = '';
 
 	/** @var string */
-	public $removeMacros = "";
+	public $removeMacros = '';
 
 	/*** @var array */
 	public $addMacros = [];

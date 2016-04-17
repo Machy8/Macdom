@@ -8,10 +8,10 @@ $testedA = 'title1 Some text in the h1 element';
 $resultA = '<h1>Some text in the h1 element</h1>';
 
 $testedB = 'passwordInput user12345';
-$resultB = '<input type="password" data-user="user12345" placeholder="New password" />';
+$resultB = '<input type="password" data-user="user12345" placeholder="New password">';
 
 $inputFunction = function ($line) {
-	return '<input type="password" data-user="' . $line . '" placeholder="New password" />';
+	return '<input type="password" data-user="' . $line . '" placeholder="New password">';
 };
 
 $o->setup->addMacros = [
@@ -20,6 +20,7 @@ $o->setup->addMacros = [
 	},
 	'passwordInput' => $inputFunction
 ];
+$o->setup->compressCode = TRUE;
 
 Assert::same($resultA, $o->compileContent($testedA));
 Assert::same($resultB, $o->compileContent($testedB));

@@ -15,7 +15,7 @@ $resultC = '<div><div id="innerDiv"></div></div>';
 
 $testedD = "div\n div #innerDiv";
 $resultD = '<div><div id="innerDiv"></div></div>';
-
+$o->setup->compressCode = TRUE;
 Assert::same($resultA, $o->compileContent($testedA));
 $o->setup->spacesPerIndent = 3;
 Assert::same($resultB, $o->compileContent($testedB));
