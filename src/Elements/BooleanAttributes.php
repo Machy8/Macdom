@@ -12,22 +12,32 @@
 
 namespace Machy8\Macdom\Elements;
 
-class BooleanAttributes {
+class BooleanAttributes
+{
 
 	/** @var array */
 	protected $booleanAttributes = [
 		'autofocus',
+		'autoplay',
 		'async',
-		'disabled',
+		'contenteditable',
+		'controls',
 		'default',
-		'formNovalidate',
+		'defer',
+		'disabled',
+		'draggable',
+		'formnovalidate',
+		'hidden',
 		'checked',
+		'ismap',
+		'loop',
 		'multiple',
+		'muted',
 		'open',
 		'readonly',
 		'required',
 		'selected',
-		'contentEditable',
+		'spellcheck',
 		'n:ifcontent'
 	];
 }

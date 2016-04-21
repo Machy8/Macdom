@@ -12,16 +12,15 @@
 
 namespace Machy8\Macdom\Replicator;
 
-use Machy8\Macdom\Replicator\Register;
-
-class Replicator extends Register {
+class Replicator extends Register
+{
 
 	const
-			/** @const regular expression */
-			REG_EXP_A = '/\[(.*?)\]/',
+		/** @const regular expression */
+		REG_EXP_A = '/\[(.*?)\]/',
 
-			/** @const regular expression */
-			REG_EXP_B = '/\[\@\]/';
+		/** @const regular expression */
+		REG_EXP_B = '/\[\@\]/';
 
 	/**
 	 * @param int $lvl
@@ -29,7 +28,8 @@ class Replicator extends Register {
 	 * @param string $line
 	 * @return array
 	 */
-	public function detect($lvl, $element, $line) {
+	public function detect($lvl, $element, $line)
+	{
 		$replicate = $clearLine = FALSE;
 		$replacement = NULL;
 		$registrationLine = preg_match('/^' . parent::REG_EXP . '/', $line);
@@ -45,8 +45,8 @@ class Replicator extends Register {
 				// If the first word on line is also the part of the key in the register
 				$key = $isRegistered['key'];
 				$replacement = $key === TRUE
-								? $this->replicate($isRegistered['registerId'], $line, $element, $key) 
-								: $this->replicate($isRegistered['registerId'], $line);
+					? $this->replicate($isRegistered['registerId'], $line, $element, $key)
+					: $this->replicate($isRegistered['registerId'], $line);
 			}
 		} else {
 			$clearLine = TRUE;
@@ -65,14 +65,15 @@ class Replicator extends Register {
 	 * @param bool $key
 	 * @return string $replicatedLine
 	 */
-	private function replicate($registerId, $line, $element = NULL, $key = FALSE) {
+	private function replicate($registerId, $line, $element = NULL, $key = FALSE)
+	{
 		$contentArrays = preg_match_all(self::REG_EXP_A, $line, $matches);
 		if ($key)
 			$line = preg_replace('/' . preg_quote($element) . '/', '', $line, 1);
-		$replicatedline = $contentArrays
-							? $this->synchronizeLines($line, $registerId, $matches[1])
-							: $this->synchronizeLines($line, $registerId);
-		return $replicatedline;
+		$replicatedLine = $contentArrays
+			? $this->synchronizeLines($line, $registerId, $matches[1])
+			: $this->synchronizeLines($line, $registerId);
+		return $replicatedLine;
 	}
 
 	/**
@@ -81,10 +82,11 @@ class Replicator extends Register {
 	 * @param array $matches
 	 * @return string $synchronizedLine
 	 */
-	private function synchronizeLines($line, $registerId, $matches = NULL) {
+	private function synchronizeLines($line, $registerId, $matches = NULL)
+	{
 		$registeredLine = $this->getRegisteredLine($registerId);
-		if ($matches !== NULL) {
-			foreach ($matches as $key => $match) {
+		if ($matches) {
+			foreach ($matches as $match) {
 				$exists = preg_match(self::REG_EXP_B, $registeredLine);
 				if ($exists) {
 					$registeredLine = preg_replace(self::REG_EXP_B, $match, $registeredLine, 1);
