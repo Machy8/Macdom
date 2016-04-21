@@ -50,6 +50,15 @@ class Register
 	}
 
 	/**
+	 * @param string $registerId
+	 * @return string $registeredLine
+	 */
+	protected function getRegisteredLine($registerId)
+	{
+		return $this->register[$registerId];
+	}
+
+	/**
 	 * @param int $lvl
 	 * @param string $element
 	 * @param string $line
@@ -102,14 +111,5 @@ class Register
 			'registered' => $registered,
 			'registerId' => $registerId
 		];
-	}
-
-	/**
-	 * @param string $registerId
-	 * @return string $registeredLine
-	 */
-	protected function getRegisteredLine($registerId)
-	{
-		return $this->register[$registerId];
 	}
 }

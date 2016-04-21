@@ -20,70 +20,60 @@ class Compiler
 {
 	/** @const string */
 	const AREA_TAG = 'SKIP';
-
-	/** @var bool */
-	private $booleansWithValue;
-
-	/** @var bool */
-	private $closeSelfClosingTags;
-
-	/** @var string */
-	private $codeStorage;
-
-	/** @var array */
-	private $closeTags = [];
-
 	/** @var Elements */
 	private $Elements;
-
-	/** @var int */
-	private $indentMethod;
-
-	/** @var bool */
-	private $inNoCompileArea = FALSE;
-
-	/** @var string */
-	private $lnBreak;
-
-	/** @var string */
-	private $lvlTabs;
-
 	/** @var Macros */
 	private $Macros;
-
-	/** @var bool */
-	private $noCompileAreaClosed = NULL;
-
-	/** @var array */
-	private $ncaOpenTags;
-
-	/** @var array */
-	private $ncaCloseTags;
-
-	/** @var array */
-	private $ncaRegExpInlineTags;
-
-	/** @var array */
-	private $ncaRegExpOpenTags;
-
 	/** @var Replicator */
 	private $Replicator;
-
+	/** @var bool */
+	private $booleansWithValue;
+	/** @var bool */
+	private $closeSelfClosingTags;
+	/** @var array */
+	private $closeTags = [];
+	/** @var string */
+	private $codeStorage;
+	/** @var int */
+	private $finallCodeIndentation;
+	/** @var bool */
+	private $inNoCompileArea = FALSE;
+	/** @var int */
+	private $indentMethod;
+	/** @var string */
+	private $lnBreak;
+	/** @var string */
+	private $lvlIndentation;
+	/** @var array */
+	private $ncaCloseTags;
+	/** @var array */
+	private $ncaOpenTags;
+	/** @var array */
+	private $ncaRegExpInlineTags;
+	/** @var array */
+	private $ncaRegExpOpenTags;
+	/** @var bool */
+	private $noCompileAreaClosed = NULL;
+	/** @var bool */
+	private $skipRow = FALSE;
+	/** @var array */
+	private $skipTags;
+	/** @var int */
+	private $skippedTagLvl = NULL;
+	/** @var int */
+	private $spacesPerIndent;
 	/** @var bool */
 	private $structureHtmlSkeleton;
 
-	/** @var int */
-	private $spacesPerIndent;
-
-	/** @var bool */
-	private $skipRow = FALSE;
-
 	/**
 	 * Compiler constructor.
-	 * @param Setup $setup
+	 * @param Setup\Setup $setup
+	 * @param Setup\SetupChecker $setupChecker
 	 */
-	public function __construct($setup)
+	public function __construct($setup, $setupChecker)
 	{
+		$setupChecker->check($setup);
+
 		$this->Elements = new Elements;
 		$this->Macros = new Macros;
 		$this->Replicator = new Replicator;
@@ -101,6 +91,8 @@ class Compiler
 		$this->structureHtmlSkeleton = $setup->structureHtmlSkeleton;
 		$this->closeSelfClosingTags = $closeSelfClosingTags;
 		$this->booleansWithValue = $booleansWithValue;
+		$this->skipTags = $setup->skipTags;
+		$this->finallCodeIndentation = $setup->finallCodeIndentation;
 
 		$this->ncaOpenTags = $setup->ncaOpenTags;
 		$this->ncaCloseTags = $setup->ncaCloseTags;
@@ -123,7 +115,7 @@ class Compiler
 	 */
 	public function compile($content)
 	{
-		if (!$content) return false;
+		if (!$content) return FALSE;
 
 		$lns = preg_split('/\n/', $content);
 
@@ -131,12 +123,18 @@ class Compiler
 			$lvl = $this->getLnLvl($ln);
 			$txt = $this->getLnTxt($ln);
 			$element = $this->getElement($txt);
-			$noCompileAreaTag = $this->detectNoCompileArea($txt);
+			$elementExists = $this->Elements->findElement($element, FALSE);
+			$noCompileAreaTag = $this->detectNoCompileArea($txt, $element, $lvl);
 
 			if ($this->lnBreak) {
-				$this->lvlTabs = '';
+				$indentation = "\t";
+				if ($this->finallCodeIndentation == "spaces") {
+					$indentation = '    ';
+				}
+
+				$this->lvlIndentation = '';
 				for ($i = 0; $i < $lvl; $i++) {
-					$this->lvlTabs .= "\t";
+					$this->lvlIndentation .= $indentation;
 				}
 			}
 
@@ -146,7 +144,7 @@ class Compiler
 				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
 			}
 
-			if ($txt && strlen(ltrim($txt)) && !$noCompileAreaTag && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed === NULL && !$this->Elements->findElement($element, FALSE) && !preg_match('/^[<*]+/', trim($txt))) {
+			if ($txt && strlen(ltrim($txt)) && !$noCompileAreaTag && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed === NULL && !$elementExists && !preg_match('/^[<*]+/', trim($txt))) {
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
 				if ($replicatorResult['replicate']) {
 					$txt = $this->getLnTxt($replicatorResult['line']);
@@ -168,9 +166,9 @@ class Compiler
 					if (!$this->inNoCompileArea && !$noCompileAreaTag && !$this->skipRow) {
 						$macro = $this->Macros->replace($element, $txt);
 						$macroExists = $macro['exists'];
-						$this->codeStorage .= $macroExists ? $this->lvlTabs . $macro['replacement'] . $this->lnBreak : $this->lvlTabs . $txt . $this->lnBreak;
+						$this->codeStorage .= $macroExists ? $this->lvlIndentation . $macro['replacement'] . $this->lnBreak : $this->lvlIndentation . $txt . $this->lnBreak;
 					} elseif ($this->inNoCompileArea || $this->skipRow) {
-						$this->codeStorage .= !$noCompileAreaTag ? $this->lvlTabs . $txt . $this->lnBreak : "";
+						$this->codeStorage .= !$noCompileAreaTag ? $this->lvlIndentation . $txt . $this->lnBreak : "";
 					}
 				}
 			}
@@ -222,9 +220,11 @@ class Compiler
 
 	/**
 	 * @param string $txt
+	 * @param string $element
+	 * @param int $lvl
 	 * @return bool
 	 */
-	private function detectNoCompileArea($txt)
+	private function detectNoCompileArea($txt, $element, $lvl)
 	{
 		$txt = trim($txt);
 		if ($this->skipRow)
@@ -233,49 +233,61 @@ class Compiler
 		$areaClosed = $this->inNoCompileArea ? FALSE : NULL;
 
 		$skipTagClose = '/' . self::AREA_TAG;
+		$skippedTags = array_merge(["style", "script", "code"], $this->skipTags);
 		$openTags = array_merge(['<style>', '<script>', '<?php', '<?', self::AREA_TAG], $this->ncaOpenTags);
 		$closeTags = array_merge(['</style>', '</script>', '?>', $skipTagClose], $this->ncaCloseTags);
 		$regExpInlineTags = array_merge(['\<(?:\?|php) .*\?\>', '\<(?:script|style) *[^>]*\>.*\<\/(?:style|script)\>'], $this->ncaRegExpInlineTags);
 		$regExpOpenTags = array_merge(['\<(?:script|style) *[^>]*\>'], $this->ncaRegExpOpenTags);
 
-		if (in_array(trim($txt), $openTags)) {
-			$this->inNoCompileArea = TRUE;
-		} elseif (in_array(trim($txt), $closeTags)) {
-			$this->inNoCompileArea = FALSE;
+		if (in_array($element, $skippedTags) && $this->skippedTagLvl === NULL) {
+			$this->skippedTagLvl = $lvl;
+		} elseif ($this->skippedTagLvl !== NULL && $lvl > $this->skippedTagLvl) {
+			$this->skipRow = TRUE;
+		} elseif ($this->skippedTagLvl !== NULL && $lvl <= $this->skippedTagLvl && in_array($element, $skippedTags)) {
+			$this->skippedTagLvl = $lvl;
 		} else {
-			$matchedTag = FALSE;
+			$this->skippedTagLvl = NULL;
+		}
 
-			if (!$this->inNoCompileArea) {
-				foreach ($regExpInlineTags as $tag) {
-					if (preg_match('/^\s*' . $tag . '/', $txt)) {
-						$matchedTag = $this->skipRow = TRUE;
-						break;
+		if (!$this->skippedTagLvl) {
+			if (in_array(trim($txt), $openTags)) {
+				$this->inNoCompileArea = TRUE;
+			} elseif (in_array(trim($txt), $closeTags)) {
+				$this->inNoCompileArea = FALSE;
+			} else {
+				$matchedTag = FALSE;
+
+				if (!$this->inNoCompileArea) {
+					foreach ($regExpInlineTags as $tag) {
+						if (preg_match('/^\s*' . $tag . '/', $txt)) {
+							$matchedTag = $this->skipRow = TRUE;
+							break;
+						}
 					}
 				}
-			}
 
-			if (!$matchedTag && !$this->inNoCompileArea) {
-				foreach ($regExpOpenTags as $tag) {
-					if (preg_match('/^\s*' . $tag . '/', $txt)) {
-						$matchedTag = $this->inNoCompileArea = TRUE;
-						break;
+				if (!$matchedTag && !$this->inNoCompileArea) {
+					foreach ($regExpOpenTags as $tag) {
+						if (preg_match('/^\s*' . $tag . '/', $txt)) {
+							$matchedTag = $this->inNoCompileArea = TRUE;
+							break;
+						}
 					}
 				}
-			}
 
-			if (!$matchedTag && $this->inNoCompileArea) {
-				foreach ($closeTags as $tag) {
-					if (preg_match('/.*' . preg_quote($tag, '/') . '$/', $txt)) {
-						$this->skipRow = TRUE;
-						$this->inNoCompileArea = FALSE;
-						break;
+				if (!$matchedTag && $this->inNoCompileArea) {
+					foreach ($closeTags as $tag) {
+						if (preg_match('/.*' . preg_quote($tag, '/') . '$/', $txt)) {
+							$this->skipRow = TRUE;
+							$this->inNoCompileArea = FALSE;
+							break;
+						}
 					}
 				}
 			}
 		}
 
 		$tagDetected = $txt === self::AREA_TAG || $txt === $skipTagClose;
-
 		// Set and return
 		$this->noCompileAreaClosed = $areaClosed;
 		return $tagDetected;
@@ -395,7 +407,7 @@ class Compiler
 	 */
 	private function addOpenTag($element, $lvl, $attributes)
 	{
-		$tabs = $this->lvlTabs;
+		$tabs = $this->lvlIndentation;
 		$elementSettings = $this->Elements->findElement($element, TRUE);
 		$openTag = $tabs . '<' . $element;
 		if ($elementSettings['qkAttributes'] && $attributes['qkAttributes']) {

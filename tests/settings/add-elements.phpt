@@ -19,6 +19,7 @@ $o->setup->addElements = [
 		'qkAttributes' => ['data-somedata']
 	]
 ];
+
 $o->setup->compressCode = TRUE;
 
 Assert::same($resultA, $o->compileContent($testedA));

@@ -1,6 +1,6 @@
 <?php
 
-namespace Machy8\Macdom;
+namespace Machy8\Macdom\Loaders;
 
 interface ILoader
 {
