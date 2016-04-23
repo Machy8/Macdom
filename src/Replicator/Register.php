@@ -32,10 +32,9 @@ class Register
 	protected function deregisterLvl($lvl, $element)
 	{
 		$unregistered = FALSE;
-		$match = preg_match('/^\/' . self::REG_EXP . '/', $element, $matches);
-		if ($match) {
+		if (preg_match('/^\/' . self::REG_EXP . '/', $element, $matches)) {
 			$selected = $lvl . self::SUFFIX;
-			if (!empty($matches[1])) {
+			if ($matches[1]) {
 				$selected = $lvl . '-' . $matches[1];
 				if (isset($this->register[$selected])) {
 					unset($this->register[$selected]);
@@ -100,10 +99,9 @@ class Register
 	{
 		$registered = FALSE;
 		$registerId = NULL;
-		$match = preg_match('/^' . self::REG_EXP . '/', $element, $matches);
-		if ($match) {
+		if (preg_match('/^' . self::REG_EXP . '/', $element, $matches)) {
 			$registerId = $lvl;
-			$registerId .= !empty($matches[1]) ? '-' . $matches[1] : self::SUFFIX;
+			$registerId .= $matches[1] ? '-' . $matches[1] : self::SUFFIX;
 			$this->register[$registerId] = $line;
 			$registered = TRUE;
 		}

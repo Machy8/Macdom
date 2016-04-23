@@ -20,6 +20,7 @@ $o->setup->addMacros = [
 	},
 	'passwordInput' => $inputFunction
 ];
+
 $o->setup->compressCode = TRUE;
 
 Assert::same($resultA, $o->compileContent($testedA));

@@ -124,3 +124,21 @@ code
         div #inner
             Some text here
 h2 Tag-32
+div #wrapper
+    header
+        h2 #logo Here we go
+        <skipthisarea data-label="some label"> var a = 123; a ++; alert(a);
+        h1 skipped title</skipthisarea>
+        p .headerText Text in header
+    main
+        SKIP
+        aside
+        section Some content
+        /SKIP
+    footer
+        Footer here
+        div #footerInner
+            <skipthisarea> var a = 123; a ++; alert(a);</skipthisarea>
+            div Some text
+    div #fixed
+        div #fixedInner

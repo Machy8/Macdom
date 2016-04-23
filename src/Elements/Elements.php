@@ -18,7 +18,7 @@ class Elements extends ElementsSettings
 	/** @param array $attributes */
 	public function addBooleanAttributes($attributes)
 	{
-		if ($attributes && is_string($attributes)) {
+		if ($attributes) {
 			$attributes = explode(" ", $attributes);
 			$this->booleanAttributes = array_merge($this->booleanAttributes, $attributes);
 		}
@@ -27,7 +27,7 @@ class Elements extends ElementsSettings
 	/** @param array $elements */
 	public function addElements($elements)
 	{
-		if ($elements && is_array($elements)) {
+		if ($elements) {
 			foreach ($elements as $element => $settings) {
 				$settingsExists = TRUE;
 				if (is_integer($element)) {
@@ -52,7 +52,7 @@ class Elements extends ElementsSettings
 	/** @param array $elements */
 	public function changeQkAttributes($elements)
 	{
-		if ($elements && is_array($elements) && !empty($elements)) {
+		if ($elements) {
 			$removeAttributes = [];
 			foreach ($elements as $element => $attributes) {
 				foreach ($attributes as $actAttribute => $newAttribute) {
@@ -118,7 +118,7 @@ class Elements extends ElementsSettings
 	/** @param array $attributes */
 	public function removeBooleanAttributes($attributes)
 	{
-		if ($attributes && is_string($attributes)) {
+		if ($attributes) {
 			$attributes = explode(" ", $attributes);
 			$this->booleanAttributes = array_diff($this->booleanAttributes, $attributes);
 		}
@@ -127,7 +127,7 @@ class Elements extends ElementsSettings
 	/** @param array $elements */
 	public function removeElements($elements)
 	{
-		if ($elements && is_string($elements)) {
+		if ($elements) {
 			$elements = explode(" ", $elements);
 			$this->elements = array_diff($this->elements, $elements);
 		}

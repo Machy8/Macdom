@@ -13,4 +13,5 @@ $resultB = file_get_contents("../test-templates/structure-html-skeleton2-b.html"
 Assert::same($resultA, $o->compileContent($testedA));
 
 $o->setup->structureHtmlSkeleton = FALSE;
+
 Assert::same($resultB, $o->compileContent($testedB));

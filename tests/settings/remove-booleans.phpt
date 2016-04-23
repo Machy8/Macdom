@@ -6,6 +6,7 @@ require '../bootstrap.php';
 
 $tested = 'input disabled hidden';
 $result = '<input>';
+
 $o->setup->compressCode = TRUE;
 $o->setup->removeBooleanAtributes = "disabled hidden";
 

@@ -27,12 +27,17 @@ $resultG = '<div><div><div></div></div></div>';
 
 $o->setup->compressCode = TRUE;
 $o->setup->indentMethod = 1;
+
 Assert::same($resultA, $o->compileContent($testedA));
 Assert::same($resultB, $o->compileContent($testedB));
+
 $o->setup->indentMethod = 2;
+
 Assert::same($resultC, $o->compileContent($testedC));
 Assert::same($resultD, $o->compileContent($testedD));
+
 $o->setup->indentMethod = 3;
+
 Assert::same($resultE, $o->compileContent($testedE));
 Assert::same($resultF, $o->compileContent($testedF));
 Assert::same($resultG, $o->compileContent($testedG));
