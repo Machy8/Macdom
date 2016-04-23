@@ -1,7 +1,7 @@
 #Macdom
 HTML and template preprocessor.
 
-For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
+For more information see [WIKI](https://github.com/Machy8/Macdom/wiki)
 
 ##Requirements
 
@@ -18,7 +18,7 @@ For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
 **Normal:**
 
 ```
-$macdom = new \Machy8\Macdom\Loader;
+$macdom = new \Machy8\Macdom\Loaders\Loader;
 $compiled = $macdom->compileContent($content);
 ```
 
@@ -30,7 +30,7 @@ Place the code bellow into your *base presenter*.
 protected function createTemplate()
     {
         $template = parent::createTemplate();
-        $template->getLatte()->setLoader(new \Machy8\Macdom\LoaderLatte($this));
+        $template->getLatte()->setLoader(new \Machy8\Macdom\Loaders\LoaderLatte($this));
         return $template;
     }
 ```
