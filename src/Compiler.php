@@ -297,11 +297,18 @@ class Compiler
 	private function processLnAttributes($txt)
 	{
 		// Store the text from the first tag to the end of the line
-		$re = '/\<.*$/';
+		$re = '/ \<[\w-]+ .*$/';
 		$txtFromTag2End = '';
 		if (preg_match($re, $txt, $match)) {
 			$txt = preg_replace($re, '', $txt);
 			$txtFromTag2End .= $match[0];
+		}
+
+		// Preserve php
+		$preservedPhp = [];
+		while (preg_match('/\<(?:\?(?:php)?)+ +.*?\?\>/', $txt, $matches)) {
+			$txt = preg_replace('/\<(?:\?(?:php)?)+ +.*?\?\>/', "PHP_RESERVED_" . count($preservedPhp), $txt, 1);
+			$preservedPhp[] = $matches;
 		}
 
 		// Replace n$*; for n:href=""
@@ -311,7 +318,7 @@ class Compiler
 			$newHref = ' n:href="' . $value . '"';
 			$txt = preg_replace($re, $newHref, $txt);
 		}
-		
+
 		// Replace -*= for data-*=
 		$re = '/ -([\w-]+)+=/';
 		if (preg_match_all($re, $txt, $matches)) {
@@ -319,7 +326,7 @@ class Compiler
 				$txt = preg_replace($re, " data-" . $match . "=", $txt, 1);
 			}
 		}
-		
+
 		// Get all html attributes
 		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\'[^\']*\'| [\w:-]+=\S+/';
 		$htmlAttributes = '';
@@ -395,7 +402,8 @@ class Compiler
 			'qkAttributes' => $qkAttributes,
 			'htmlAttributes' => $htmlAttributes,
 			'booleanAttributes' => $booleanAttributes,
-			'txt' => $txt
+			'txt' => $txt,
+			'preservedPhp' => $preservedPhp
 		];
 	}
 
@@ -434,6 +442,14 @@ class Compiler
 		// Close the open tag, add close tags if needed
 		$selfClosing = $elementSettings['paired'] || !$this->closeSelfClosingTags ? '' : ' /';
 		$openTag .= $selfClosing . '>' . $this->lnBreak;
+		if ($attributes['preservedPhp']) {
+			foreach ($attributes['preservedPhp'] as $key => $code) {
+				if (preg_match("/PHP_RESERVED_" . $key . "/", $openTag)) {
+					$openTag = str_replace("PHP_RESERVED_" . $key, $code[0], $openTag);
+					$attributes['preservedPhp'][$key] = FALSE;
+				}
+			}
+		}
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
@@ -443,6 +459,15 @@ class Compiler
 			if ($this->lnBreak)
 				$singleLvl = $this->finallCodeIndentation === "spaces" ? '    ' : "\t";
 			$textIndentation = $indentation . $singleLvl;
+			if ($attributes['txt']) {
+				if ($attributes['preservedPhp']) {
+					foreach ($attributes['preservedPhp'] as $key => $code) {
+						if ($code[0] && preg_match("/PHP_RESERVED_" . $key . "/", $attributes['txt'])) {
+							$attributes['txt'] = str_replace("PHP_RESERVED_" . $key, $code[0], $attributes['txt']);
+						}
+					}
+				}
+			}
 			$this->codeStorage .= $attributes['txt'] ? $textIndentation . $attributes['txt'] . $this->lnBreak : "";
 			$closeTag = $indentation . '</' . $element . '>' . $this->lnBreak;
 			$this->closeTags[] = [$lvl, $closeTag];
