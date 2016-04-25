@@ -43,7 +43,7 @@ class Compiler
 	/** @var string */
 	private $lnBreak;
 	/** @var string */
-	private $lvlIndentation;
+	private $lvlIndentation = "";
 	/** @var array */
 	private $ncaCloseTags;
 	/** @var array */
@@ -81,9 +81,8 @@ class Compiler
 		$closeSelfClosingTags = $setup->closeSelfClosingTags;
 		$booleansWithValue = $setup->booleansWithValue;
 
-		if ($setup->preferXhtml) {
+		if ($setup->preferXhtml)
 			$closeSelfClosingTags = $booleansWithValue = TRUE;
-		}
 
 		$this->indentMethod = $setup->indentMethod;
 		$this->spacesPerIndent = $setup->spacesPerIndent;
@@ -128,7 +127,7 @@ class Compiler
 
 			if ($this->lnBreak) {
 				$indentation = "\t";
-				if ($this->finallCodeIndentation == "spaces") {
+				if ($this->finallCodeIndentation === "spaces") {
 					$indentation = '    ';
 				}
 
@@ -312,13 +311,15 @@ class Compiler
 			$newHref = ' n:href="' . $value . '"';
 			$txt = preg_replace($re, $newHref, $txt);
 		}
-
-		$re = '/ (-[\w-]+)=/';
+		
+		// Replace -*= for data-*=
+		$re = '/ -([\w-]+)+=/';
 		if (preg_match_all($re, $txt, $matches)) {
 			foreach ($matches[1] as $match) {
-				$txt = preg_replace($re, " data" . $match . "=", $txt, 1);
+				$txt = preg_replace($re, " data-" . $match . "=", $txt, 1);
 			}
 		}
+		
 		// Get all html attributes
 		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\'[^\']*\'| [\w:-]+=\S+/';
 		$htmlAttributes = '';
@@ -330,7 +331,7 @@ class Compiler
 		// Get the id selector
 		$re = '/ #(\S+)/';
 		$idSelector = preg_match($re, $txt, $matches);
-		if ($idSelector && !preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes))
+		if ($idSelector && !preg_match('/ id="[^"]+"|  id=\'[^\']+\'| id=[\S]+/', $htmlAttributes))
 			$htmlAttributes .= ' id="' . $matches[1] . '"';
 
 		if ($idSelector)
@@ -345,7 +346,7 @@ class Compiler
 		}
 
 		// Synchronize class selectors
-		$re = '/ class="([^"]+)+"| class=\'([^\']+)+\'| class=([\S]+)/';
+		$re = '/ class="([^"]+)+"| class=\'([^\']+)+\'| class=([\S]+)+/';
 		$htmlClsSelector = preg_match($re, $htmlAttributes, $matches);
 		if ($clsSelectors && $htmlClsSelector) {
 			$htmlAttributes = preg_replace($re, ' class="' . end($matches) . ' ' . $clsSelectors . '"', $htmlAttributes);
@@ -431,7 +432,7 @@ class Compiler
 		$openTag .= $attributes['htmlAttributes'] . $attributes['booleanAttributes'];
 
 		// Close the open tag, add close tags if needed
-		$selfClosing = $elementSettings['paired'] || $this->closeSelfClosingTags === FALSE ? '' : ' /';
+		$selfClosing = $elementSettings['paired'] || !$this->closeSelfClosingTags ? '' : ' /';
 		$openTag .= $selfClosing . '>' . $this->lnBreak;
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
@@ -440,7 +441,7 @@ class Compiler
 		if ($elementSettings['paired']) {
 			$singleLvl = '';
 			if ($this->lnBreak)
-				$singleLvl = $this->finallCodeIndentation == "spaces" ? '    ' : "\t";
+				$singleLvl = $this->finallCodeIndentation === "spaces" ? '    ' : "\t";
 			$textIndentation = $indentation . $singleLvl;
 			$this->codeStorage .= $attributes['txt'] ? $textIndentation . $attributes['txt'] . $this->lnBreak : "";
 			$closeTag = $indentation . '</' . $element . '>' . $this->lnBreak;
