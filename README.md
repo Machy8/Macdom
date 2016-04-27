@@ -1,12 +1,12 @@
 #Macdom
-HTML and template preprocessor.
+HTML preprocessor.
 
 For more information see [WIKI](https://github.com/Machy8/Macdom/wiki)
 
 ##Requirements
 
 - php 5.3+
-- If you are using Nette Framework: Nette v2.3 or newer.
+- If you are using Nette Framework - v2.3+
 
 ##Installation
 1 - Download the Macdom using composer:
@@ -17,7 +17,7 @@ For more information see [WIKI](https://github.com/Machy8/Macdom/wiki)
 
 **Normal:**
 
-```
+```php
 $macdom = new \Machy8\Macdom\Loaders\Loader;
 $compiled = $macdom->compileContent($content);
 ```
@@ -26,7 +26,7 @@ $compiled = $macdom->compileContent($content);
 
 Place the code bellow into your *base presenter*.
 
-```
+```php
 protected function createTemplate()
     {
         $template = parent::createTemplate();
