@@ -26,13 +26,13 @@ class Register
 
 	/**
 	 * @param int $lvl
-	 * @param string $element
+	 * @param string $el
 	 * @return bool
 	 */
-	protected function deregisterLvl($lvl, $element)
+	protected function deregisterLvl($lvl, $el)
 	{
 		$unregistered = FALSE;
-		if (preg_match('/^\/' . self::REG_EXP . '/', $element, $matches)) {
+		if (preg_match('/^\/' . self::REG_EXP . '/', $el, $matches)) {
 			$selected = $lvl . self::SUFFIX;
 			if ($matches[1]) {
 				$selected = $lvl . '-' . $matches[1];
@@ -59,26 +59,26 @@ class Register
 
 	/**
 	 * @param int $lvl
-	 * @param string $element
-	 * @param string $line
-	 * @param int $registrationLine
+	 * @param string $el
+	 * @param string $ln
+	 * @param string $registrationLn
 	 * @return array
 	 */
-	protected function isRegistered($lvl, $element, $line, $registrationLine)
+	protected function isRegistered($lvl, $el, $ln, $registrationLn)
 	{
 		$registered = $key = FALSE;
 		$registerId = NULL;
-		if (!$registrationLine) {
-			if (array_key_exists($lvl . '-' . $element, $this->register)) {
+		if (!$registrationLn) {
+			if (array_key_exists($lvl . '-' . $el, $this->register)) {
 				$registered = $key = TRUE;
-				$registerId = $lvl . '-' . $element;
+				$registerId = $lvl . '-' . $el;
 			} elseif (array_key_exists($lvl . self::SUFFIX, $this->register)) {
 				$registered = TRUE;
 				$registerId = $lvl . self::SUFFIX;
 			}
 		}
-		if (!$registered || $registrationLine) {
-			$registerLvl = $this->registerLvl($element, $line, $lvl);
+		if (!$registered || $registrationLn) {
+			$registerLvl = $this->registerLvl($el, $ln, $lvl);
 			$registered = $registerLvl['registered'];
 			$registerId = $registerLvl['registerId'];
 		}
@@ -90,19 +90,19 @@ class Register
 	}
 
 	/**
-	 * @param string $element
-	 * @param string $line
+	 * @param string $el
+	 * @param string $ln
 	 * @param int $lvl
 	 * @return array
 	 */
-	private function registerLvl($element, $line, $lvl)
+	private function registerLvl($el, $ln, $lvl)
 	{
 		$registered = FALSE;
 		$registerId = NULL;
-		if (preg_match('/^' . self::REG_EXP . '/', $element, $matches)) {
+		if (preg_match('/^' . self::REG_EXP . '/', $el, $matches)) {
 			$registerId = $lvl;
 			$registerId .= $matches[1] ? '-' . $matches[1] : self::SUFFIX;
-			$this->register[$registerId] = $line;
+			$this->register[$registerId] = $ln;
 			$registered = TRUE;
 		}
 		return [

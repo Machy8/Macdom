@@ -21,5 +21,5 @@ interface ILoader
 	 * @param string $content
 	 * @return string
 	 */
-	public function compileContent($content);
+	public function compile($content);
 }

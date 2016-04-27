@@ -22,5 +22,5 @@ $o->setup->addElements = [
 
 $o->setup->compressCode = TRUE;
 
-Assert::same($resultA, $o->compileContent($testedA));
-Assert::same($resultB, $o->compileContent($testedB));
+Assert::same($resultA, $o->compile($testedA));
+Assert::same($resultB, $o->compile($testedB));

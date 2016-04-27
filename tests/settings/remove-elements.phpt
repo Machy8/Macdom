@@ -10,4 +10,4 @@ $result = "divspana";
 $o->setup->compressCode = TRUE;
 $o->setup->removeElements = "a span div";
 
-Assert::same($result, $o->compileContent($tested));
+Assert::same($result, $o->compile($tested));

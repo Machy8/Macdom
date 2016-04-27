@@ -7,4 +7,4 @@ require 'bootstrap.php';
 $tested = file_get_contents("test-templates/replicator-a.html");
 $result = file_get_contents("test-templates/replicator-b.html");
 
-Assert::same($result, $o->compileContent($tested));
+Assert::same($result, $o->compile($tested));

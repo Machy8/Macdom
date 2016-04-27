@@ -9,4 +9,4 @@ $result = '<a n:href="Homepage:default, id => $id, lang => cs" id="homepageLink"
 
 $o->setup->compressCode = TRUE;
 
-Assert::same($result, $o->compileContent($tested));
+Assert::same($result, $o->compile($tested));

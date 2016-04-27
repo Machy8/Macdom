@@ -34,7 +34,7 @@ class Loader implements ILoader
 	 * @param string $content
 	 * @return string
 	 */
-	public function compileContent($content)
+	public function compile($content)
 	{
 		$compiler = new Compiler($this->setup, $this->setupChecker);
 		$compiled = $compiler->compile($content);

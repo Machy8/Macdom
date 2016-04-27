@@ -11,4 +11,4 @@ $o->setup->ncaRegExpInlineTags = ['\<(?:skipthisarea) *[^>]*\>.*\<\/skipthisarea
 $o->setup->ncaRegExpOpenTags = ['\<(?:skipthisarea) *[^>]*\>'];
 $o->setup->ncaCloseTags = ['</skipthisarea>'];
 
-Assert::same($result, $o->compileContent($tested));
+Assert::same($result, $o->compile($tested));

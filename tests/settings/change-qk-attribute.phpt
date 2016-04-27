@@ -18,7 +18,7 @@ $o->setup->changeQkAttributes = [
 	]
 ];
 
-Assert::same($resultA, $o->compileContent($testedA));
+Assert::same($resultA, $o->compile($testedA));
 
 $o->setup->changeQkAttributes = [
 	'a' => [
@@ -27,4 +27,4 @@ $o->setup->changeQkAttributes = [
 	]
 ];
 
-Assert::same($resultB, $o->compileContent($testedB));
+Assert::same($resultB, $o->compile($testedB));
