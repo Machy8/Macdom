@@ -17,8 +17,8 @@ For more information see [WIKI](https://github.com/Machy8/Macdom-for-Nette/wiki)
 
 **Normal:**
 
-```
-$macdom = new \Machy8\Macdom\Loader;
+```php
+$macdom = new Machy8\Macdom\Loader;
 $compiled = $macdom->compileContent($content);
 ```
 
@@ -26,11 +26,11 @@ $compiled = $macdom->compileContent($content);
 
 Place the code bellow into your *base presenter*.
 
-```
+```php
 protected function createTemplate()
-    {
-        $template = parent::createTemplate();
-        $template->getLatte()->setLoader(new \Machy8\Macdom\LoaderLatte($this));
-        return $template;
-    }
+{
+    $template = parent::createTemplate();
+    $template->getLatte()->setLoader(new \Machy8\Macdom\LoaderLatte($this));
+    return $template;
+}
 ```
