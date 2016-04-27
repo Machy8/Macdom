@@ -18,9 +18,10 @@ use Machy8\Macdom\Setup\SetupChecker;
 
 class Loader implements ILoader
 {
-	/** @var \Machy8\Macdom\Setup\Setup */
+	/** @var Setup */
 	public $setup;
 
+	/** @var SetupChecker */
 	private $setupChecker;
 
 	/** Loader constructor */

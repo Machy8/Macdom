@@ -77,7 +77,7 @@ class Elements extends ElementsSettings
 	 * @param string $returnSettings
 	 * @return bool|array
 	 */
-	public function findElement($el, $returnSettings)
+	public function findElement($el, $returnSettings = NULL)
 	{
 		$return = FALSE;
 		if (in_array($el, $this->elements))

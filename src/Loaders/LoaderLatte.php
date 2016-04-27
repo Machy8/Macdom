@@ -9,9 +9,10 @@ use Machy8\Macdom\Setup\SetupChecker;
 
 class LoaderLatte extends FileLoader implements ILoader
 {
-	/** @var \Machy8\Macdom\Setup\Setup */
+	/** @var Setup */
 	public $setup;
-
+	
+	/** @var SetupChecker */
 	private $setupChecker;
 
 	/** Loader constructor */

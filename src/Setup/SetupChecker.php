@@ -70,11 +70,12 @@ class SetupChecker
 	private function throwException($var, $options, $requiredType, $exceptionType)
 	{
 		if ($exceptionType === "type") {
-			$txt = "must have a " . strtoupper($requiredType) . " value.";
+			$article = $requiredType === "array" || $requiredType === "integer" ? "an" : "a";
+			$txt = "must have " . $article . " " . strtoupper($requiredType) . " value.";
 		} else {
 			$allowedOptions = join(", ", $options);
 			$txt = "has illegal value. Options are: " . $allowedOptions . ".";
 		}
-		throw new Exception("Variable " . strtoupper($var) . " " . $txt);
+		throw new Exception("Variable $" . $var . " " . $txt);
 	}
 }
