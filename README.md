@@ -18,7 +18,7 @@
 **Normal:**
 
 ```php
-$macdom = new \Machy8\Macdom\Loaders\Loader;
+$macdom = new Machy8\Macdom\Loaders\Loader;
 $compiled = $macdom->compile($content);
 ```
 
