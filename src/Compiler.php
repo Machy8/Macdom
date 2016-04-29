@@ -118,7 +118,7 @@ class Compiler
 
 		$lns = preg_split('/\n/', $content);
 
-		foreach ($lns as $key => $ln) {
+		foreach ($lns as $ln) {
 			$lvl = $this->getLnLvl($ln);
 			$txt = $this->getLnTxt($ln);
 			$element = $this->getElement($txt);
@@ -137,10 +137,12 @@ class Compiler
 				}
 			}
 
-			if ($this->structureHtmlSkeleton && $element === "html") {
-				$lvl = 0;
-			} elseif ($this->structureHtmlSkeleton) {
-				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
+			if ($this->structureHtmlSkeleton) {
+				if ($element === "html") {
+					$lvl = 0;
+				} else {
+					$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
+				}
 			}
 
 			if ($txt && strlen(ltrim($txt)) && !$noCompileAreaTag && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed && !$elementExists) {
