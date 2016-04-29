@@ -8,4 +8,5 @@ $tested = file_get_contents("../test-templates/finall-code-indentation-a.html");
 $result = file_get_contents("../test-templates/finall-code-indentation-b.html");
 
 $o->setup->finallCodeIndentation = "spaces";
-Assert::same($result, $o->compileContent($tested));
+
+Assert::same($result, $o->compile($tested));

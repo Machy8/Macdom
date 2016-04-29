@@ -10,7 +10,8 @@ $resultA = file_get_contents("../test-templates/structure-html-skeleton-b.html")
 $testedB = file_get_contents("../test-templates/structure-html-skeleton2-a.html");
 $resultB = file_get_contents("../test-templates/structure-html-skeleton2-b.html");
 
-Assert::same($resultA, $o->compileContent($testedA));
+Assert::same($resultA, $o->compile($testedA));
 
 $o->setup->structureHtmlSkeleton = FALSE;
-Assert::same($resultB, $o->compileContent($testedB));
+
+Assert::same($resultB, $o->compile($testedB));

@@ -18,9 +18,10 @@ use Machy8\Macdom\Setup\SetupChecker;
 
 class Loader implements ILoader
 {
-	/** @var \Machy8\Macdom\Setup\Setup */
+	/** @var Setup */
 	public $setup;
 
+	/** @var SetupChecker */
 	private $setupChecker;
 
 	/** Loader constructor */
@@ -34,7 +35,7 @@ class Loader implements ILoader
 	 * @param string $content
 	 * @return string
 	 */
-	public function compileContent($content)
+	public function compile($content)
 	{
 		$compiler = new Compiler($this->setup, $this->setupChecker);
 		$compiled = $compiler->compile($content);

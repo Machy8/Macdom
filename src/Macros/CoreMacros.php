@@ -27,47 +27,47 @@ class CoreMacros extends MacrosInstaller
 		});
 
 		$this->addMacro('charset', function ($line) {
-			return '<meta charset="' . $line . '" />';
+			return '<meta charset="' . $line . '">';
 		});
 
 		$this->addMacro('utf-8', function () {
-			return '<meta charset="utf-8" />';
+			return '<meta charset="utf-8">';
 		});
 
 		$this->addMacro('keywords', function ($line) {
-			return '<meta name="Keywords" content="' . $line . '" />';
+			return '<meta name="Keywords" content="' . $line . '">';
 		});
 
 		$this->addMacro('description', function ($line) {
-			return '<meta name="Description" content="' . $line . '" />';
+			return '<meta name="Description" content="' . $line . '">';
 		});
 
 		$this->addMacro('author', function ($line) {
-			return '<meta name="Author" content="' . $line . '" />';
+			return '<meta name="Author" content="' . $line . '">';
 		});
 
 		$this->addMacro('viewport', function ($line) {
-			return '<meta name="viewport" content="' . $line . '" />';
+			return '<meta name="viewport" content="' . $line . '">';
 		});
 
 		$this->addMacro('fb', function ($line) {
 			$selected = strtok($line, " ");
 			$content = preg_replace("/" . $selected . " /", "", $line);
-			return '<meta property="og:' . $selected . '" content="' . $content . '" />';
+			return '<meta property="og:' . $selected . '" content="' . $content . '">';
 		});
 
 		$this->addMacro('tw', function ($line) {
 			$selected = strtok($line, " ");
 			$content = trim(preg_replace("/" . $selected . "/", "", $line));
-			return '<meta name="twitter:' . $selected . '" content="' . $content . '" />';
+			return '<meta name="twitter:' . $selected . '" content="' . $content . '">';
 		});
 
 		$this->addMacro('css', function ($line) {
-			return '<link rel="stylesheet" type="text/css" href="' . $line . '" />';
+			return '<link rel="stylesheet" type="text/css" href="' . $line . '">';
 		});
 
 		$this->addMacro('favicon', function ($line) {
-			return '<link rel="shortcut icon" href="' . $line . '" />';
+			return '<link rel="shortcut icon" href="' . $line . '">';
 		});
 
 		$this->addMacro('js', function ($line) {

@@ -49,7 +49,7 @@ class Setup
 	/** @var string */
 	public $removeMacros = '';
 	/** @var array */
-	public $skipTags = [];
+	public $skipElements = '';
 	/** @var int */
 	public $spacesPerIndent = 4;
 	/** @var bool */

@@ -43,7 +43,7 @@ class Compiler
 	/** @var string */
 	private $lnBreak;
 	/** @var string */
-	private $lvlIndentation;
+	private $lvlIndentation = "";
 	/** @var array */
 	private $ncaCloseTags;
 	/** @var array */
@@ -53,13 +53,13 @@ class Compiler
 	/** @var array */
 	private $ncaRegExpOpenTags;
 	/** @var bool */
-	private $noCompileAreaClosed = NULL;
+	private $noCompileAreaClosed;
 	/** @var bool */
 	private $skipRow = FALSE;
 	/** @var array */
-	private $skipTags;
+	private $skipElements;
 	/** @var int */
-	private $skippedTagLvl = NULL;
+	private $skippedElementLvl = NULL;
 	/** @var int */
 	private $spacesPerIndent;
 	/** @var bool */
@@ -81,9 +81,8 @@ class Compiler
 		$closeSelfClosingTags = $setup->closeSelfClosingTags;
 		$booleansWithValue = $setup->booleansWithValue;
 
-		if ($setup->preferXhtml === TRUE) {
+		if ($setup->preferXhtml)
 			$closeSelfClosingTags = $booleansWithValue = TRUE;
-		}
 
 		$this->indentMethod = $setup->indentMethod;
 		$this->spacesPerIndent = $setup->spacesPerIndent;
@@ -91,7 +90,7 @@ class Compiler
 		$this->structureHtmlSkeleton = $setup->structureHtmlSkeleton;
 		$this->closeSelfClosingTags = $closeSelfClosingTags;
 		$this->booleansWithValue = $booleansWithValue;
-		$this->skipTags = $setup->skipTags;
+		$this->skipElements = explode(' ', $setup->skipElements);
 		$this->finallCodeIndentation = $setup->finallCodeIndentation;
 
 		$this->ncaOpenTags = $setup->ncaOpenTags;
@@ -115,7 +114,7 @@ class Compiler
 	 */
 	public function compile($content)
 	{
-		if (!$content) return FALSE;
+		if (!$content) return '';
 
 		$lns = preg_split('/\n/', $content);
 
@@ -123,12 +122,12 @@ class Compiler
 			$lvl = $this->getLnLvl($ln);
 			$txt = $this->getLnTxt($ln);
 			$element = $this->getElement($txt);
-			$elementExists = $this->Elements->findElement($element, FALSE);
+			$elementExists = $this->Elements->findElement($element);
 			$noCompileAreaTag = $this->detectNoCompileArea($txt, $element, $lvl);
 
 			if ($this->lnBreak) {
 				$indentation = "\t";
-				if ($this->finallCodeIndentation == "spaces") {
+				if ($this->finallCodeIndentation === "spaces") {
 					$indentation = '    ';
 				}
 
@@ -138,42 +137,41 @@ class Compiler
 				}
 			}
 
-			if ($this->structureHtmlSkeleton && $element === "html") {
-				$lvl = 0;
-			} elseif ($this->structureHtmlSkeleton && $element !== "html") {
-				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
+			if ($this->structureHtmlSkeleton) {
+				if ($element === "html") {
+					$lvl = 0;
+				} else {
+					$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
+				}
 			}
 
-			if ($txt && strlen(ltrim($txt)) && !$noCompileAreaTag && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed === NULL && !$elementExists && !preg_match('/^[<*]+/', trim($txt))) {
+			if ($txt && strlen(ltrim($txt)) && !$noCompileAreaTag && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed && !$elementExists) {
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
 				if ($replicatorResult['replicate']) {
-					$txt = $this->getLnTxt($replicatorResult['line']);
+					$txt = $this->getLnTxt($replicatorResult['ln']);
 					$element = $this->getElement($txt);
 				}
-				if ($replicatorResult['clearLine']) {
+				if ($replicatorResult['clearLn']) {
 					$txt = NULL;
 					$element = FALSE;
 				}
 			}
 
-			if ($this->Elements->findElement($element, FALSE) && !$this->inNoCompileArea && !$this->skipRow) {
+			if (!$this->inNoCompileArea && !$this->skipRow && $this->Elements->findElement($element)) {
 				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
 				$attributes = $this->processLnAttributes($clearedText);
 				$this->addOpenTag($element, $lvl, $attributes);
-			} else {
-				if ($txt) {
-					$this->addCloseTags($lvl);
-					if (!$this->inNoCompileArea && !$noCompileAreaTag && !$this->skipRow) {
-						$macro = $this->Macros->replace($element, $txt);
-						$macroExists = $macro['exists'];
-						$this->codeStorage .= $macroExists ? $this->lvlIndentation . $macro['replacement'] . $this->lnBreak : $this->lvlIndentation . $txt . $this->lnBreak;
-					} elseif ($this->inNoCompileArea || $this->skipRow) {
-						$this->codeStorage .= !$noCompileAreaTag ? $this->lvlIndentation . $txt . $this->lnBreak : "";
-					}
+			} elseif ($txt) {
+				$this->addCloseTags($lvl);
+				if (!$this->inNoCompileArea && !$noCompileAreaTag && !$this->skipRow) {
+					$macro = $this->Macros->replace($element, $txt);
+					$macroExists = $macro['exists'];
+					$this->codeStorage .= $macroExists ? $this->lvlIndentation . $macro['replacement'] . $this->lnBreak : $this->lvlIndentation . $txt . $this->lnBreak;
+				} elseif ($this->inNoCompileArea || $this->skipRow) {
+					$this->codeStorage .= !$noCompileAreaTag ? $this->lvlIndentation . $txt . $this->lnBreak : "";
 				}
 			}
 		}
-
 		$this->addCloseTags(0);
 		return $this->codeStorage;
 	}
@@ -230,26 +228,26 @@ class Compiler
 		if ($this->skipRow)
 			$this->skipRow = $this->inNoCompileArea = FALSE;
 
-		$areaClosed = $this->inNoCompileArea ? FALSE : NULL;
+		$areaClosed = $this->inNoCompileArea ? FALSE : TRUE;
 
 		$skipTagClose = '/' . self::AREA_TAG;
-		$skippedTags = array_merge(["style", "script", "code"], $this->skipTags);
+		$skippedTags = array_merge(["style", "script", "code"], $this->skipElements);
 		$openTags = array_merge(['<style>', '<script>', '<?php', '<?', self::AREA_TAG], $this->ncaOpenTags);
 		$closeTags = array_merge(['</style>', '</script>', '?>', $skipTagClose], $this->ncaCloseTags);
 		$regExpInlineTags = array_merge(['\<(?:\?|php) .*\?\>', '\<(?:script|style) *[^>]*\>.*\<\/(?:style|script)\>'], $this->ncaRegExpInlineTags);
 		$regExpOpenTags = array_merge(['\<(?:script|style) *[^>]*\>'], $this->ncaRegExpOpenTags);
 
-		if (in_array($element, $skippedTags) && $this->skippedTagLvl === NULL) {
-			$this->skippedTagLvl = $lvl;
-		} elseif ($this->skippedTagLvl !== NULL && $lvl > $this->skippedTagLvl) {
+		if (in_array($element, $skippedTags) && $this->skippedElementLvl === NULL) {
+			$this->skippedElementLvl = $lvl;
+		} elseif ($this->skippedElementLvl !== NULL && $lvl > $this->skippedElementLvl) {
 			$this->skipRow = TRUE;
-		} elseif ($this->skippedTagLvl !== NULL && $lvl <= $this->skippedTagLvl && in_array($element, $skippedTags)) {
-			$this->skippedTagLvl = $lvl;
+		} elseif ($this->skippedElementLvl !== NULL && $lvl <= $this->skippedElementLvl && in_array($element, $skippedTags)) {
+			$this->skippedElementLvl = $lvl;
 		} else {
-			$this->skippedTagLvl = NULL;
+			$this->skippedElementLvl = NULL;
 		}
 
-		if (!$this->skippedTagLvl) {
+		if (!$this->skippedElementLvl) {
 			if (in_array(trim($txt), $openTags)) {
 				$this->inNoCompileArea = TRUE;
 			} elseif (in_array(trim($txt), $closeTags)) {
@@ -300,11 +298,18 @@ class Compiler
 	private function processLnAttributes($txt)
 	{
 		// Store the text from the first tag to the end of the line
-		$re = '/\<.*$/';
+		$re = '/ \<[\w-]+ .*$/';
 		$txtFromTag2End = '';
 		if (preg_match($re, $txt, $match)) {
 			$txt = preg_replace($re, '', $txt);
 			$txtFromTag2End .= $match[0];
+		}
+
+		// Preserve php
+		$preservedPhp = [];
+		while (preg_match('/\<(?:\?(?:php)?) .*?\?\>/', $txt, $matches)) {
+			$txt = preg_replace('/\<(?:\?(?:php)?)+ +.*?\?\>/', "PHP_RESERVED_" . count($preservedPhp), $txt, 1);
+			$preservedPhp[] = $matches;
 		}
 
 		// Replace n$*; for n:href=""
@@ -315,12 +320,14 @@ class Compiler
 			$txt = preg_replace($re, $newHref, $txt);
 		}
 
-		$re = '/ (-[\w-]+)=/';
+		// Replace -*= for data-*=
+		$re = '/ -([\w-]+)+=/';
 		if (preg_match_all($re, $txt, $matches)) {
 			foreach ($matches[1] as $match) {
-				$txt = preg_replace($re, " data" . $match . "=", $txt, 1);
+				$txt = preg_replace($re, " data-" . $match . "=", $txt, 1);
 			}
 		}
+
 		// Get all html attributes
 		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\'[^\']*\'| [\w:-]+=\S+/';
 		$htmlAttributes = '';
@@ -332,7 +339,7 @@ class Compiler
 		// Get the id selector
 		$re = '/ #(\S+)/';
 		$idSelector = preg_match($re, $txt, $matches);
-		if ($idSelector && !preg_match('/ id="[^"]+"| id=[\S]+/', $htmlAttributes))
+		if ($idSelector && !preg_match('/ id="[^"]+"|  id=\'[^\']+\'| id=[\S]+/', $htmlAttributes))
 			$htmlAttributes .= ' id="' . $matches[1] . '"';
 
 		if ($idSelector)
@@ -347,7 +354,7 @@ class Compiler
 		}
 
 		// Synchronize class selectors
-		$re = '/ class="([^"]+)+"| class=\'([^\']+)+\'| class=([\S]+)/';
+		$re = '/ class="([^"]+)+"| class=\'([^\']+)+\'| class=([\S]+)+/';
 		$htmlClsSelector = preg_match($re, $htmlAttributes, $matches);
 		if ($clsSelectors && $htmlClsSelector) {
 			$htmlAttributes = preg_replace($re, ' class="' . end($matches) . ' ' . $clsSelectors . '"', $htmlAttributes);
@@ -363,7 +370,7 @@ class Compiler
 			$txt = preg_replace($re, '', $txt);
 			foreach ($matches as $value) {
 				$paramVal = end($value);
-				if (!empty($paramVal) && strtolower($paramVal) !== 'null') {
+				if ($paramVal && strtolower($paramVal) !== 'null') {
 
 					// If quick attribute is without index
 					$paramKey = is_numeric($value[1]) ? $value[1] : NULL;
@@ -396,7 +403,8 @@ class Compiler
 			'qkAttributes' => $qkAttributes,
 			'htmlAttributes' => $htmlAttributes,
 			'booleanAttributes' => $booleanAttributes,
-			'txt' => $txt
+			'txt' => $txt,
+			'preservedPhp' => $preservedPhp
 		];
 	}
 
@@ -407,42 +415,67 @@ class Compiler
 	 */
 	private function addOpenTag($element, $lvl, $attributes)
 	{
-		$tabs = $this->lvlIndentation;
+		$indentation = $this->lvlIndentation;
 		$elementSettings = $this->Elements->findElement($element, TRUE);
-		$openTag = $tabs . '<' . $element;
-		if ($elementSettings['qkAttributes'] && $attributes['qkAttributes']) {
+		$openTag = $indentation . '<' . $element;
+		$sQkAttributes = $elementSettings['qkAttributes'];
+		$qkAttributes = $attributes['qkAttributes'];
+
+		if ($sQkAttributes && $qkAttributes) {
 			$usedKeys = [];
 			$withoutKey = 0;
-			foreach ($attributes['qkAttributes'] as $attribute) {
+			foreach ($qkAttributes as $attribute) {
 				$newAttr = NULL;
 				if ($attribute['key']) {
 					$paramKey = $attribute['key'] - 1;
-					if (isset($elementSettings['qkAttributes'][$paramKey])) {
-						$newAttr = $elementSettings['qkAttributes'][$paramKey] . '="' . $attribute['value'] . '"';
+					if (isset($sQkAttributes[$paramKey])) {
+						$newAttr = $sQkAttributes[$paramKey] . '="' . $attribute['value'] . '"';
 						$usedKeys[] = $paramKey;
 					}
-				} elseif (!in_array($withoutKey, $usedKeys) && array_key_exists($withoutKey, $elementSettings['qkAttributes'])) {
-					$newAttr = $elementSettings['qkAttributes'][$withoutKey] . '="' . $attribute['value'] . '"';
+				} elseif (!in_array($withoutKey, $usedKeys) && array_key_exists($withoutKey, $sQkAttributes)) {
+					$newAttr = $sQkAttributes[$withoutKey] . '="' . $attribute['value'] . '"';
 					$withoutKey++;
 				}
 				$openTag .= $newAttr ? ' ' . $newAttr : "";
 			}
 		}
-
 		// Add html and boolean attributes
 		$openTag .= $attributes['htmlAttributes'] . $attributes['booleanAttributes'];
 
 		// Close the open tag, add close tags if needed
-		$selfClosing = $elementSettings['paired'] || $this->closeSelfClosingTags === FALSE ? '' : ' /';
+		$selfClosing = $elementSettings['paired'] || !$this->closeSelfClosingTags ? '' : ' /';
 		$openTag .= $selfClosing . '>' . $this->lnBreak;
+		$preservedPhp = $attributes['preservedPhp'];
+		$phpMark = "PHP_RESERVED_";
+		if ($preservedPhp) {
+			foreach ($preservedPhp as $key => $code) {
+				if (preg_match("/" . $phpMark . $key . "/", $openTag)) {
+					$openTag = str_replace($phpMark . $key, $code[0], $openTag);
+					$preservedPhp[$key] = FALSE;
+				}
+			}
+		}
 		$this->addCloseTags($lvl);
 		$this->codeStorage .= $openTag;
 
 		// If the tag is paired add its close tag to the storage
 		if ($elementSettings['paired']) {
-			$textTabs = $tabs ? $tabs . "\t" : "";
-			$this->codeStorage .= $attributes['txt'] ? $textTabs . $attributes['txt'] . $this->lnBreak : "";
-			$closeTag = $tabs . '</' . $element . '>' . $this->lnBreak;
+			$singleLvl = '';
+			if ($this->lnBreak)
+				$singleLvl = $this->finallCodeIndentation === "spaces" ? '    ' : "\t";
+			$textIndentation = $indentation . $singleLvl;
+			$txt = $attributes['txt'];
+			if ($txt) {
+				if ($preservedPhp) {
+					foreach ($preservedPhp as $key => $code) {
+						if ($code[0] && preg_match("/" . $phpMark . $key . "/", $txt)) {
+							$txt = str_replace($phpMark . $key, $code[0], $txt);
+						}
+					}
+				}
+			}
+			$this->codeStorage .= $txt ? $textIndentation . $txt . $this->lnBreak : "";
+			$closeTag = $indentation . '</' . $element . '>' . $this->lnBreak;
 			$this->closeTags[] = [$lvl, $closeTag];
 		}
 	}

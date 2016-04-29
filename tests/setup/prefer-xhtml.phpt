@@ -9,4 +9,4 @@ $result = file_get_contents("../test-templates/prefer-xhtml-b.html");
 
 $o->setup->preferXhtml = TRUE;
 
-Assert::same($result, $o->compileContent($tested));
+Assert::same($result, $o->compile($tested));

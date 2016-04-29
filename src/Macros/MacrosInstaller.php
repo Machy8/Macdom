@@ -21,7 +21,7 @@ class MacrosInstaller
 	/** @param array $macros */
 	public function addCustomMacros($macros)
 	{
-		if ($macros && is_array($macros)) {
+		if ($macros) {
 			foreach ($macros as $macro => $function) {
 				if (is_callable($function))
 					$this->addMacro($macro, $function);
@@ -42,7 +42,7 @@ class MacrosInstaller
 	/** @param array $macros */
 	public function removeMacros($macros)
 	{
-		if ($macros && is_string($macros)) {
+		if ($macros) {
 			$macros = explode(" ", $macros);
 			$this->macros = array_diff_key($this->macros, array_flip($macros));
 		}

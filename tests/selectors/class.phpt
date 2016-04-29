@@ -7,4 +7,4 @@ require '../bootstrap.php';
 $tested = file_get_contents("../test-templates/class-a.html");
 $result = file_get_contents("../test-templates/class-b.html");
 
-Assert::same($result, $o->compileContent($tested));
+Assert::same($result, $o->compile($tested));
