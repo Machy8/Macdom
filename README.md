@@ -1,7 +1,7 @@
-#Macdom
-HTML preprocessor.
-
-For more information see [WIKI](https://github.com/Machy8/Macdom/wiki)
+#Macdom 
+- HTML preprocessor
+- For more information see [WIKI](https://github.com/Machy8/Macdom/wiki)
+- **[Try it on CODEPEN](http://codepen.io/Machy8/pen/mPLdbg)** *(JavaScript version is always behind the php version so it may contain bugs and errors that have already been fixed in the PHP version)*
 
 ##Requirements
 
