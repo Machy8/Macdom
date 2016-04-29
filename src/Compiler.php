@@ -57,9 +57,9 @@ class Compiler
 	/** @var bool */
 	private $skipRow = FALSE;
 	/** @var array */
-	private $skipTags;
+	private $skipElements;
 	/** @var int */
-	private $skippedTagLvl = NULL;
+	private $skippedElementLvl = NULL;
 	/** @var int */
 	private $spacesPerIndent;
 	/** @var bool */
@@ -90,7 +90,7 @@ class Compiler
 		$this->structureHtmlSkeleton = $setup->structureHtmlSkeleton;
 		$this->closeSelfClosingTags = $closeSelfClosingTags;
 		$this->booleansWithValue = $booleansWithValue;
-		$this->skipTags = $setup->skipTags;
+		$this->skipElements = explode(' ', $setup->skipElements);
 		$this->finallCodeIndentation = $setup->finallCodeIndentation;
 
 		$this->ncaOpenTags = $setup->ncaOpenTags;
@@ -231,23 +231,23 @@ class Compiler
 		$areaClosed = $this->inNoCompileArea ? FALSE : TRUE;
 
 		$skipTagClose = '/' . self::AREA_TAG;
-		$skippedTags = array_merge(["style", "script", "code"], $this->skipTags);
+		$skippedTags = array_merge(["style", "script", "code"], $this->skipElements);
 		$openTags = array_merge(['<style>', '<script>', '<?php', '<?', self::AREA_TAG], $this->ncaOpenTags);
 		$closeTags = array_merge(['</style>', '</script>', '?>', $skipTagClose], $this->ncaCloseTags);
 		$regExpInlineTags = array_merge(['\<(?:\?|php) .*\?\>', '\<(?:script|style) *[^>]*\>.*\<\/(?:style|script)\>'], $this->ncaRegExpInlineTags);
 		$regExpOpenTags = array_merge(['\<(?:script|style) *[^>]*\>'], $this->ncaRegExpOpenTags);
 
-		if (in_array($element, $skippedTags) && $this->skippedTagLvl === NULL) {
-			$this->skippedTagLvl = $lvl;
-		} elseif ($this->skippedTagLvl !== NULL && $lvl > $this->skippedTagLvl) {
+		if (in_array($element, $skippedTags) && $this->skippedElementLvl === NULL) {
+			$this->skippedElementLvl = $lvl;
+		} elseif ($this->skippedElementLvl !== NULL && $lvl > $this->skippedElementLvl) {
 			$this->skipRow = TRUE;
-		} elseif ($this->skippedTagLvl !== NULL && $lvl <= $this->skippedTagLvl && in_array($element, $skippedTags)) {
-			$this->skippedTagLvl = $lvl;
+		} elseif ($this->skippedElementLvl !== NULL && $lvl <= $this->skippedElementLvl && in_array($element, $skippedTags)) {
+			$this->skippedElementLvl = $lvl;
 		} else {
-			$this->skippedTagLvl = NULL;
+			$this->skippedElementLvl = NULL;
 		}
 
-		if (!$this->skippedTagLvl) {
+		if (!$this->skippedElementLvl) {
 			if (in_array(trim($txt), $openTags)) {
 				$this->inNoCompileArea = TRUE;
 			} elseif (in_array(trim($txt), $closeTags)) {
