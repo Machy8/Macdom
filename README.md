@@ -19,7 +19,7 @@ For more information see [WIKI](https://github.com/Machy8/Macdom/wiki)
 
 ```php
 $macdom = new \Machy8\Macdom\Loaders\Loader;
-$compiled = $macdom->compileContent($content);
+$compiled = $macdom->compile($content);
 ```
 
 **Nette framework:**
