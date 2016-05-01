@@ -43,7 +43,7 @@ class MacrosInstaller
 	public function removeMacros($macros)
 	{
 		if ($macros) {
-			$macros = explode(" ", $macros);
+			$macros = explode(' ', $macros);
 			$this->macros = array_diff_key($this->macros, array_flip($macros));
 		}
 	}

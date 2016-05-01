@@ -4,3 +4,12 @@ div #headerInner class="d-content-apart items-centered d-95 m-80 h-centered <?ph
 input $text class="text-bold" $<?php echo $someValue ?>;
 input $text $<?php echo $someValue ?>; $someplaceholder  <?php echo $someValue ?>;
 input $text $<?php echo $someValue; echo $someValue; echo $someValue; ?>; $someplaceholder  <?php echo $someValue; ?>;
+
+------------------------------------------------------------------------------------------------------------------------
+
+description <? echo $description ?? "Some description."; ?>
+title data-label="<? echo $title ?? "Some title." ?>" <? echo $title ?? "Some title." ?>
+div #headerInner class="d-content-apart items-centered d-95 m-80 h-centered <? echo $homepageCls ?>"
+input $text class="text-bold" $<? echo $someValue ?>;
+input $text $<? echo $someValue ?>; $someplaceholder  <? echo $someValue ?>;
+input $text $<? echo $someValue; echo $someValue; echo $someValue; ?>; $someplaceholder  <? echo $someValue; ?>;

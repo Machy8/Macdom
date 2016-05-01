@@ -15,11 +15,8 @@ namespace Machy8\Macdom\Replicator;
 class Register
 {
 
-	const
-		/** @const regular expression */
-		REG_EXP = '@([\S]*)',
-		/** @const string */
-		SUFFIX = '-x';
+	/** @const regular expression */
+	const REG_EXP = '@([\S]*)';
 
 	/** @var array */
 	private $register = [];
@@ -33,7 +30,7 @@ class Register
 	{
 		$unregistered = FALSE;
 		if (preg_match('/^\/' . self::REG_EXP . '/', $el, $matches)) {
-			$selected = $lvl . self::SUFFIX;
+			$selected = $lvl;
 			if ($matches[1]) {
 				$selected = $lvl . '-' . $matches[1];
 				if (isset($this->register[$selected])) {
@@ -72,9 +69,9 @@ class Register
 			if (array_key_exists($lvl . '-' . $el, $this->register)) {
 				$registered = $key = TRUE;
 				$registerId = $lvl . '-' . $el;
-			} elseif (array_key_exists($lvl . self::SUFFIX, $this->register)) {
+			} elseif (array_key_exists($lvl, $this->register)) {
 				$registered = TRUE;
-				$registerId = $lvl . self::SUFFIX;
+				$registerId = $lvl;
 			}
 		}
 		if (!$registered || $registrationLn) {
@@ -101,7 +98,7 @@ class Register
 		$registerId = NULL;
 		if (preg_match('/^' . self::REG_EXP . '/', $el, $matches)) {
 			$registerId = $lvl;
-			$registerId .= $matches[1] ? '-' . $matches[1] : self::SUFFIX;
+			$registerId .= $matches[1] ? '-' . $matches[1] : '';
 			$this->register[$registerId] = $ln;
 			$registered = TRUE;
 		}

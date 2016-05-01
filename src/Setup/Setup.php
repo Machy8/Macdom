@@ -28,8 +28,6 @@ class Setup
 	public $closeSelfClosingTags = FALSE;
 	/** @var bool */
 	public $compressCode = FALSE;
-	/** @var string */
-	public $finallCodeIndentation = "tabs";
 	/** @var int */
 	public $indentMethod = 3;
 	/** @var array */
@@ -40,6 +38,8 @@ class Setup
 	public $ncaRegExpInlineTags = [];
 	/** @var array */
 	public $ncaRegExpOpenTags = [];
+	/** @var string */
+	public $outputIndentation = "tabs";
 	/** @var bool */
 	public $preferXhtml = FALSE;
 	/** @var string */

@@ -37,6 +37,6 @@ Assert::exception(function(){
 Assert::exception(function(){
 	$s = new Setup;
 	$checker = new SetupChecker($s);
-	$s->setup->finallCodeIndentation = "hamburger";
+	$s->setup->outputIndentation = "hamburger";
 	$checker->check($s->setup);
-}, 'Exception', 'Variable $finallCodeIndentation has illegal value. Options are: spaces, tabs.');
+}, 'Exception', 'Variable $outputIndentation has illegal value. Options are: spaces, tabs.');

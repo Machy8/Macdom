@@ -18,8 +18,8 @@ class SetupChecker
 {
 	/** @var array */
 	private $options = [
-		"finallCodeIndentation" => ["spaces", "tabs"],
-		"indentMethod" => [1, 2, 3]
+		'outputIndentation' => ['spaces', 'tabs'],
+		'indentMethod' => [1, 2, 3]
 	];
 	/** @var array */
 	private $register = [];
@@ -48,11 +48,11 @@ class SetupChecker
 			if ($type === $this->register[$key]) {
 				if ($options && !in_array($var, $options)) {
 					$throw = TRUE;
-					$exceptionType = "options";
+					$exceptionType = 'options';
 				}
 			} else {
 				$throw = TRUE;
-				$exceptionType = "type";
+				$exceptionType = 'type';
 			}
 
 			if ($throw)
@@ -69,13 +69,13 @@ class SetupChecker
 	 */
 	private function throwException($var, $options, $requiredType, $exceptionType)
 	{
-		if ($exceptionType === "type") {
-			$article = $requiredType === "array" || $requiredType === "integer" ? "an" : "a";
-			$txt = "must have " . $article . " " . strtoupper($requiredType) . " value.";
+		if ($exceptionType === 'type') {
+			$article = $requiredType === 'array' || $requiredType === 'integer' ? 'an' : 'a';
+			$txt = 'must have ' . $article . ' ' . strtoupper($requiredType) . ' value.';
 		} else {
-			$allowedOptions = join(", ", $options);
-			$txt = "has illegal value. Options are: " . $allowedOptions . ".";
+			$allowedOptions = join(', ', $options);
+			$txt = 'has illegal value. Options are: ' . $allowedOptions . '.';
 		}
-		throw new Exception("Variable $" . $var . " " . $txt);
+		throw new Exception('Variable $' . $var . ' ' . $txt);
 	}
 }
