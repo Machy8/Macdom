@@ -1,6 +1,6 @@
 {
     "name": "machy8/macdom",
-    "description": "HTML and template preprocessor",
+    "description": "HTML preprocessor",
     "keywords": ["macdom", "html", "preprocessor"],
     "license": "New BSD License",
     "require": {
