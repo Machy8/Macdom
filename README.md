@@ -8,7 +8,7 @@
 
 ##Requirements
 
-- php 5.3+
+- php 5.4+
 - If you are using Nette Framework - v2.3+
 
 ##Installation
