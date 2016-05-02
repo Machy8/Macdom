@@ -233,8 +233,7 @@ class Compiler
 	private function detectNoCompileArea($txt, $element, $exists, $lvl)
 	{
 		$txt = trim($txt);
-		$skipContent = FALSE;
-		$skipRow = FALSE;
+		$skipContent = $skipRow = FALSE;
 
 		if ($this->skipRow)
 			$this->skipRow = $this->inNoCompileArea = FALSE;
@@ -243,10 +242,12 @@ class Compiler
 
 		if ($areaClosed && $exists) {
 			$txt2array = explode(' ', $txt);
-			if ($txt2array[0] === self::AREA_TAG) {
-				$skipRow = TRUE;
-			} elseif ($txt2array[1] === self::AREA_TAG . '-CONTENT') {
-				$skipContent = TRUE;
+			if (isset($txt2array[0])) {
+				if ($txt2array[0] === self::AREA_TAG) {
+					$skipRow = TRUE;
+				} elseif ($txt2array[0] === self::AREA_TAG . '-CONTENT') {
+					$skipContent = TRUE;
+				}
 			}
 		}
 
