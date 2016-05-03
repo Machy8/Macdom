@@ -8,7 +8,8 @@
 
 ##Requirements
 
-- php 5.4+
+- php 5.3+ - 2.0.0
+- php 5.4+ - master branch
 - If you are using Nette Framework - v2.3+
 
 ##Installation
