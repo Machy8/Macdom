@@ -207,7 +207,8 @@ class Compiler
 		$txt = ltrim($ln);
 
 		if ($clean) {
-			$txt = preg_replace('/^' . self::AREA_TAG . '(?:-CONTENT)?/', '', $txt);
+			$txt = preg_replace('/^' . self::AREA_TAG . '(?:-CONTENT)?/', '', $txt, 1);
+			$txt = preg_replace('/^\|{1}/','', $txt, 1);
 		}
 
 		return $txt;
