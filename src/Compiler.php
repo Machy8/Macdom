@@ -68,12 +68,9 @@ class Compiler
 	/**
 	 * Compiler constructor.
 	 * @param Setup\Setup $setup
-	 * @param Setup\SetupChecker $setupChecker
 	 */
-	public function __construct($setup, $setupChecker)
+	public function __construct($setup)
 	{
-		$setupChecker->check($setup);
-
 		$this->Elements = new Elements;
 		$this->Macros = new Macros;
 		$this->Replicator = new Replicator;
@@ -122,8 +119,7 @@ class Compiler
 			$lvl = $this->getLnLvl($ln);
 			$txt = $this->getLnTxt($ln, TRUE);
 			$element = $this->getElement($txt);
-			$elementExists = $this->Elements->findElement($element);
-			$noCompileAreaTag = $this->detectNoCompileArea($ln, $element, $elementExists, $lvl);
+			$noCompileAreaTag = $this->detectNoCompileArea($ln, $element, $lvl);
 
 			if ($this->lnBreak) {
 				$indentation = "\t";
@@ -145,33 +141,36 @@ class Compiler
 				}
 			}
 
-			if ($txt && strlen(ltrim($txt)) && !$noCompileAreaTag && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed && !$elementExists) {
-				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
-				if ($replicatorResult['replicate']) {
-					$txt = $this->getLnTxt($replicatorResult['ln']);
-					$element = $this->getElement($txt);
+			if (!$noCompileAreaTag) {
+				if ($txt && ltrim($txt) && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed && !$this->Elements->findElement($element)) {
+					$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
+					if ($replicatorResult['replicate']) {
+						$txt = $this->getLnTxt($replicatorResult['ln']);
+						$element = $this->getElement($txt);
+					}
+					if ($replicatorResult['clearLn']) {
+						$txt = NULL;
+						$element = FALSE;
+					}
 				}
-				if ($replicatorResult['clearLn']) {
-					$txt = NULL;
-					$element = FALSE;
-				}
-			}
 
-			if (!$this->inNoCompileArea && !$this->skipRow && $this->Elements->findElement($element)) {
-				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
-				$attributes = $this->processLn($clearedText);
-				$this->addOpenTag($element, $lvl, $attributes);
-			} elseif ($txt) {
-				$this->addCloseTags($lvl);
-				if (!$this->inNoCompileArea && !$noCompileAreaTag && !$this->skipRow) {
-					$macro = $this->Macros->replace($element, $txt);
-					$macroExists = $macro['exists'];
-					$this->codeStorage .= $macroExists ? $this->lvlIndentation . $macro['replacement'] . $this->lnBreak : $this->lvlIndentation . $txt . $this->lnBreak;
-				} elseif ($this->inNoCompileArea || $this->skipRow) {
-					$this->codeStorage .= !$noCompileAreaTag ? $this->lvlIndentation . $txt . $this->lnBreak : '';
+				if (!$this->inNoCompileArea && !$this->skipRow && $this->Elements->findElement($element)) {
+					$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
+					$attributes = $this->processLn($clearedText);
+					$this->addOpenTag($element, $lvl, $attributes);
+				} elseif ($txt) {
+					$this->addCloseTags($lvl);
+					if (!$this->inNoCompileArea && !$this->skipRow) {
+						$macro = $this->Macros->replace($element, $txt);
+						$macroExists = $macro['exists'];
+						$this->codeStorage .= $macroExists ? $this->lvlIndentation . $macro['replacement'] . $this->lnBreak : $this->lvlIndentation . $txt . $this->lnBreak;
+					} elseif ($this->inNoCompileArea || $this->skipRow) {
+						$this->codeStorage .= $this->lvlIndentation . $txt . $this->lnBreak;
+					}
 				}
 			}
 		}
+
 		$this->addCloseTags(0);
 		return $this->codeStorage;
 	}
@@ -207,8 +206,8 @@ class Compiler
 		$txt = ltrim($ln);
 
 		if ($clean) {
-			$txt = preg_replace('/^' . self::AREA_TAG . '(?:-CONTENT)?/', '', $txt, 1);
-			$txt = preg_replace('/^\|{1}/','', $txt, 1);
+			$txt = preg_replace('/ *' . self::AREA_TAG . '(?:-CONTENT)?/', '', $txt, 1);
+			$txt = preg_replace('/^\|{1}/', '', $txt, 1);
 		}
 
 		return $txt;
@@ -227,11 +226,10 @@ class Compiler
 	/**
 	 * @param string $txt
 	 * @param string $element
-	 * @param string $exists
 	 * @param int $lvl
 	 * @return bool
 	 */
-	private function detectNoCompileArea($txt, $element, $exists, $lvl)
+	private function detectNoCompileArea($txt, $element, $lvl)
 	{
 		$txt = trim($txt);
 		$skipContent = $skipRow = FALSE;
@@ -239,16 +237,15 @@ class Compiler
 		if ($this->skipRow)
 			$this->skipRow = $this->inNoCompileArea = FALSE;
 
-		$areaClosed = $this->inNoCompileArea ? FALSE : TRUE;
+		$areaClosed = !$this->inNoCompileArea;
 
-		if ($areaClosed && $exists) {
+		if ($areaClosed) {
 			$txt2array = explode(' ', $txt);
-			if (isset($txt2array[0])) {
-				if ($txt2array[0] === self::AREA_TAG) {
-					$skipRow = TRUE;
-				} elseif ($txt2array[0] === self::AREA_TAG . '-CONTENT') {
-					$skipContent = TRUE;
-				}
+			$skipSelector = end($txt2array);
+			if ($skipSelector === self::AREA_TAG && count($txt2array) > 1) {
+				$skipRow = TRUE;
+			} elseif ($skipSelector === self::AREA_TAG . '-CONTENT') {
+				$skipContent = TRUE;
 			}
 		}
 
@@ -371,8 +368,7 @@ class Compiler
 
 		// Synchronize class selectors
 		$re = '/ class="([^"]+)+"| class=\'([^\']+)+\'| class=([\S]+)+/';
-		$htmlClsSelector = preg_match($re, $htmlAttributes, $matches);
-		if ($clsSelectors && $htmlClsSelector) {
+		if ($clsSelectors && preg_match($re, $htmlAttributes, $matches)) {
 			$htmlAttributes = preg_replace($re, ' class="' . end($matches) . ' ' . $clsSelectors . '"', $htmlAttributes);
 		} elseif ($clsSelectors) {
 			$htmlAttributes .= ' class="' . $clsSelectors . '"';
@@ -380,9 +376,8 @@ class Compiler
 
 		// Get all quick attributes
 		$re = '/ ([\d]+)?\$(?:([^$;"]+);|(\S+)+)/';
-		$matched = preg_match_all($re, $txt, $matches, PREG_SET_ORDER);
 		$qkAttributes = [];
-		if ($matched) {
+		if (preg_match_all($re, $txt, $matches, PREG_SET_ORDER)) {
 			$txt = preg_replace($re, '', $txt);
 			foreach ($matches as $value) {
 				$paramVal = end($value);

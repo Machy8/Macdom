@@ -37,7 +37,8 @@ trait LoadersCore
 	 */
 	public function compile($content)
 	{
-		$compiler = new Compiler($this->setup, $this->setupChecker);
+		$this->setupChecker->check($this->setup);
+		$compiler = new Compiler($this->setup);
 		$compiled = $compiler->compile($content);
 		return $compiled;
 	}

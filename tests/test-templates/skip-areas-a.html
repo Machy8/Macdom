@@ -31,8 +31,11 @@ h2 Tag-7
 echo $a; ?>
 h2 Tag-8
 <?
-   $a = 123;
-   echo $a;
+    $a = 123;
+    echo $a;
+    i
+    h1
+    h2
 ?>
 h2 Tag-9
 <? $a = 123; echo $a; ?>
@@ -59,11 +62,10 @@ h2 Tag-15
 <script type="text/javascript"> var a = 123; a ++; alert(a);
 var b = 123; b ++; alert(b);</script>
 h2 Tag-16
-div
-    SKIP
+div 
+    SKIP-CONTENT
         h1 No compiled title
             span Text text text
-    /SKIP
     h2 Tag-17
 <script>
     var a = 123;
@@ -131,10 +133,9 @@ div #wrapper
         h1 skipped title</skipthisarea>
         p .headerText Text in header
     main
-        SKIP
-        aside
-        section Some content
-        /SKIP
+        SKIP-CONTENT
+            aside
+            section Some content
     footer
         Footer here
         div #footerInner
@@ -150,14 +151,35 @@ h6
     span Some title here
 h2 Tag-34
 div #wrapper2
-    SKIP-CONTENT div #inner2
+    div #inner2 SKIP-CONTENT
         h1 Tag in skip content
         input $text $Some value;
     div Content in div
 h2 Tag 35
 div #wrapper2
-    SKIP div #inner2
+     div #inner2 SKIP
         h1 Not skipped
         input $text $Some value;
     div Content in div
 h2 Tag 36
+div #wrapper
+    <div id="myId">
+        SKIP-CONTENT
+            div
+                div
+                    div
+    </div>
+    h2 Tag 37
+    <div id="myId"> SKIP-CONTENT
+        div
+        div
+        div
+    </div>
+    h2 Tag 38
+div #wrapper
+    SKIP
+    div
+        div
+            div
+    /SKIP
+h2 Tag 39

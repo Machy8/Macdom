@@ -96,8 +96,8 @@ class Elements extends ElementsSettings
 		$settings = $this->elementsSettings;
 		if (isset($settings[$el])) {
 			$s = $settings[$el];
-			$paired = in_array('unpaired', $s) ? FALSE : TRUE;
-			$qkAttributes = isset($s['qkAttributes']) && count($s['qkAttributes']) ? $s['qkAttributes'] : NULL;
+			$paired = !in_array('unpaired', $s);
+			$qkAttributes = isset($s['qkAttributes']) ? $s['qkAttributes'] : NULL;
 		}
 		return [
 			'element' => $el,
