@@ -5,8 +5,9 @@ use Tester\Assert;
 require '../bootstrap.php';
 
 $o->setup->outputIndentation = "spaces";
+$o->setup->structureHtmlSkeleton = TRUE;
 
 Assert::matchFile(
-	"../test-templates/output-indentation-b.html",
-	$o->compile(file_get_contents("../test-templates/output-indentation-a.html"))
+	TEMPLATES."/output-indentation-b.html",
+	$o->compile(file_get_contents(TEMPLATES."/output-indentation-a.html"))
 );

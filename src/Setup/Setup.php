@@ -28,6 +28,8 @@ class Setup
 	public $closeSelfClosingTags = FALSE;
 	/** @var bool */
 	public $compressCode = FALSE;
+	/** @var bool */
+	public $compressText = FALSE;
 	/** @var int */
 	public $indentMethod = 3;
 	/** @var array */

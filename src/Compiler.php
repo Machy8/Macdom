@@ -34,6 +34,8 @@ class Compiler
 	private $closeTags = [];
 	/** @var string */
 	private $codeStorage;
+	/** @var bool */
+	private $compressText;
 	/** @var int */
 	private $outputIndentation;
 	/** @var bool */
@@ -42,8 +44,6 @@ class Compiler
 	private $indentMethod;
 	/** @var string */
 	private $lnBreak;
-	/** @var string */
-	private $lvlIndentation = '';
 	/** @var array */
 	private $ncaCloseTags;
 	/** @var array */
@@ -64,6 +64,10 @@ class Compiler
 	private $spacesPerIndent;
 	/** @var bool */
 	private $structureHtmlSkeleton;
+	/** @var string */
+	private $prevOutputType = NULL;
+	/** @var int */
+	private $prevOutputLvl = NULL;
 
 	/**
 	 * Compiler constructor.
@@ -84,16 +88,17 @@ class Compiler
 		$this->indentMethod = $setup->indentMethod;
 		$this->spacesPerIndent = $setup->spacesPerIndent;
 		$this->lnBreak = $setup->compressCode ? '' : "\n";
+		$this->compressText = $setup->compressText;
 		$this->structureHtmlSkeleton = $setup->structureHtmlSkeleton;
 		$this->closeSelfClosingTags = $closeSelfClosingTags;
 		$this->booleansWithValue = $booleansWithValue;
-		$this->skipElements = array_merge(['style', 'script', 'code'], explode(' ', $setup->skipElements));
+		$this->skipElements = array_merge(['style', 'script', 'code', 'textarea'], explode(' ', $setup->skipElements));
 		$this->outputIndentation = $setup->outputIndentation;
 
-		$this->ncaOpenTags = array_merge(['<style>', '<script>', '<?php', '<?', self::AREA_TAG], $setup->ncaOpenTags);
-		$this->ncaCloseTags = array_merge(['</style>', '</script>', '?>', '/' . self::AREA_TAG], $setup->ncaCloseTags);
-		$this->ncaRegExpInlineTags = array_merge(['\<(?:\?|php) .*\?\>', '\<(?:script|style) *[^>]*\>.*\<\/(?:style|script)\>'], $setup->ncaRegExpInlineTags);
-		$this->ncaRegExpOpenTags = array_merge(['\<(?:script|style) *[^>]*\>'], $setup->ncaRegExpOpenTags);
+		$this->ncaOpenTags = array_merge(['<style>', '<script>', '<code>', '<textarea>', '<?php', '<?', self::AREA_TAG], $setup->ncaOpenTags);
+		$this->ncaCloseTags = array_merge(['</style>', '</script>', '</code>', '</textarea>', '?>', '/' . self::AREA_TAG], $setup->ncaCloseTags);
+		$this->ncaRegExpInlineTags = array_merge(['\<(?:\?|php) .*\?\>', '\<(?:script|style|textarea|code) *[^>]*\>.*\<\/(?:style|script|textarea|code)\>'], $setup->ncaRegExpInlineTags);
+		$this->ncaRegExpOpenTags = array_merge(['\<(?:script|style|textarea|code) *[^>]*\>'], $setup->ncaRegExpOpenTags);
 
 		$this->Elements->addElements($setup->addElements);
 		$this->Elements->addBooleanAttributes($setup->addBooleanAttributes);
@@ -121,21 +126,10 @@ class Compiler
 			$element = $this->getElement($txt);
 			$noCompileAreaTag = $this->detectNoCompileArea($ln, $element, $lvl);
 
-			if ($this->lnBreak) {
-				$indentation = "\t";
-				if ($this->outputIndentation === 'spaces') {
-					$indentation = '    ';
-				}
-
-				$this->lvlIndentation = '';
-				for ($i = 0; $i < $lvl; $i++) {
-					$this->lvlIndentation .= $indentation;
-				}
-			}
-
 			if ($this->structureHtmlSkeleton) {
 				if ($element === 'html') {
 					$lvl = 0;
+
 				} else {
 					$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
 				}
@@ -160,13 +154,19 @@ class Compiler
 					$this->addOpenTag($element, $lvl, $attributes);
 				} elseif ($txt) {
 					$this->addCloseTags($lvl);
+					$content = $txt;
+					$type = 'text';
 					if (!$this->inNoCompileArea && !$this->skipRow) {
+
 						$macro = $this->Macros->replace($element, $txt);
 						$macroExists = $macro['exists'];
-						$this->codeStorage .= $macroExists ? $this->lvlIndentation . $macro['replacement'] . $this->lnBreak : $this->lvlIndentation . $txt . $this->lnBreak;
-					} elseif ($this->inNoCompileArea || $this->skipRow) {
-						$this->codeStorage .= $this->lvlIndentation . $txt . $this->lnBreak;
+						if ($macroExists) {
+							$content = $macro['replacement'];
+							$type = 'macro';
+						}
 					}
+
+					$this->addToStorage($type, $content, $lvl);
 				}
 			}
 		}
@@ -426,9 +426,8 @@ class Compiler
 	 */
 	private function addOpenTag($element, $lvl, $attributes)
 	{
-		$indentation = $this->lvlIndentation;
 		$elementSettings = $this->Elements->findElement($element, TRUE);
-		$openTag = $indentation . '<' . $element;
+		$openTag = '<' . $element;
 		$sQkAttributes = $elementSettings['qkAttributes'];
 		$qkAttributes = $attributes['qkAttributes'];
 
@@ -455,7 +454,7 @@ class Compiler
 
 		// Close the open tag, add close tags if needed
 		$selfClosing = $elementSettings['paired'] || !$this->closeSelfClosingTags ? '' : ' /';
-		$openTag .= $selfClosing . '>' . $this->lnBreak;
+		$openTag .= $selfClosing . '>';
 		$preservedPhp = $attributes['preservedPhp'];
 		$phpMark = 'PHP_RESERVED_';
 		if ($preservedPhp) {
@@ -467,14 +466,9 @@ class Compiler
 			}
 		}
 		$this->addCloseTags($lvl);
-		$this->codeStorage .= $openTag;
-
+		$this->addToStorage('openTag', $openTag, $lvl);
 		// If the tag is paired add its close tag to the storage
 		if ($elementSettings['paired']) {
-			$singleLvl = '';
-			if ($this->lnBreak)
-				$singleLvl = $this->outputIndentation === 'spaces' ? '    ' : "\t";
-			$textIndentation = $indentation . $singleLvl;
 			$txt = $attributes['txt'];
 			if ($txt) {
 				if ($preservedPhp) {
@@ -484,9 +478,9 @@ class Compiler
 						}
 					}
 				}
+				$this->addToStorage('text', $txt, $lvl);
 			}
-			$this->codeStorage .= $txt ? $textIndentation . $txt . $this->lnBreak : '';
-			$closeTag = $indentation . '</' . $element . '>' . $this->lnBreak;
+			$closeTag = '</' . $element . '>';
 			$this->closeTags[] = [$lvl, $closeTag];
 		}
 	}
@@ -495,16 +489,44 @@ class Compiler
 	private function addCloseTags($lvl)
 	{
 		$lastTag = $length = count($this->closeTags);
-		if ($length > 0) {
-			for ($i = $length - 1; $i >= 0; $i--) {
-				if ($lvl <= $this->closeTags[$i][0]) {
-					$this->codeStorage .= $this->closeTags[$i][1];
-					$lastTag = $i;
-				} else {
-					break;
-				}
+		for ($i = $length - 1; $i >= 0; $i--) {
+			if ($lvl <= $this->closeTags[$i][0]) {
+				$this->addToStorage('closeTag', $this->closeTags[$i][1], $this->closeTags[$i][0]);
+				$lastTag = $i;
+			} else {
+				break;
 			}
-			array_splice($this->closeTags, $lastTag);
 		}
+		array_splice($this->closeTags, $lastTag);
+	}
+
+	/**
+	 * @param string $type
+	 * @param string $content
+	 * @param int $lvl
+	 */
+	private function addToStorage($type, $content, $lvl)
+	{
+		$indentation = '';
+		$lvl += $this->structureHtmlSkeleton && $lvl > 0 ? -1 : 0;
+
+		if ($this->lnBreak) {
+			if (!$this->compressText && $type === 'text' && $lvl === $this->prevOutputLvl && $this->prevOutputType === 'openTag') {
+				$lvl++;
+			} elseif ($type === 'text' && $this->compressText && $this->prevOutputType === 'text') {
+				$lvl = $this->prevOutputLvl;
+			}
+			$method = $this->outputIndentation === 'spaces' ? '    ' : "\t";
+			$indentation = str_repeat($method, $lvl);
+		}
+		if ($content) {
+			if (!($this->prevOutputType === NULL || $this->prevOutputType === 'openTag' && $type === 'closeTag' || $this->compressText && !$this->inNoCompileArea && !$this->skipRow && ($type === 'text' || $type === 'closeTag' && $this->prevOutputType === 'text' && $lvl === $this->prevOutputLvl)) || $this->prevOutputType === "closeTag") {
+				$this->codeStorage .= $this->lnBreak . $indentation;
+			}
+			
+			$this->codeStorage .= $content;
+		}
+		$this->prevOutputLvl = $lvl;
+		$this->prevOutputType = $type;
 	}
 }

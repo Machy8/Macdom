@@ -5,11 +5,11 @@ use Tester\Assert;
 require 'bootstrap.php';
 
 Assert::matchFile(
-	"test-templates/booleans-b.html", 
-	$o->compile(file_get_contents("test-templates/booleans-a.html"))
+	TEMPLATES."/booleans-b.html", 
+	$o->compile(file_get_contents(TEMPLATES."/booleans-a.html"))
 );
 
 Assert::matchFile(
-	"test-templates/html-attributes-b.html", 
-	$o->compile(file_get_contents("test-templates/html-attributes-a.html"))
+	TEMPLATES."/html-attributes-b.html", 
+	$o->compile(file_get_contents(TEMPLATES."/html-attributes-a.html"))
 );
