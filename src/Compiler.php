@@ -88,13 +88,18 @@ class Compiler
 		$this->structureHtmlSkeleton = $setup->structureHtmlSkeleton;
 		$this->closeSelfClosingTags = $closeSelfClosingTags;
 		$this->booleansWithValue = $booleansWithValue;
-		$this->skipElements = array_merge(['style', 'script', 'code', 'textarea'], explode(' ', $setup->skipElements));
+		$this->skipElements = array_merge(['script', 'style', 'textarea', 'code'], explode(' ', $setup->skipElements));
+		$this->ncaOpenTags = ['<?php', '<?', self::AREA_TAG];
+		$this->ncaCloseTags = ['?>', '/' . self::AREA_TAG];
+		$inlineOpenTags = join("|", array_filter($this->skipElements));
+		$this->ncaRegExpInlineTags = ['\<(?:\?|php) .*\?\>', '\<(?:' . $inlineOpenTags . ') *[^>]*\>.*\<\/(?:' . $inlineOpenTags . ')\>'];
+		$this->ncaRegExpOpenTags = ['\<(?:' . $inlineOpenTags . ') *[^\>]*\>'];
 		$this->outputIndentation = $setup->outputIndentation;
 
-		$this->ncaOpenTags = array_merge(['<style>', '<script>', '<code>', '<textarea>', '<?php', '<?', self::AREA_TAG], $setup->ncaOpenTags);
-		$this->ncaCloseTags = array_merge(['</style>', '</script>', '</code>', '</textarea>', '?>', '/' . self::AREA_TAG], $setup->ncaCloseTags);
-		$this->ncaRegExpInlineTags = array_merge(['\<(?:\?|php) .*\?\>', '\<(?:script|style|textarea|code) *[^>]*\>.*\<\/(?:style|script|textarea|code)\>'], $setup->ncaRegExpInlineTags);
-		$this->ncaRegExpOpenTags = array_merge(['\<(?:script|style|textarea|code) *[^>]*\>'], $setup->ncaRegExpOpenTags);
+		foreach ($this->skipElements as $element) {
+			$this->ncaCloseTags[] = '</' . $element . '>';
+			$this->ncaOpenTags[] = '<' . $element . '>';
+		}
 
 		$this->Elements->addElements($setup->addElements);
 		$this->Elements->addBooleanAttributes($setup->addBooleanAttributes);

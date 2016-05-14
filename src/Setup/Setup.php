@@ -32,14 +32,6 @@ class Setup
 	public $compressText = FALSE;
 	/** @var int */
 	public $indentMethod = 3;
-	/** @var array */
-	public $ncaCloseTags = [];
-	/** @var array */
-	public $ncaOpenTags = [];
-	/** @var array */
-	public $ncaRegExpInlineTags = [];
-	/** @var array */
-	public $ncaRegExpOpenTags = [];
 	/** @var string */
 	public $outputIndentation = "tabs";
 	/** @var bool */
