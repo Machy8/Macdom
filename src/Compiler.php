@@ -156,16 +156,18 @@ class Compiler
 				} elseif ($txt) {
 					$this->addCloseTags($lvl);
 					$content = $txt;
+					$type = 'text';
 					if (!$this->inNoCompileArea && !$this->skipRow) {
 
 						$macro = $this->Macros->replace($element, $txt);
 						$macroExists = $macro['exists'];
 						if ($macroExists) {
 							$content = $macro['replacement'];
+							$type = 'macro';
 						}
 					}
 
-					$this->addToQueue('text', $content, $lvl);
+					$this->addToQueue($type, $content, $lvl);
 				}
 			}
 		}
@@ -502,6 +504,11 @@ class Compiler
 		array_splice($this->closeTags, $lastTag);
 	}
 
+	/**
+	 * @param string $type
+	 * @param string $content
+	 * @param int $lvl
+	 */
 	private function addToQueue($type, $content, $lvl)
 	{
 		$content = [
@@ -515,6 +522,9 @@ class Compiler
 		$this->contentQueue[] = $content;
 	}
 
+	/**
+	 * @return string
+	 */
 	private function composeContent()
 	{
 		$composedContent = '';
@@ -561,15 +571,15 @@ class Compiler
 
 					$method = $this->outputIndentation === 'spaces' ? '    ' : "\t";
 					$indentation = str_repeat($method, $lvl);
-
-					$nextOutputType = isset($this->contentQueue[$contentKey + 1]) ? $this->contentQueue[$contentKey + 1]['type'] : '';
+					$nextOutputKey = isset($nextKey) ? $nextKey : $contentKey + 1;
+					$nextOutputType = isset($this->contentQueue[$nextOutputKey]) ? $this->contentQueue[$nextOutputKey]['type'] : '';
 
 					// WTF condition for output formatting
 					if ($prevOutputType !== NULL && (
-							$type === 'closeTag' && ($prevOutputType === 'closeTag' || !$prevAllowedFormatting || !$this->compressText && $prevOutputType === 'text' || $prevOutputType === 'text' && $lastProcessed['type'] === 'closeTag')
+							$type === 'closeTag' && ($prevOutputType === 'closeTag' || !$prevAllowedFormatting || !$this->compressText && $prevOutputType === 'text' || $prevOutputType === 'text' && $lastProcessed['type'] !== 'openTag')
 							|| ($type === 'openTag' || $type === 'inlineTag') && ($prevOutputType === 'closeTag' || $prevOutputType === 'text' || ($prevOutputType === 'openTag' || $prevOutputType === 'inlineTag'))
-							|| $type === 'text' && (!$this->compressText || $this->compressText && ($prevOutputType === 'closeTag' || !$formatting || !$prevAllowedFormatting || $prevOutputType === 'inlineTag' || $prevOutputType === 'openTag' && $nextOutputType === 'openTag'))
-						)
+							|| $type === 'text' && (!$this->compressText || $this->compressText && (!$formatting || !$prevAllowedFormatting || $prevOutputType === 'closeTag' || $prevOutputType === 'inlineTag' || $prevOutputType === 'openTag' && ($nextOutputType === 'openTag' || $nextOutputType === 'macro')))
+							|| $type === 'macro' || $prevOutputType === 'macro')
 					)
 						$composedContent .= $lnBreak . $indentation;
 
@@ -578,11 +588,11 @@ class Compiler
 					$prevOutputLvl = $lvl;
 					$prevOutputType = $type;
 					$processedArraysKeys[] = $contentKey;
+
 				}
 				$composedContent .= $content;
 			}
 		}
-
 		return $composedContent;
 	}
 }

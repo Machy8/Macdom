@@ -9,5 +9,7 @@ $o = new Machy8\Macdom\Loaders\Loader;
 $o->setup->structureHtmlSkeleton = FALSE;
 
 function rewriteTest($testName, $loader) {
-	file_put_contents(TEMPLATES.'/'.$testName."-b.html", $loader->compile(file_get_contents(TEMPLATES.'/'.$testName.'-a.html')));
+	if(file_exists(TEMPLATES.'/'.$testName.'-b.html') && file_exists(TEMPLATES.'/'.$testName.'-a.html')) {
+		file_put_contents(TEMPLATES . '/' . $testName . "-b.html", $loader->compile(file_get_contents(TEMPLATES . '/' . $testName . '-a.html')));
+	}
 }

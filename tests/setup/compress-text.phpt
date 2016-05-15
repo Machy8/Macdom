@@ -4,10 +4,7 @@ use Tester\Assert;
 
 require '../bootstrap.php';
 
-$o->setup->ncaRegExpInlineTags = ['\<(?:skipthisarea) *[^>]*\>.*\<\/skipthisarea\>'];
-$o->setup->ncaRegExpOpenTags = ['\<(?:skipthisarea) *[^>]*\>'];
-$o->setup->ncaCloseTags = ['</skipthisarea>'];
-$o->setup->skipElements = 'table h6';
+$o->setup->skipElements = 'table h6 skipthisarea';
 $o->setup->compressText = TRUE;
 
 Assert::matchFile(
