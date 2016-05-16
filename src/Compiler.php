@@ -552,7 +552,7 @@ class Compiler
 							$nextKey = $contentKey;
 							while (TRUE) {
 								$nextKey++;
-								if ($this->contentQueue[$nextKey]['type'] === 'text') {
+								if (isset($this->contentQueue[$nextKey]) && $this->contentQueue[$nextKey]['type'] === 'text') {
 									$content .= $this->contentQueue[$nextKey]['content'];
 									$processedArraysKeys[] = $nextKey;
 								} else {
