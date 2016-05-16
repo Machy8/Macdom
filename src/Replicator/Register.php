@@ -53,7 +53,7 @@ class Register
 	{
 		return $this->register[$registerId];
 	}
-
+	
 	/**
 	 * @param int $lvl
 	 * @param string $el
@@ -76,8 +76,8 @@ class Register
 		}
 		if (!$registered || $registrationLn) {
 			$registerLvl = $this->registerLvl($el, $ln, $lvl);
-			$registered = $registerLvl['registered'];
-			$registerId = $registerLvl['registerId'];
+			$registered = $registerLvl ? TRUE : FALSE;
+			$registerId = $registerLvl;
 		}
 		return [
 			'registered' => $registered,
@@ -94,17 +94,12 @@ class Register
 	 */
 	private function registerLvl($el, $ln, $lvl)
 	{
-		$registered = FALSE;
 		$registerId = NULL;
 		if (preg_match('/^' . self::REG_EXP . '/', $el, $matches)) {
 			$registerId = $lvl;
 			$registerId .= $matches[1] ? '-' . $matches[1] : '';
 			$this->register[$registerId] = $ln;
-			$registered = TRUE;
 		}
-		return [
-			'registered' => $registered,
-			'registerId' => $registerId
-		];
+		return $registerId;
 	}
 }

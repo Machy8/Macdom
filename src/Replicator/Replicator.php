@@ -30,7 +30,7 @@ class Replicator extends Register
 	 */
 	public function detect($lvl, $element, $ln)
 	{
-		$replicate = $clearLn = FALSE;
+		$clearLn = FALSE;
 		$replacement = NULL;
 		if (preg_match('/^' . parent::REG_EXP . '/', $ln, $regLn)) {
 			$clearLn = TRUE;
@@ -40,9 +40,8 @@ class Replicator extends Register
 		if (!$deregister) {
 			$isRegistered = $this->isRegistered($lvl, $element, $ln, $regLn);
 			if ($isRegistered['registered'] && !$regLn) {
-				$replicate = TRUE;
 				$key = $isRegistered['key'];
-				$replacement = $key === TRUE
+				$replacement = $key
 					? $this->replicate($isRegistered['registerId'], $ln, $element, $key)
 					: $this->replicate($isRegistered['registerId'], $ln);
 			}
@@ -50,9 +49,8 @@ class Replicator extends Register
 			$clearLn = TRUE;
 		}
 		return [
-			'replicate' => $replicate,
 			'clearLn' => $clearLn,
-			'ln' => $replacement
+			'toReplicate' => $replacement
 		];
 	}
 

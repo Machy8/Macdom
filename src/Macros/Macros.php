@@ -20,18 +20,13 @@ class Macros extends CoreMacros
 	 * @param string $ln
 	 * @return array
 	 */
+	public function findMacro($macro) {
+		return array_key_exists($macro, $this->macros);
+	}
+	
 	public function replace($macro, $ln)
 	{
-		$replacement = NULL;
-		$exists = FALSE;
-		if (isset($this->macros[$macro])) {
-			$ln = trim(strstr($ln, ' '));
-			$replacement = call_user_func($this->macros[$macro], $ln);
-			$exists = TRUE;
-		}
-		return [
-			'exists' => $exists,
-			'replacement' => $replacement
-		];
+		$ln = trim(strstr($ln, ' '));
+		return call_user_func($this->macros[$macro], $ln);
 	}
 }

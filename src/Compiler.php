@@ -126,49 +126,34 @@ class Compiler
 			$txt = $this->getLnTxt($ln, TRUE);
 			$element = $this->getElement($txt);
 			$noCompileAreaTag = $this->detectNoCompileArea($ln, $element, $lvl);
-
+			$compilationAllowed = !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed;
+			if($noCompileAreaTag || $compilationAllowed && !$txt) continue;
+			
 			if ($this->structureHtmlSkeleton) {
-				if ($element === 'html') {
-					$lvl = 0;
-
-				} else {
-					$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
-				}
+				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
+				if ($element === 'html') $lvl = 0;
 			}
 
-			if (!$noCompileAreaTag) {
-				if ($txt && ltrim($txt) && !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed && !$this->Elements->findElement($element)) {
-					$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
-					if ($replicatorResult['replicate']) {
-						$txt = $this->getLnTxt($replicatorResult['ln']);
-						$element = $this->getElement($txt);
-					}
-					if ($replicatorResult['clearLn']) {
-						$txt = NULL;
-						$element = FALSE;
-					}
+			if ($compilationAllowed && $txt && !$this->Elements->findElement($element)) {
+				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
+				if ($replicatorResult['toReplicate']) {
+					$txt = $this->getLnTxt($replicatorResult['toReplicate']);
+					$element = $this->getElement($txt);
 				}
+				if ($replicatorResult['clearLn']) $txt = $element = NULL;
+			}
 
-				if (!$this->inNoCompileArea && !$this->skipRow && $this->Elements->findElement($element)) {
-					$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
-					$attributes = $this->processLn($clearedText);
-					$this->addOpenTag($element, $lvl, $attributes);
-				} elseif ($txt) {
-					$this->addCloseTags($lvl);
-					$content = $txt;
-					$type = 'text';
-					if (!$this->inNoCompileArea && !$this->skipRow) {
+			if ($compilationAllowed && $this->Elements->findElement($element)) {
+				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
+				$attributes = $this->processLn($clearedText);
+				$this->addOpenTag($element, $lvl, $attributes);
+			} elseif ($txt) {
+				$this->addCloseTags($lvl);
+				$macro = $compilationAllowed && $this->Macros->findMacro($element);
+				$content = $macro ? $this->Macros->replace($element, $txt) : $txt;
+				$type = $macro ? 'macro' : 'text';
 
-						$macro = $this->Macros->replace($element, $txt);
-						$macroExists = $macro['exists'];
-						if ($macroExists) {
-							$content = $macro['replacement'];
-							$type = 'macro';
-						}
-					}
-
-					$this->addToQueue($type, $content, $lvl);
-				}
+				$this->addToQueue($type, $content, $lvl);
 			}
 		}
 
@@ -209,8 +194,8 @@ class Compiler
 		$txt = ltrim($ln);
 
 		if ($clean) {
-			$txt = preg_replace('/ *' . self::AREA_TAG . '(?:-CONTENT)?/', '', $txt, 1);
-			$txt = preg_replace('/^\|{1}/', '', $txt, 1);
+			$find = ['/ *' . self::AREA_TAG . '(?:-CONTENT)?/', '/^\|{1}/'];
+			$txt = preg_replace($find, '', $txt, 1);
 		}
 
 		return $txt;
@@ -252,12 +237,10 @@ class Compiler
 			}
 		}
 
-		if (in_array($element, $this->skipElements) && $this->skippedElementLvl === NULL || $skipContent) {
+		if (in_array($element, $this->skipElements) && ($this->skippedElementLvl === NULL || $this->skippedElementLvl !== NULL && $lvl <= $this->skippedElementLvl) || $skipContent) {
 			$this->skippedElementLvl = $lvl;
 		} elseif ($this->skippedElementLvl !== NULL && $lvl > $this->skippedElementLvl || $skipRow) {
 			$this->skipRow = TRUE;
-		} elseif ($this->skippedElementLvl !== NULL && $lvl <= $this->skippedElementLvl && in_array($element, $this->skipElements)) {
-			$this->skippedElementLvl = $lvl;
 		} else {
 			$this->skippedElementLvl = NULL;
 		}
@@ -469,7 +452,7 @@ class Compiler
 			}
 		}
 		$this->addCloseTags($lvl);
-		$type = $elementSettings['paired'] ? "openTag" : "inlineTag";
+		$type = $elementSettings['paired'] ? 'openTag' : 'inlineTag';
 		$this->addToQueue($type, $openTag, $lvl);
 		// If the tag is paired add its close tag to the storage
 		if ($elementSettings['paired']) {
@@ -477,9 +460,8 @@ class Compiler
 			if ($txt) {
 				if ($preservedPhp) {
 					foreach ($preservedPhp as $key => $code) {
-						if ($code[0] && preg_match("/" . $phpMark . $key . "/", $txt)) {
+						if ($code[0] && preg_match("/" . $phpMark . $key . "/", $txt))
 							$txt = str_replace($phpMark . $key, $code[0], $txt);
-						}
 					}
 				}
 				$this->addToQueue('text', $txt, $lvl);
@@ -528,70 +510,68 @@ class Compiler
 	private function composeContent()
 	{
 		$composedContent = '';
-		$prevOutputType = NULL;
-		$prevOutputLvl = NULL;
-		$lastProcessed = NULL;
+		$prevOutputType = $prevOutputLvl = $lastProcessed = NULL;
 		$processedArraysKeys = [];
 		$lnBreak = $this->compressCode ? '' : "\n";
 
 		foreach ($this->contentQueue as $contentKey => $contentArr) {
-			if ($this->compressCode || !in_array($contentKey, $processedArraysKeys)) {
+			if (in_array($contentKey, $processedArraysKeys)) continue;
 
-				$content = $contentArr['content'];
+			$content = $contentArr['content'];
 
-				if (!$this->compressCode) {
-					$type = $contentArr['type'];
-					$lvl = $contentArr['lvl'];
-					$formatting = $contentArr['formatting'];
-					$prevAllowedFormatting = isset($this->contentQueue[$contentKey - 1]) ? $this->contentQueue[$contentKey - 1]['formatting'] : TRUE;
+			if (!$this->compressCode) {
+				$type = $contentArr['type'];
+				$lvl = $contentArr['lvl'];
+				$formatting = $contentArr['formatting'];
+				$prevAllowedFormatting = isset($this->contentQueue[$contentKey - 1]) ? $this->contentQueue[$contentKey - 1]['formatting'] : TRUE;
 
-					$lvl += $this->structureHtmlSkeleton && $lvl > 0 ? -1 : 0;
+				$lvl += $this->structureHtmlSkeleton && $lvl > 0 ? -1 : 0;
 
-					if ($formatting) {
-						if ($type === 'text' && $this->compressText) {
-							$nextKey = $contentKey;
-							while (TRUE) {
-								$nextKey++;
-								if (isset($this->contentQueue[$nextKey]) && $this->contentQueue[$nextKey]['type'] === 'text') {
-									$content .= $this->contentQueue[$nextKey]['content'];
-									$processedArraysKeys[] = $nextKey;
-								} else {
-									break;
-								}
-							}
-						}
-						if ($type === 'text') {
-							if (!$this->compressText && $lvl === $prevOutputLvl && $prevOutputType === 'openTag') {
-								$lvl++;
-							} elseif ($this->compressText && ($prevOutputType === 'text' && $prevAllowedFormatting || ($prevOutputType === 'openTag' || $prevOutputType === 'inlineTag'))) {
-								$lvl = $prevOutputLvl + 1;
-							}
+				if ($formatting) {
+					if ($type === 'text' && $this->compressText) {
+						$nextKey = $contentKey;
+						while (TRUE) {
+							$nextKey++;
+							
+							if (!isset($this->contentQueue[$nextKey]) || $this->contentQueue[$nextKey]['type'] !== 'text')
+								break;
+							
+							$content .= $this->contentQueue[$nextKey]['content'];
+							$processedArraysKeys[] = $nextKey;
+
 						}
 					}
-
-					$method = $this->outputIndentation === 'spaces' ? '    ' : "\t";
-					$indentation = str_repeat($method, $lvl);
-					$nextOutputKey = isset($nextKey) ? $nextKey : $contentKey + 1;
-					$nextOutputType = isset($this->contentQueue[$nextOutputKey]) ? $this->contentQueue[$nextOutputKey]['type'] : '';
-
-					// WTF condition for output formatting
-					if ($prevOutputType !== NULL && (
-							$type === 'closeTag' && ($prevOutputType === 'closeTag' || !$prevAllowedFormatting || !$this->compressText && $prevOutputType === 'text' || $prevOutputType === 'text' && $lastProcessed['type'] !== 'openTag')
-							|| ($type === 'openTag' || $type === 'inlineTag') && ($prevOutputType === 'closeTag' || $prevOutputType === 'text' || ($prevOutputType === 'openTag' || $prevOutputType === 'inlineTag'))
-							|| $type === 'text' && (!$this->compressText || $this->compressText && (!$formatting || !$prevAllowedFormatting || $prevOutputType === 'closeTag' || $prevOutputType === 'inlineTag' || $prevOutputType === 'openTag' && ($nextOutputType === 'openTag' || $nextOutputType === 'macro')))
-							|| $type === 'macro' || $prevOutputType === 'macro')
-					)
-						$composedContent .= $lnBreak . $indentation;
-
-					$lastProcessedKey = $contentKey > 0 ? $contentKey - 1 : 0;
-					$lastProcessed = $this->contentQueue[$lastProcessedKey];
-					$prevOutputLvl = $lvl;
-					$prevOutputType = $type;
-					$processedArraysKeys[] = $contentKey;
-
+					if ($type === 'text') {
+						if (!$this->compressText && $lvl === $prevOutputLvl && $prevOutputType === 'openTag') {
+							$lvl++;
+						} elseif ($this->compressText && ($prevOutputType === 'text' && $prevAllowedFormatting || ($prevOutputType === 'openTag' || $prevOutputType === 'inlineTag'))) {
+							$lvl = $prevOutputLvl + 1;
+						}
+					}
 				}
-				$composedContent .= $content;
+
+				$method = $this->outputIndentation === 'spaces' ? '    ' : "\t";
+				$indentation = str_repeat($method, $lvl);
+				$nextOutputKey = isset($nextKey) ? $nextKey : $contentKey + 1;
+				$nextOutputType = isset($this->contentQueue[$nextOutputKey]) ? $this->contentQueue[$nextOutputKey]['type'] : '';
+
+				// WTF condition for output formatting
+				if ($prevOutputType !== NULL && (
+						$type === 'closeTag' && ($prevOutputType === 'closeTag' || !$prevAllowedFormatting || !$this->compressText && $prevOutputType === 'text' || $prevOutputType === 'text' && $lastProcessed['type'] !== 'openTag')
+						|| ($type === 'openTag' || $type === 'inlineTag') && ($prevOutputType === 'closeTag' || $prevOutputType === 'text' || ($prevOutputType === 'openTag' || $prevOutputType === 'inlineTag'))
+						|| $type === 'text' && (!$this->compressText || $this->compressText && (!$formatting || !$prevAllowedFormatting || $prevOutputType === 'closeTag' || $prevOutputType === 'inlineTag' || $prevOutputType === 'openTag' && ($nextOutputType === 'openTag' || $nextOutputType === 'macro')))
+						|| $type === 'macro' || $prevOutputType === 'macro')
+				)
+					$composedContent .= $lnBreak . $indentation;
+
+				$lastProcessedKey = $contentKey > 0 ? $contentKey - 1 : 0;
+				$lastProcessed = $this->contentQueue[$lastProcessedKey];
+				$prevOutputLvl = $lvl;
+				$prevOutputType = $type;
+				$processedArraysKeys[] = $contentKey;
+
 			}
+			$composedContent .= $content;
 		}
 		return $composedContent;
 	}
