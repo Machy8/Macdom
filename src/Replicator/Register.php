@@ -59,7 +59,6 @@ class Register
 	protected function registerLvl($key, $lvl, $ln)
 	{
 		$registerId = $key ? $lvl . '-' . $key : $lvl . '-x';
-
 		$this->register[$registerId] = $ln;
 	}
 }

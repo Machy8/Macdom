@@ -35,16 +35,15 @@ class Replicator extends Register
 	public function detect($lvl, $element, $ln)
 	{
 		$clearLn = FALSE;
-		$replacement = FALSE;
-		preg_match('/^' . self::REG_EXP_C . '/', $element, $key);
-		if (preg_match('/^' . self::REG_EXP_C . '/', $element, $regLn)) {
+		$replacement = NULL;
+		if (preg_match('/^' . self::REG_EXP_C . '/', $element, $key)) {
 			$clearLn = TRUE;
 			$ln = preg_replace('/' . self::REG_EXP_C . '/', '', $ln, 1);
 			$key = $key && isset($key[1]) ? $key[1] : NULL;
 			$this->registerLvl($key, $lvl, $ln);
 		}
 
-		if (!preg_match('/^\/' . self::REG_EXP_C . '/', $element, $deregLn) && !$regLn) {
+		if (!preg_match('/^\/' . self::REG_EXP_C . '/', $element, $deregLn) && !$key) {
 			$regLn = $this->isRegistered($lvl, $element);
 			if ($regLn['ln']) {
 				if ($regLn['key']) $ln = preg_replace('/' . preg_quote($element) . '/', '', $ln, 1);
