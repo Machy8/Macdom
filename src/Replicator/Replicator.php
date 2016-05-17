@@ -20,7 +20,11 @@ class Replicator extends Register
 		REG_EXP_A = '/\[(.*?)\]/',
 
 		/** @const regular expression */
-		REG_EXP_B = '/\[\@\]/';
+		REG_EXP_B = '/\[\@\]/',
+
+		/** @const regular expression */
+		REG_EXP_C = '@([\S]*)';
+
 
 	/**
 	 * @param int $lvl
@@ -31,23 +35,26 @@ class Replicator extends Register
 	public function detect($lvl, $element, $ln)
 	{
 		$clearLn = FALSE;
-		$replacement = NULL;
-		if (preg_match('/^' . parent::REG_EXP . '/', $ln, $regLn)) {
+		$replacement = FALSE;
+		preg_match('/^' . self::REG_EXP_C . '/', $element, $key);
+		if (preg_match('/^' . self::REG_EXP_C . '/', $element, $regLn)) {
 			$clearLn = TRUE;
-			$ln = preg_replace('/' . preg_quote($element) . '/', '', $ln, 1);
+			$ln = preg_replace('/' . self::REG_EXP_C . '/', '', $ln, 1);
+			$key = $key && isset($key[1]) ? $key[1] : NULL;
+			$this->registerLvl($key, $lvl, $ln);
 		}
-		$deregister = $this->deregisterLvl($lvl, $element);
-		if (!$deregister) {
-			$isRegistered = $this->isRegistered($lvl, $element, $ln, $regLn);
-			if ($isRegistered['registered'] && !$regLn) {
-				$key = $isRegistered['key'];
-				$replacement = $key
-					? $this->replicate($isRegistered['registerId'], $ln, $element, $key)
-					: $this->replicate($isRegistered['registerId'], $ln);
+
+		if (!preg_match('/^\/' . self::REG_EXP_C . '/', $element, $deregLn) && !$regLn) {
+			$regLn = $this->isRegistered($lvl, $element);
+			if ($regLn['ln']) {
+				if ($regLn['key']) $ln = preg_replace('/' . preg_quote($element) . '/', '', $ln, 1);
+				$replacement = $this->synchronizeLines($ln, $regLn['ln']);
 			}
-		} else {
+		} elseif ($deregLn) {
 			$clearLn = TRUE;
+			$this->deregisterLvl($lvl, $deregLn[1]);
 		}
+
 		return [
 			'clearLn' => $clearLn,
 			'toReplicate' => $replacement
@@ -55,43 +62,20 @@ class Replicator extends Register
 	}
 
 	/**
-	 * @param string $regId
 	 * @param string $ln
-	 * @param string $element
-	 * @param bool $key
-	 * @return string $replicatedLn
+	 * @param string $regLn
+	 * @return string
 	 */
-	private function replicate($regId, $ln, $element = NULL, $key = FALSE)
+	private function synchronizeLines($ln, $regLn)
 	{
-		$contentArrays = preg_match_all(self::REG_EXP_A, $ln, $matches);
-		if ($key)
-			$ln = preg_replace('/' . preg_quote($element) . '/', '', $ln, 1);
-		$replicatedLn = $contentArrays
-			? $this->synchronizeLines($ln, $regId, $matches[1])
-			: $this->synchronizeLines($ln, $regId);
-		return $replicatedLn;
-	}
-
-	/**
-	 * @param string $ln
-	 * @param string $regId
-	 * @param array $matches
-	 * @return string $synchronizedLn
-	 */
-	private function synchronizeLines($ln, $regId, $matches = NULL)
-	{
-		$regLn = $this->getRegisteredLine($regId);
-		if ($matches) {
-			foreach ($matches as $match) {
-				$exists = preg_match(self::REG_EXP_B, $regLn);
-				if ($exists) {
-					$regLn = preg_replace(self::REG_EXP_B, $match, $regLn, 1);
-					$ln = ltrim(str_replace('[' . $match . ']', '', $ln));
-				} else {
-					break;
-				}
-			}
+		if (preg_match_all(self::REG_EXP_A, $ln, $matches)) {
+			$matches = $matches[1];
+			$regLn = preg_replace_callback(self::REG_EXP_B, function () use (&$matches) {
+				return array_shift($matches);
+			}, $regLn);
 		}
+
+		$ln = ltrim(preg_replace(self::REG_EXP_A, '', $ln));
 		$clear = preg_replace(self::REG_EXP_B, '', $regLn);
 		return trim($clear . $ln);
 	}

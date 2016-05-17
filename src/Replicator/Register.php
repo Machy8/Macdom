@@ -15,91 +15,51 @@ namespace Machy8\Macdom\Replicator;
 class Register
 {
 
-	/** @const regular expression */
-	const REG_EXP = '@([\S]*)';
-
 	/** @var array */
 	private $register = [];
 
 	/**
 	 * @param int $lvl
-	 * @param string $el
+	 * @param string $ln
 	 * @return bool
 	 */
-	protected function deregisterLvl($lvl, $el)
+	protected function deregisterLvl($lvl, $ln)
 	{
-		$unregistered = FALSE;
-		if (preg_match('/^\/' . self::REG_EXP . '/', $el, $matches)) {
-			$selected = $lvl;
-			if ($matches[1]) {
-				$selected = $lvl . '-' . $matches[1];
-				if (isset($this->register[$selected])) {
-					unset($this->register[$selected]);
-					$unregistered = TRUE;
-				}
-			} elseif (isset($this->register[$selected])) {
-				unset($this->register[$selected]);
-				$unregistered = TRUE;
-			}
-		}
-		return $unregistered;
+		$selected = $ln ? $lvl . '-' . $ln : $lvl . '-x';
+		if (isset($this->register[$selected])) unset($this->register[$selected]);
 	}
 
 	/**
-	 * @param string $registerId
-	 * @return string $registeredLine
+	 * @param $lvl
+	 * @param $el
+	 * @return mixed|null
 	 */
-	protected function getRegisteredLine($registerId)
+	protected function isRegistered($lvl, $el)
 	{
-		return $this->register[$registerId];
-	}
-	
-	/**
-	 * @param int $lvl
-	 * @param string $el
-	 * @param string $ln
-	 * @param string $registrationLn
-	 * @return array
-	 */
-	protected function isRegistered($lvl, $el, $ln, $registrationLn)
-	{
-		$registered = $key = FALSE;
-		$registerId = NULL;
-		if (!$registrationLn) {
-			if (array_key_exists($lvl . '-' . $el, $this->register)) {
-				$registered = $key = TRUE;
-				$registerId = $lvl . '-' . $el;
-			} elseif (array_key_exists($lvl, $this->register)) {
-				$registered = TRUE;
-				$registerId = $lvl;
-			}
+		$ln = NULL;
+		$key = FALSE;
+		if (array_key_exists($lvl . '-' . $el, $this->register)) {
+			$ln = $this->register[$lvl . '-' . $el];
+			$key = TRUE;
+		} elseif (array_key_exists($lvl . '-x', $this->register)) {
+			$ln = $this->register[$lvl . '-x'];
 		}
-		if (!$registered || $registrationLn) {
-			$registerLvl = $this->registerLvl($el, $ln, $lvl);
-			$registered = $registerLvl ? TRUE : FALSE;
-			$registerId = $registerLvl;
-		}
+
 		return [
-			'registered' => $registered,
-			'key' => $key,
-			'registerId' => $registerId
+			'ln' => $ln,
+			'key' => $key
 		];
 	}
 
 	/**
-	 * @param string $el
-	 * @param string $ln
+	 * @param string $key
 	 * @param int $lvl
-	 * @return array
+	 * @param string $ln
 	 */
-	private function registerLvl($el, $ln, $lvl)
+	protected function registerLvl($key, $lvl, $ln)
 	{
-		$registerId = NULL;
-		if (preg_match('/^' . self::REG_EXP . '/', $el, $matches)) {
-			$registerId = $lvl;
-			$registerId .= $matches[1] ? '-' . $matches[1] : '';
-			$this->register[$registerId] = $ln;
-		}
-		return $registerId;
+		$registerId = $key ? $lvl . '-' . $key : $lvl . '-x';
+
+		$this->register[$registerId] = $ln;
 	}
 }

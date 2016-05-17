@@ -127,8 +127,8 @@ class Compiler
 			$element = $this->getElement($txt);
 			$noCompileAreaTag = $this->detectNoCompileArea($ln, $element, $lvl);
 			$compilationAllowed = !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed;
-			if($noCompileAreaTag || $compilationAllowed && !$txt) continue;
-			
+			if ($noCompileAreaTag || $compilationAllowed && !$txt) continue;
+
 			if ($this->structureHtmlSkeleton) {
 				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
 				if ($element === 'html') $lvl = 0;
@@ -192,12 +192,10 @@ class Compiler
 	private function getLnTxt($ln, $clean = FALSE)
 	{
 		$txt = ltrim($ln);
-
 		if ($clean) {
 			$find = ['/ *' . self::AREA_TAG . '(?:-CONTENT)?/', '/^\|{1}/'];
 			$txt = preg_replace($find, '', $txt, 1);
 		}
-
 		return $txt;
 	}
 
@@ -532,10 +530,10 @@ class Compiler
 						$nextKey = $contentKey;
 						while (TRUE) {
 							$nextKey++;
-							
+
 							if (!isset($this->contentQueue[$nextKey]) || $this->contentQueue[$nextKey]['type'] !== 'text')
 								break;
-							
+
 							$content .= $this->contentQueue[$nextKey]['content'];
 							$processedArraysKeys[] = $nextKey;
 
