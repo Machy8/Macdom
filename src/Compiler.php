@@ -92,8 +92,8 @@ class Compiler
 		$this->ncaOpenTags = ['<?php', '<?', self::AREA_TAG];
 		$this->ncaCloseTags = ['?>', '/' . self::AREA_TAG];
 		$inlineOpenTags = join("|", array_filter($this->skipElements));
-		$this->ncaRegExpInlineTags = ['\<(?:\?|php) .*\?\>', '\<(?:' . $inlineOpenTags . ') *[^>]*\>.*\<\/(?:' . $inlineOpenTags . ')\>'];
-		$this->ncaRegExpOpenTags = ['\<(?:' . $inlineOpenTags . ') *[^\>]*\>'];
+		$this->ncaRegExpInlineTags = ['\<\?(?:php)? .*\?\>', '\<(?:' . $inlineOpenTags . ') *[^>]*\>.*\<\/(?:' . $inlineOpenTags . ')\>'];
+		$this->ncaRegExpOpenTags = ['\<(?:' . $inlineOpenTags . ') *[^\>]*\>', '\<\?(?:php)?'];
 		$this->outputIndentation = $setup->outputIndentation;
 
 		foreach ($this->skipElements as $element) {
@@ -262,7 +262,7 @@ class Compiler
 
 				if (!$matchedTag && !$this->inNoCompileArea) {
 					foreach ($this->ncaRegExpOpenTags as $tag) {
-						if (preg_match('/^\s*' . $tag . '/', $txt)) {
+						if (preg_match('/^\s*' . $tag . '.*/', $txt)) {
 							$matchedTag = $this->inNoCompileArea = TRUE;
 							break;
 						}
