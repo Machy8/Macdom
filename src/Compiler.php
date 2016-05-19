@@ -100,7 +100,8 @@ class Compiler
 			$this->ncaCloseTags[] = '</' . $element . '>';
 			$this->ncaOpenTags[] = '<' . $element . '>';
 		}
-
+		
+		$this->Elements->addQkAttributes($setup->addQkAttributes);
 		$this->Elements->addElements($setup->addElements);
 		$this->Elements->addBooleanAttributes($setup->addBooleanAttributes);
 		$this->Elements->removeBooleanAttributes($setup->removeBooleanAtributes);

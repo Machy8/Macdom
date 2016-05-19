@@ -20,6 +20,8 @@ class Setup
 	public $addElements = [];
 	/*** @var array */
 	public $addMacros = [];
+	/** @var array */
+	public $addQkAttributes = [];
 	/** @var bool */
 	public $booleansWithValue = FALSE;
 	/** @var array */
