@@ -310,14 +310,6 @@ class Compiler
 			$preservedPhp[] = $matches;
 		}
 
-		// Replace n$*; for n:href=""
-		$re = '/ n\$(.+);/';
-		if (preg_match($re, $txt, $matches)) {
-			$value = $matches[1] ?: $matches[2];
-			$newHref = ' n:href="' . $value . '"';
-			$txt = preg_replace($re, $newHref, $txt);
-		}
-
 		// Replace -*= for data-*=
 		$re = '/ -([\w-]+)+=/';
 		if (preg_match_all($re, $txt, $matches)) {
