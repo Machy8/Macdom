@@ -32,22 +32,22 @@ class Replicator extends Register
 	 * @param string $ln
 	 * @return array|bool
 	 */
-	public function detect($lvl, $element, $ln)
+	public function detect($lvl, $element, $txt)
 	{
 		$clearLn = FALSE;
 		$replacement = NULL;
 		if (preg_match('/^' . self::REG_EXP_C . '/', $element, $key)) {
 			$clearLn = TRUE;
-			$ln = preg_replace('/' . self::REG_EXP_C . '/', '', $ln, 1);
+			$txt = preg_replace('/' . self::REG_EXP_C . '/', '', $txt, 1);
 			$key = $key && isset($key[1]) ? $key[1] : NULL;
-			$this->registerLvl($key, $lvl, $ln);
+			$this->registerLvl($key, $lvl, $txt);
 		}
 
 		if (!preg_match('/^\/' . self::REG_EXP_C . '/', $element, $deregLn) && !$key) {
 			$regLn = $this->isRegistered($lvl, $element);
 			if ($regLn['ln']) {
-				if ($regLn['key']) $ln = preg_replace('/' . preg_quote($element) . '/', '', $ln, 1);
-				$replacement = $this->synchronizeLines($ln, $regLn['ln']);
+				if ($regLn['key']) $txt = preg_replace('/' . preg_quote($element) . '/', '', $txt, 1);
+				$replacement = $this->synchronizeLines($txt, $regLn['ln']);
 			}
 		} elseif ($deregLn) {
 			$clearLn = TRUE;

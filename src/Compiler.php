@@ -100,7 +100,7 @@ class Compiler
 			$this->ncaCloseTags[] = '</' . $element . '>';
 			$this->ncaOpenTags[] = '<' . $element . '>';
 		}
-		
+
 		$this->Elements->addQkAttributes($setup->addQkAttributes);
 		$this->Elements->addElements($setup->addElements);
 		$this->Elements->addBooleanAttributes($setup->addBooleanAttributes);
@@ -124,29 +124,32 @@ class Compiler
 
 		foreach ($lns as $ln) {
 			$lvl = $this->getLnLvl($ln);
-			$txt = $this->getLnTxt($ln, TRUE);
-			$element = $this->getElement($txt);
+			$element = $this->getElement($ln);
 			$noCompileAreaTag = $this->detectNoCompileArea($ln, $element, $lvl);
 			$compilationAllowed = !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed;
-			if ($noCompileAreaTag || $compilationAllowed && !$txt) continue;
+			if ($noCompileAreaTag || $compilationAllowed && !$ln) continue;
 
 			if ($this->structureHtmlSkeleton) {
 				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
 				if ($element === 'html') $lvl = 0;
 			}
 
-			if ($compilationAllowed && $txt && !$this->Elements->findElement($element)) {
-				$replicatorResult = $this->Replicator->detect($lvl, $element, $txt);
+			if ($compilationAllowed && $ln && !$this->Elements->findElement($element)) {
+				$ln = preg_replace('/\|{1}$/', '', $ln, 1);
+				$replicatorResult = $this->Replicator->detect($lvl, $element, $ln);
 				if ($replicatorResult['toReplicate']) {
-					$txt = $this->getLnTxt($replicatorResult['toReplicate']);
-					$element = $this->getElement($txt);
+					$ln = $replicatorResult['toReplicate'];
+					$element = $this->getElement($ln);
 				}
-				if ($replicatorResult['clearLn']) $txt = $element = NULL;
+				if ($replicatorResult['clearLn']) $ln = $element = NULL;
 			}
+			
+			$processElement = $compilationAllowed && $this->Elements->findElement($element);
+			// if compilation allowed => remove "|" if exists on the begining of the line
+			$txt = $this->getLnTxt($ln, $compilationAllowed, $processElement);
 
-			if ($compilationAllowed && $this->Elements->findElement($element)) {
-				$clearedText = preg_replace('/' . $element . '/', '', $txt, 1);
-				$attributes = $this->processLn($clearedText);
+			if ($processElement) {
+				$attributes = $this->processLn($txt);
 				$this->addOpenTag($element, $lvl, $attributes);
 			} elseif ($txt) {
 				$this->addCloseTags($lvl);
@@ -188,15 +191,19 @@ class Compiler
 	/**
 	 * @param string $ln
 	 * @param bool $clean
+	 * @param bool $elementExists
 	 * @return string
 	 */
-	private function getLnTxt($ln, $clean = FALSE)
+	private function getLnTxt($ln, $clean = FALSE, $elementExists = FALSE)
 	{
+		$find = ['/ *' . self::AREA_TAG . '(?:-CONTENT)?/'];
 		$txt = ltrim($ln);
-		if ($clean) {
-			$find = ['/ *' . self::AREA_TAG . '(?:-CONTENT)?/', '/^\|{1}/'];
-			$txt = preg_replace($find, '', $txt, 1);
-		}
+		
+		if ($elementExists) $txt = strstr($txt, " ");
+		if ($clean) $find[] = '/^\|{1}/';
+
+		$txt = preg_replace($find, '', $txt, 1);
+		
 		return $txt;
 	}
 
@@ -532,6 +539,7 @@ class Compiler
 
 						}
 					}
+					
 					if ($type === 'text') {
 						if (!$this->compressText && $lvl === $prevOutputLvl && $prevOutputType === 'openTag') {
 							$lvl++;
