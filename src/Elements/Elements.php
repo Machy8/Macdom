@@ -49,19 +49,19 @@ class Elements extends ElementsSettings
 		}
 	}
 
-	/** @param string $elements */
+	/** @param array $elements */
 	public function addQkAttributes($elements)
 	{
 		if ($elements) {
 			foreach ($elements as $element => $attributes) {
-				if(!$attributes || !is_string($attributes)) continue;
-				
-				if (!array_key_exists($element, $this->elementsSettings)) 
+				if (!$attributes || !is_string($attributes)) continue;
+
+				if (!array_key_exists($element, $this->elementsSettings))
 					$this->elementsSettings[] = $element;
-				
-				if (!array_key_exists('qkAttributes', $this->elementsSettings[$element])) 
+
+				if (!array_key_exists('qkAttributes', $this->elementsSettings[$element]))
 					$this->elementsSettings[$element]['qkAttributes'] = [];
-				
+
 				if (array_key_exists($element, $this->elementsSettings)) {
 					$newAttributes = explode(' ', $attributes);
 					$this->elementsSettings[$element]['qkAttributes'] = array_merge($this->elementsSettings[$element]['qkAttributes'], $newAttributes);

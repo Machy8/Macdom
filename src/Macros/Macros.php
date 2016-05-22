@@ -24,9 +24,15 @@ class Macros extends CoreMacros
 		return array_key_exists($macro, $this->macros);
 	}
 
-	public function replace($macro, $ln)
+	/**
+	 * @param string $macro
+	 * @param string $ln
+	 * @param bool $clean
+	 * @return string
+	 */
+	public function replace($macro, $ln, $clean = TRUE)
 	{
-		$ln = trim(strstr($ln, ' '));
+		if ($clean) $ln = trim(strstr($ln, ' '));
 		return call_user_func($this->macros[$macro], $ln);
 	}
 }

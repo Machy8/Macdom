@@ -143,9 +143,9 @@ class Compiler
 				}
 				if ($replicatorResult['clearLn']) $ln = $element = NULL;
 			}
-			
+
 			$processElement = $compilationAllowed && $this->Elements->findElement($element);
-			// if compilation allowed => remove "|" if exists on the begining of the line
+			// if compilation allowed => remove "|" if exists on the beginning of the line
 			$txt = $this->getLnTxt($ln, $compilationAllowed, $processElement);
 
 			if ($processElement) {
@@ -153,8 +153,10 @@ class Compiler
 				$this->addOpenTag($element, $lvl, $attributes);
 			} elseif ($txt) {
 				$this->addCloseTags($lvl);
+
+				if (preg_match('/\.((?:css|js))$/', $this->getElement(trim($txt)), $isJsCss)) $element = $isJsCss[1];
 				$macro = $compilationAllowed && $this->Macros->findMacro($element);
-				$content = $macro ? $this->Macros->replace($element, $txt) : $txt;
+				$content = $macro ? $this->Macros->replace($element, $txt, !$isJsCss) : $txt;
 				$type = $macro ? 'macro' : 'text';
 
 				$this->addToQueue($type, $content, $lvl);
@@ -198,12 +200,12 @@ class Compiler
 	{
 		$find = ['/ *' . self::AREA_TAG . '(?:-CONTENT)?/'];
 		$txt = ltrim($ln);
-		
+
 		if ($elementExists) $txt = strstr($txt, " ");
 		if ($clean) $find[] = '/^\|{1}/';
 
 		$txt = preg_replace($find, '', $txt, 1);
-		
+
 		return $txt;
 	}
 
@@ -539,7 +541,7 @@ class Compiler
 
 						}
 					}
-					
+
 					if ($type === 'text') {
 						if (!$this->compressText && $lvl === $prevOutputLvl && $prevOutputType === 'openTag') {
 							$lvl++;
