@@ -8,35 +8,35 @@ require '../bootstrap.php';
 Assert::exception(function(){
 	$s = new Setup;
 	$checker = new SetupChecker($s);
-	$s->setup->addBooleanAttributes = TRUE;
-	$checker->check($s->setup);
+	$s->addBooleanAttributes = TRUE;
+	$checker->check($s);
 }, 'Exception', 'Variable $addBooleanAttributes must have a STRING value.');
 
 Assert::exception(function(){
 	$s = new Setup;
 	$checker = new SetupChecker($s);
-	$s->setup->addElements = TRUE;
-	$checker->check($s->setup);
+	$s->addElements = TRUE;
+	$checker->check($s);
 }, 'Exception', 'Variable $addElements must have an ARRAY value.');
 
 Assert::exception(function(){
 	$s = new Setup;
 	$checker = new SetupChecker($s);
-	$s->setup->booleansWithValue = "";
-	$checker->check($s->setup);
+	$s->booleansWithValue = "";
+	$checker->check($s);
 }, 'Exception', 'Variable $booleansWithValue must have a BOOLEAN value.');
 
 Assert::exception(function(){
 	$s = new Setup;
 	$checker = new SetupChecker($s);
-	$s->setup->indentMethod = 10;
-	$checker->check($s->setup);
+	$s->indentMethod = 10;
+	$checker->check($s);
 }, 'Exception', 'Variable $indentMethod has illegal value. Options are: 1, 2, 3.');
 
 
 Assert::exception(function(){
 	$s = new Setup;
 	$checker = new SetupChecker($s);
-	$s->setup->outputIndentation = "hamburger";
-	$checker->check($s->setup);
+	$s->outputIndentation = "hamburger";
+	$checker->check($s);
 }, 'Exception', 'Variable $outputIndentation has illegal value. Options are: spaces, tabs.');

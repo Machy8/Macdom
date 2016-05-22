@@ -57,7 +57,7 @@ class Elements extends ElementsSettings
 				if (!$attributes || !is_string($attributes)) continue;
 
 				if (!array_key_exists($element, $this->elementsSettings))
-					$this->elementsSettings[] = $element;
+					$this->elementsSettings[$element] = [];
 
 				if (!array_key_exists('qkAttributes', $this->elementsSettings[$element]))
 					$this->elementsSettings[$element]['qkAttributes'] = [];
