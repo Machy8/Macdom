@@ -26,17 +26,17 @@ $testedG = "div\n    div\n    \tdiv";
 $resultG = '<div><div><div></div></div></div>';
 
 $o->setup->compressCode = TRUE;
-$o->setup->indentMethod = 1;
+$o->setup->indentMethod = 'spaces';
 
 Assert::same($resultA, $o->compile($testedA));
 Assert::same($resultB, $o->compile($testedB));
 
-$o->setup->indentMethod = 2;
+$o->setup->indentMethod = 'tabs';
 
 Assert::same($resultC, $o->compile($testedC));
 Assert::same($resultD, $o->compile($testedD));
 
-$o->setup->indentMethod = 3;
+$o->setup->indentMethod = 'combined';
 
 Assert::same($resultE, $o->compile($testedE));
 Assert::same($resultF, $o->compile($testedF));

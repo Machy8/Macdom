@@ -155,12 +155,12 @@ class Compiler
 		preg_match('/^\s+/', $ln, $matches);
 		$whites = $matches ? $matches[0] : 0;
 		// Only for spaces and combined method
-		$spaces = $method === 1 || $method === 3 ? preg_match_all('/ {' . $this->Setup->spacesPerIndent . '}/', $whites) : 0;
+		$spaces = $method === 'spaces' || $method === 'combined' ? preg_match_all('/ {' . $this->Setup->spacesPerIndent . '}/', $whites) : 0;
 
 		// Only for tabulators and combined method
-		$tabulators = $method === 2 || $method === 3 ? preg_match_all('/\t/', $whites) : 0;
+		$tabulators = $method === 'tabs' || $method === 'combined' ? preg_match_all('/\t/', $whites) : 0;
 
-		if ($method === 3)
+		if ($method === 'combined')
 			$tabulators *= 2;
 
 		return $spaces + $tabulators;

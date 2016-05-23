@@ -29,9 +29,9 @@ Assert::exception(function(){
 Assert::exception(function(){
 	$s = new Setup;
 	$checker = new SetupChecker($s);
-	$s->indentMethod = 10;
+	$s->indentMethod = 'someMethod';
 	$checker->check($s);
-}, 'Exception', 'Variable $indentMethod has illegal value. Options are: 1, 2, 3.');
+}, 'Exception', 'Variable $indentMethod has illegal value. Options are: spaces, tabs, combined.');
 
 
 Assert::exception(function(){

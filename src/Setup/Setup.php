@@ -33,7 +33,7 @@ class Setup
 	/** @var bool */
 	public $compressText = FALSE;
 	/** @var int */
-	public $indentMethod = 3;
+	public $indentMethod = 'combined';
 	/** @var string */
 	public $outputIndentation = "tabs";
 	/** @var bool */
