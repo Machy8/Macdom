@@ -57,8 +57,7 @@ class Compiler
 	 */
 	public function __construct($setup)
 	{
-		if ($setup->preferXhtml)
-			$setup->closeSelfClosingTags = $setup->booleansWithValue = TRUE;
+		if ($setup->preferXhtml) $setup->closeSelfClosingTags = $setup->booleansWithValue = TRUE;
 
 		$this->ncaSkipElements = array_merge(['script', 'style', 'textarea', 'code'], explode(' ', $setup->skipElements));
 		$this->ncaOpenTags = ['<?php', '<?', self::AREA_TAG];
@@ -177,8 +176,7 @@ class Compiler
 		// Only for tabulators and combined method
 		$tabulators = $method === 'tabs' || $method === 'combined' ? preg_match_all('/\t/', $whites) : 0;
 
-		if ($method === 'combined')
-			$tabulators *= 2;
+		if ($method === 'combined') $tabulators *= 2;
 
 		return $spaces + $tabulators;
 	}
@@ -223,8 +221,7 @@ class Compiler
 		$txt = trim($txt);
 		$skipContent = $skipRow = FALSE;
 
-		if ($this->skipRow)
-			$this->skipRow = $this->inNoCompileArea = FALSE;
+		if ($this->skipRow) $this->skipRow = $this->inNoCompileArea = FALSE;
 
 		$areaClosed = !$this->inNoCompileArea;
 
@@ -334,8 +331,7 @@ class Compiler
 		if ($idSelector && !preg_match('/ id="[^"]+"|  id=\'[^\']+\'| id=[\S]+/', $htmlAttributes))
 			$htmlAttributes .= ' id="' . $matches[1] . '"';
 
-		if ($idSelector)
-			$txt = preg_replace($re, '', $txt);
+		if ($idSelector) $txt = preg_replace($re, '', $txt);
 
 		// Get all class selectors
 		$re = '/ \.(\S+)/';
@@ -517,34 +513,19 @@ class Compiler
 				$formatting = $contentArr['formatting'];
 				$prevAllowedFormatting = isset($this->contentQueue[$contentKey - 1]) ? $this->contentQueue[$contentKey - 1]['formatting'] : TRUE;
 
-				$lvl += $this->Setup->structureHtmlSkeleton && $lvl > 0 ? -1 : 0;
+				if ($formatting && $type === 'text' && $this->Setup->compressText) {
+					$nextKey = $contentKey;
+					while (TRUE) {
+						$nextKey++;
 
-				if ($formatting) {
-					if ($type === 'text' && $this->Setup->compressText) {
-						$nextKey = $contentKey;
-						while (TRUE) {
-							$nextKey++;
+						if (!isset($this->contentQueue[$nextKey]) || $this->contentQueue[$nextKey]['type'] !== 'text') break;
 
-							if (!isset($this->contentQueue[$nextKey]) || $this->contentQueue[$nextKey]['type'] !== 'text')
-								break;
+						$content .= $this->contentQueue[$nextKey]['content'];
+						$processedArraysKeys[] = $nextKey;
 
-							$content .= $this->contentQueue[$nextKey]['content'];
-							$processedArraysKeys[] = $nextKey;
-
-						}
-					}
-
-					if ($type === 'text') {
-						if (!$this->Setup->compressText && $lvl === $prevOutputLvl && $prevOutputType === 'openTag') {
-							$lvl++;
-						} elseif ($this->Setup->compressText && ($prevOutputType === 'text' && $prevAllowedFormatting || ($prevOutputType === 'openTag' || $prevOutputType === 'inlineTag'))) {
-							$lvl = $prevOutputLvl + 1;
-						}
 					}
 				}
 
-				$method = $this->Setup->outputIndentation === 'spaces' ? '    ' : "\t";
-				$indentation = str_repeat($method, $lvl);
 				$nextOutputKey = isset($nextKey) ? $nextKey : $contentKey + 1;
 				$nextOutputType = isset($this->contentQueue[$nextOutputKey]) ? $this->contentQueue[$nextOutputKey]['type'] : '';
 
@@ -552,10 +533,23 @@ class Compiler
 				if ($prevOutputType !== NULL && (
 						$type === 'closeTag' && ($prevOutputType === 'closeTag' || $prevOutputType === 'inlineTag' || !$prevAllowedFormatting || $prevOutputType === 'text' && (!$this->Setup->compressText || $lastProcessed['type'] !== 'openTag'))
 						|| ($type === 'openTag' || $type === 'inlineTag') && ($prevOutputType === 'closeTag' || $prevOutputType === 'text' || ($prevOutputType === 'openTag' || $prevOutputType === 'inlineTag'))
-						|| $type === 'text' && (!$this->Setup->compressText || $this->Setup->compressText && (!$formatting || !$prevAllowedFormatting || $prevOutputType === 'closeTag' || $prevOutputType === 'inlineTag' || $prevOutputType === 'openTag' && ($nextOutputType === 'openTag' || $nextOutputType === 'macro')))
+						|| $type === 'text' && (!$this->Setup->compressText || $this->Setup->compressText && (!$formatting || !$prevAllowedFormatting || $prevOutputType === 'closeTag' || $prevOutputType === 'inlineTag' || $prevOutputType === 'openTag' && ($nextOutputType === 'openTag' || $nextOutputKey === 'inlineTag' || $nextOutputType === 'macro')))
 						|| $type === 'macro' || $prevOutputType === 'macro')
-				)
+				) {
+					$lvl += $this->Setup->structureHtmlSkeleton && $lvl > 0 ? -1 : 0;
+
+					if ($formatting && $type === 'text') {
+						if (!$this->Setup->compressText && $lvl === $prevOutputLvl && $prevOutputType === 'openTag') {
+							$lvl++;
+						} elseif ($this->Setup->compressText && ($prevOutputType === 'text' && $prevAllowedFormatting || $prevOutputType === 'openTag')) {
+							$lvl = $prevOutputLvl + 1;
+						}
+					}
+
+					$method = $this->Setup->outputIndentation === 'spaces' ? '    ' : "\t";
+					$indentation = str_repeat($method, $lvl);
 					$composedContent .= $lnBreak . $indentation;
+				}
 
 				$lastProcessedKey = $contentKey > 0 ? $contentKey - 1 : 0;
 				$lastProcessed = $this->contentQueue[$lastProcessedKey];
