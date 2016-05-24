@@ -27,12 +27,11 @@ class Macros extends CoreMacros
 	/**
 	 * @param string $macro
 	 * @param string $ln
-	 * @param bool $clean
 	 * @return string
 	 */
-	public function replace($macro, $ln, $clean = TRUE)
+	public function replace($macro, $ln)
 	{
-		if ($clean) $ln = trim(strstr($ln, ' '));
+		$ln = trim(strstr($ln, ' '));
 		return call_user_func($this->macros[$macro], $ln);
 	}
 }

@@ -129,13 +129,30 @@ class Compiler
 				$this->addOpenTag($element, $lvl, $attributes);
 			} elseif ($txt) {
 				$this->addCloseTags($lvl);
+				$isJsCssLink = $this->getElement($txt);
+				if ($compilationAllowed && preg_match('/\.((?:css|js))$/', $isJsCssLink, $isJsCss)) {
+					if ($isJsCss[1] === "css") {
+						$element = "link";
+						$attr = "href";
+						$type = 'rel="stylesheet" type="text/css"';
+					} else {
+						$element = "script";
+						$attr = "src";
+						$type = 'type="text/javascript"';
+					}
+					$txt = $this->getLnTxt($txt, TRUE, TRUE);
+					$txt = ' ' . $type . ' ' . $attr . '="' . $isJsCssLink . '"' . $txt;
+					$attributes = $this->processLn($txt);
+					$attributes['txt'] = NULL;
+					$this->addOpenTag($element, $lvl, $attributes);
 
-				if ($compilationAllowed && preg_match('/\.((?:css|js))$/', $this->getElement(trim($txt)), $isJsCss)) $element = $isJsCss[1];
-				$macro = $compilationAllowed && $this->Macros->findMacro($element);
-				$content = $macro ? $this->Macros->replace($element, $txt, !$isJsCss) : $txt;
-				$type = $macro ? 'macro' : 'text';
+				} else {
+					$macro = $compilationAllowed && $this->Macros->findMacro($element);
+					$content = $macro ? $this->Macros->replace($element, $txt) : $txt;
+					$type = $macro ? 'macro' : 'text';
 
-				$this->addToQueue($type, $content, $lvl);
+					$this->addToQueue($type, $content, $lvl);
+				}
 			}
 		}
 
@@ -489,7 +506,6 @@ class Compiler
 		$prevOutputType = $prevOutputLvl = $lastProcessed = NULL;
 		$processedArraysKeys = [];
 		$lnBreak = $this->Setup->compressCode ? '' : "\n";
-
 		foreach ($this->contentQueue as $contentKey => $contentArr) {
 			if (in_array($contentKey, $processedArraysKeys)) continue;
 
@@ -534,7 +550,7 @@ class Compiler
 
 				// WTF condition for output formatting
 				if ($prevOutputType !== NULL && (
-						$type === 'closeTag' && ($prevOutputType === 'closeTag' || !$prevAllowedFormatting || !$this->Setup->compressText && $prevOutputType === 'text' || $prevOutputType === 'text' && $lastProcessed['type'] !== 'openTag')
+						$type === 'closeTag' && ($prevOutputType === 'closeTag' || $prevOutputType === 'inlineTag' || !$prevAllowedFormatting || $prevOutputType === 'text' && (!$this->Setup->compressText || $lastProcessed['type'] !== 'openTag'))
 						|| ($type === 'openTag' || $type === 'inlineTag') && ($prevOutputType === 'closeTag' || $prevOutputType === 'text' || ($prevOutputType === 'openTag' || $prevOutputType === 'inlineTag'))
 						|| $type === 'text' && (!$this->Setup->compressText || $this->Setup->compressText && (!$formatting || !$prevAllowedFormatting || $prevOutputType === 'closeTag' || $prevOutputType === 'inlineTag' || $prevOutputType === 'openTag' && ($nextOutputType === 'openTag' || $nextOutputType === 'macro')))
 						|| $type === 'macro' || $prevOutputType === 'macro')
