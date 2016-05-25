@@ -154,7 +154,7 @@ class Compiler
 				}
 			}
 		}
-
+		unset($lns);
 		$this->addCloseTags(0);
 
 		$composedContent = $this->composeContent();
@@ -522,7 +522,6 @@ class Compiler
 
 						$content .= $this->contentQueue[$nextKey]['content'];
 						$processedArraysKeys[] = $nextKey;
-
 					}
 				}
 
