@@ -30,7 +30,8 @@ class ElementsSettings extends ElementsList
 			'qkAttributes' => ['src']
 		],
 		'base' => [
-			'unpaired'
+			'unpaired',
+			'qkAttributes' => ['href']
 		],
 		'bdo' => [
 			'qkAttributes' => ['dir']

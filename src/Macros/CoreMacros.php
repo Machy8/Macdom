@@ -35,21 +35,29 @@ class CoreMacros extends MacrosInstaller
 		});
 
 		$this->addMacro('keywords', function ($line) {
-			return '<meta name="Keywords" content="' . $line . '">';
+			return '<meta name="keywords" content="' . $line . '">';
 		});
 
 		$this->addMacro('description', function ($line) {
-			return '<meta name="Description" content="' . $line . '">';
+			return '<meta name="description" content="' . $line . '">';
 		});
 
 		$this->addMacro('author', function ($line) {
-			return '<meta name="Author" content="' . $line . '">';
+			return '<meta name="author" content="' . $line . '">';
 		});
 
 		$this->addMacro('viewport', function ($line) {
 			return '<meta name="viewport" content="' . $line . '">';
 		});
 
+		$this->addMacro('index-follow', function() {
+			return '<meta name="robots" content="index, follow">';
+		});
+
+		$this->addMacro('no-index-follow', function() {
+			return '<meta name="robots" content="noindex, nofollow">';
+		});
+		
 		$this->addMacro('fb', function ($line) {
 			$selected = strtok($line, " ");
 			$content = preg_replace("/" . $selected . " /", "", $line);
