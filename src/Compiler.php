@@ -65,10 +65,10 @@ class Compiler
 	{
 		if ($setup->preferXhtml) $setup->closeSelfClosingTags = $setup->booleansWithValue = TRUE;
 
-		$this->ncaSkipElements = array_merge(['script', 'style', 'textarea', 'code'], explode(' ', $setup->skipElements));
+		$this->ncaSkipElements = array_filter(array_merge(['script', 'style', 'textarea', 'code'], explode(' ', $setup->skipElements)));
 		$this->ncaOpenTags = ['<?php', '<?', self::AREA_TAG];
 		$this->ncaCloseTags = ['?>', '/' . self::AREA_TAG];
-		$inlineOpenTags = join("|", array_filter($this->ncaSkipElements));
+		$inlineOpenTags = join("|", $this->ncaSkipElements);
 		$this->ncaRegExpInlineTags = ['\<\?(?:php)? .*\?\>', '\<(?:' . $inlineOpenTags . ') *[^>]*\>.*\<\/(?:' . $inlineOpenTags . ')\>'];
 		$this->ncaRegExpOpenTags = ['\<(?:' . $inlineOpenTags . ') *[^\>]*\>', '\<\?(?:php)?'];
 
@@ -152,7 +152,6 @@ class Compiler
 					$macro = $compilationAllowed && $this->Macros->findMacro($element);
 					$content = $macro ? $this->Macros->replace($element, $txt) : $txt;
 					$type = $macro ? 'macro' : 'text';
-
 					$this->addToQueue($type, $content, $lvl);
 				}
 			}
@@ -237,7 +236,7 @@ class Compiler
 				$skipContent = TRUE;
 			}
 		}
-
+		
 		if (in_array($element, $this->ncaSkipElements) && ($this->skippedElementLvl === NULL || $this->skippedElementLvl !== NULL && $lvl <= $this->skippedElementLvl) || $skipContent) {
 			$this->skippedElementLvl = $lvl;
 		} elseif ($this->skippedElementLvl !== NULL && $lvl > $this->skippedElementLvl || $skipRow) {
@@ -245,7 +244,6 @@ class Compiler
 		} else {
 			$this->skippedElementLvl = NULL;
 		}
-
 		if (!$this->skippedElementLvl) {
 			if (in_array(trim($txt), $this->ncaOpenTags)) {
 				$this->inNoCompileArea = TRUE;
@@ -253,7 +251,6 @@ class Compiler
 				$this->inNoCompileArea = FALSE;
 			} else {
 				$matchedTag = FALSE;
-
 				if (!$this->inNoCompileArea) {
 					foreach ($this->ncaRegExpInlineTags as $tag) {
 						if (preg_match('/^\s*' . $tag . '/', $txt)) {
@@ -262,7 +259,6 @@ class Compiler
 						}
 					}
 				}
-
 				if (!$matchedTag && !$this->inNoCompileArea) {
 					foreach ($this->ncaRegExpOpenTags as $tag) {
 						if (preg_match('/^\s*' . $tag . '.*/', $txt)) {
@@ -489,7 +485,6 @@ class Compiler
 			'lvl' => $lvl,
 			'formatting' => $formatting
 		];
-
 		if ($type === 'text' && $this->Setup->compressText && $formatting && isset($this->outputQueue[$lastKey]) && $this->outputQueue[$lastKey]['type'] === 'text' && $this->outputQueue[$lastKey]['formatting']) {
 			$this->outputQueue[$lastKey]['content'] .= $content;
 			return;

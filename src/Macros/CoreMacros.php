@@ -47,7 +47,10 @@ class CoreMacros extends MacrosInstaller
 		});
 
 		$this->addMacro('viewport', function ($line) {
-			return '<meta name="viewport" content="' . $line . '">';
+			$viewport = '<meta name="viewport" content="';
+			$viewport .= !empty($line) ? $line : 'width=device-width, initial-scale=1';
+			$viewport .= '">';
+			return $viewport;
 		});
 
 		$this->addMacro('index-follow', function() {
