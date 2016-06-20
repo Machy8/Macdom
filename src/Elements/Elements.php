@@ -16,79 +16,79 @@ class Elements extends ElementsSettings
 {
 
 	/** @param array $attributes */
-	public function addBooleanAttributes($attributes)
+	public function addBooleanAttributes ($attributes)
 	{
 		if ($attributes) {
-			$attributes = explode(' ', $attributes);
-			$this->booleanAttributes = array_merge($this->booleanAttributes, $attributes);
+			$attributes = explode (' ', $attributes);
+			$this->booleanAttributes = array_merge ($this->booleanAttributes, $attributes);
 		}
 	}
 
 	/** @param array $elements */
-	public function addElements($elements)
+	public function addElements ($elements)
 	{
 		if ($elements) {
 			foreach ($elements as $element => $settings) {
 				$settingsExists = TRUE;
-				if (is_integer($element)) {
+
+				if (is_integer ($element)) {
 					$settingsExists = FALSE;
 					$element = $settings;
 				}
 
-				if (!in_array($element, $this->elements))
-					$this->elements[] = $element;
+				if (!in_array ($element, $this->elements)) $this->elements[] = $element;
 
 				if ($settingsExists) {
-					if (!isset($this->elementsSettings[$element]))
-						$this->elementsSettings[] = $element;
+					if (!isset($this->elementsSettings[$element])) $this->elementsSettings[] = $element;
 
-					if ($settings)
-						$this->elementsSettings[$element] = $settings;
+					if ($settings) $this->elementsSettings[$element] = $settings;
 				}
 			}
 		}
 	}
 
 	/** @param array $elements */
-	public function addQkAttributes($elements)
+	public function addQkAttributes ($elements)
 	{
 		if ($elements) {
 			foreach ($elements as $element => $attributes) {
-				if (!$attributes || !is_string($attributes)) continue;
+				if (!$attributes || !is_string ($attributes)) continue;
 
-				if (!array_key_exists($element, $this->elementsSettings))
-					$this->elementsSettings[$element] = [];
+				if (!array_key_exists ($element, $this->elementsSettings)) $this->elementsSettings[$element] = [];
 
-				if (!array_key_exists('qkAttributes', $this->elementsSettings[$element]))
-					$this->elementsSettings[$element]['qkAttributes'] = [];
+				if (!array_key_exists ('qkAttributes', $this->elementsSettings[$element])) $this->elementsSettings[$element]['qkAttributes'] = [];
 
-				if (array_key_exists($element, $this->elementsSettings)) {
-					$newAttributes = explode(' ', $attributes);
-					$this->elementsSettings[$element]['qkAttributes'] = array_merge($this->elementsSettings[$element]['qkAttributes'], $newAttributes);
+				if (array_key_exists ($element, $this->elementsSettings)) {
+					$newAttributes = explode (' ', $attributes);
+					$this->elementsSettings[$element]['qkAttributes'] = array_merge ($this->elementsSettings[$element]['qkAttributes'], $newAttributes);
 				}
 			}
 		}
 	}
 
 	/** @param array $elements */
-	public function changeQkAttributes($elements)
+	public function changeQkAttributes ($elements)
 	{
 		if ($elements) {
 			$removeAttributes = [];
+
 			foreach ($elements as $element => $attributes) {
 				foreach ($attributes as $actAttribute => $newAttribute) {
-					if (array_key_exists($element, $this->elementsSettings) && array_key_exists('qkAttributes', $this->elementsSettings[$element]) && in_array($actAttribute, $this->elementsSettings[$element]['qkAttributes'])) {
+					if (array_key_exists ($element, $this->elementsSettings) && array_key_exists ('qkAttributes', $this->elementsSettings[$element])
+						&& in_array ($actAttribute, $this->elementsSettings[$element]['qkAttributes'])) {
+
 						if ($newAttribute) {
-							$attrKey = array_search($actAttribute, $this->elementsSettings[$element]['qkAttributes']);
+							$attrKey = array_search ($actAttribute, $this->elementsSettings[$element]['qkAttributes']);
 							$this->elementsSettings[$element]['qkAttributes'][$attrKey] = $newAttribute;
+
 						} else {
 							$removeAttributes[] = $actAttribute;
 						}
 					}
 				}
-				if ($removeAttributes) {
-					$this->elementsSettings[$element]['qkAttributes'] = array_diff($this->elementsSettings[$element]['qkAttributes'], $removeAttributes);
-				}
+
+				if ($removeAttributes)
+					$this->elementsSettings[$element]['qkAttributes'] = array_diff ($this->elementsSettings[$element]['qkAttributes'], $removeAttributes);
 			}
 		}
 	}
@@ -98,11 +98,12 @@ class Elements extends ElementsSettings
 	 * @param string $returnSettings
 	 * @return bool|array
 	 */
-	public function findElement($el, $returnSettings = NULL)
+	public function findElement ($el, $returnSettings = NULL)
 	{
 		$return = FALSE;
-		if (in_array($el, $this->elements))
-			$return = $returnSettings ? $this->getElementSettings($el) : TRUE;
+
+		if (in_array ($el, $this->elements)) $return = $returnSettings ? $this->getElementSettings ($el) : TRUE;
+
 		return $return;
 	}
 
@@ -110,16 +111,18 @@ class Elements extends ElementsSettings
 	 * @param string $el
 	 * @return array
 	 */
-	private function getElementSettings($el)
+	private function getElementSettings ($el)
 	{
 		$qkAttributes = NULL;
 		$paired = TRUE;
 		$settings = $this->elementsSettings;
+
 		if (isset($settings[$el])) {
 			$s = $settings[$el];
-			$paired = !in_array('unpaired', $s);
+			$paired = !in_array ('unpaired', $s);
 			$qkAttributes = isset($s['qkAttributes']) ? $s['qkAttributes'] : NULL;
 		}
+
 		return [
 			'element' => $el,
 			'paired' => $paired,
@@ -131,26 +134,26 @@ class Elements extends ElementsSettings
 	 * @param string $attribute
 	 * @return bool
 	 */
-	public function isBoolean($attribute)
+	public function isBoolean ($attribute)
 	{
-		return in_array($attribute, $this->booleanAttributes);
+		return in_array ($attribute, $this->booleanAttributes);
 	}
 
 	/** @param array $attributes */
-	public function removeBooleanAttributes($attributes)
+	public function removeBooleanAttributes ($attributes)
 	{
 		if ($attributes) {
-			$attributes = explode(' ', $attributes);
-			$this->booleanAttributes = array_diff($this->booleanAttributes, $attributes);
+			$attributes = explode (' ', $attributes);
+			$this->booleanAttributes = array_diff ($this->booleanAttributes, $attributes);
 		}
 	}
 
 	/** @param array $elements */
-	public function removeElements($elements)
+	public function removeElements ($elements)
 	{
 		if ($elements) {
-			$elements = explode(' ', $elements);
-			$this->elements = array_diff($this->elements, $elements);
+			$elements = explode (' ', $elements);
+			$this->elements = array_diff ($this->elements, $elements);
 		}
 	}
 }

@@ -16,44 +16,63 @@ use Machy8\Macdom\Elements\Elements;
 use Machy8\Macdom\Macros\Macros;
 use Machy8\Macdom\Replicator\Replicator;
 
+
 class Compiler
 {
 	/** @const string */
 	const AREA_TAG = 'SKIP';
+
 	/** @var Elements */
 	private $Elements;
+
 	/** @var Macros */
 	private $Macros;
+
 	/** @var Replicator */
 	private $Replicator;
+
 	/** @var Setup\Setup */
 	private $Setup;
+
 	/** @var array */
 	private $closeTags = [];
+
 	/** @var bool */
 	private $inNoCompileArea = FALSE;
+
 	/** @var array */
 	private $ncaCloseTags;
+
 	/** @var array */
 	private $ncaOpenTags;
+
 	/** @var array */
 	private $ncaSkipElements;
+
 	/** @var array */
 	private $ncaRegExpInlineTags;
+
 	/** @var array */
 	private $ncaRegExpOpenTags;
+
 	/** @var bool */
 	private $noCompileAreaClosed;
+
 	/** @var string */
 	private $outputStorage = '';
+
 	/** @var array */
 	private $outputQueue = [];
+
 	/** @var array */
 	private $prevOutput;
+
 	/** @var string */
 	private $prev2OutputType;
+
 	/** @var bool */
 	private $skipRow = FALSE;
+
 	/** @var int */
 	private $skippedElementLvl = NULL;
 
@@ -61,14 +80,14 @@ class Compiler
 	 * Compiler constructor.
 	 * @param Setup\Setup $setup
 	 */
-	public function __construct($setup)
+	public function __construct ($setup)
 	{
 		if ($setup->preferXhtml) $setup->closeSelfClosingTags = $setup->booleansWithValue = TRUE;
 
-		$this->ncaSkipElements = array_filter(array_merge(['script', 'style', 'textarea', 'code'], explode(' ', $setup->skipElements)));
+		$this->ncaSkipElements = array_filter (array_merge (['script', 'style', 'textarea', 'code'], explode (' ', $setup->skipElements)));
 		$this->ncaOpenTags = ['<?php', '<?', self::AREA_TAG];
 		$this->ncaCloseTags = ['?>', '/' . self::AREA_TAG];
-		$inlineOpenTags = join("|", $this->ncaSkipElements);
+		$inlineOpenTags = join ("|", $this->ncaSkipElements);
 		$this->ncaRegExpInlineTags = ['\<\?(?:php)? .*\?\>', '\<(?:' . $inlineOpenTags . ') *[^>]*\>.*\<\/(?:' . $inlineOpenTags . ')\>'];
 		$this->ncaRegExpOpenTags = ['\<(?:' . $inlineOpenTags . ') *[^\>]*\>', '\<\?(?:php)?'];
 
@@ -82,83 +101,91 @@ class Compiler
 		$this->Replicator = new Replicator;
 		$this->Setup = $setup;
 
-		$this->Elements->addQkAttributes($setup->addQkAttributes);
-		$this->Elements->addElements($setup->addElements);
-		$this->Elements->addBooleanAttributes($setup->addBooleanAttributes);
-		$this->Elements->removeBooleanAttributes($setup->removeBooleanAtributes);
-		$this->Elements->removeElements($setup->removeElements);
-		$this->Elements->changeQkAttributes($setup->changeQkAttributes);
+		$this->Elements->addQkAttributes ($setup->addQkAttributes);
+		$this->Elements->addElements ($setup->addElements);
+		$this->Elements->addBooleanAttributes ($setup->addBooleanAttributes);
+		$this->Elements->removeBooleanAttributes ($setup->removeBooleanAtributes);
+		$this->Elements->removeElements ($setup->removeElements);
+		$this->Elements->changeQkAttributes ($setup->changeQkAttributes);
 
-		$this->Macros->addCustomMacros($setup->addMacros);
-		$this->Macros->removeMacros($setup->removeMacros);
+		$this->Macros->addCustomMacros ($setup->addMacros);
+		$this->Macros->removeMacros ($setup->removeMacros);
 	}
 
 	/**
 	 * @param string $content
 	 * @return string
 	 */
-	public function compile($content)
+	public function compile ($content)
 	{
 		if (!$content) return '';
 
-		foreach (preg_split('/\n/', $content) as $ln) {
-			$lvl = $this->getLnLvl($ln);
-			$element = $this->getElement($ln);
-			$noCompileAreaTag = $this->detectNoCompileArea($ln, $element, $lvl);
+		foreach (preg_split ('/\n/', $content) as $ln) {
+			$lvl = $this->getLnLvl ($ln);
+			$element = $this->getElement ($ln);
+			$noCompileAreaTag = $this->detectNoCompileArea ($ln, $element, $lvl);
 			$compilationAllowed = !$this->inNoCompileArea && !$this->skipRow && $this->noCompileAreaClosed;
+
 			if ($noCompileAreaTag || $compilationAllowed && !$ln) continue;
 
 			if ($this->Setup->structureHtmlSkeleton) {
-				$lvl = in_array($element, ['head', 'body']) ? 1 : $lvl + 1;
+				$lvl = in_array ($element, ['head', 'body']) ? 1 : $lvl + 1;
+
 				if ($element === 'html') $lvl = 0;
 			}
 
-			if ($compilationAllowed && $ln && !$this->Elements->findElement($element)) {
-				$ln = preg_replace('/\|{1}$/', '', $ln, 1);
-				$replicatorResult = $this->Replicator->detect($lvl, $element, $ln);
+			if ($compilationAllowed && $ln && !$this->Elements->findElement ($element)) {
+				$ln = preg_replace ('/\|{1}$/', '', $ln, 1);
+				$replicatorResult = $this->Replicator->detect ($lvl, $element, $ln);
+
 				if ($replicatorResult['toReplicate']) {
 					$ln = $replicatorResult['toReplicate'];
-					$element = $this->getElement($ln);
+					$element = $this->getElement ($ln);
 				}
+
 				if ($replicatorResult['clearLn']) $ln = $element = NULL;
 			}
 
-			$processElement = $compilationAllowed && $this->Elements->findElement($element);
-			$txt = $this->getLnTxt($ln, $compilationAllowed, $processElement);
+			$processElement = $compilationAllowed && $this->Elements->findElement ($element);
+			$txt = $this->getLnTxt ($ln, $compilationAllowed, $processElement);
 
 			if ($processElement) {
-				$attributes = $this->processLn($txt);
-				$this->addOpenTag($element, $lvl, $attributes);
+				$attributes = $this->processLn ($txt);
+				$this->addOpenTag ($element, $lvl, $attributes);
+
 			} elseif ($txt) {
-				$this->addCloseTags($lvl);
-				$isJsCssLink = $this->getElement($txt);
-				if ($compilationAllowed && preg_match('/\.((?:css|js))$/', $isJsCssLink, $isJsCss)) {
+				$this->addCloseTags ($lvl);
+				$isJsCssLink = $this->getElement ($txt);
+
+				if ($compilationAllowed && preg_match ('/\.((?:css|js))$/', $isJsCssLink, $isJsCss)) {
 					if ($isJsCss[1] === "css") {
 						$element = "link";
 						$attr = "href";
 						$type = 'rel="stylesheet" type="text/css"';
+
 					} else {
 						$element = "script";
 						$attr = "src";
 						$type = 'type="text/javascript"';
 					}
-					$txt = $this->getLnTxt($txt, TRUE, TRUE);
+					
+					$txt = $this->getLnTxt ($txt, TRUE, TRUE);
 					$txt = ' ' . $type . ' ' . $attr . '="' . $isJsCssLink . '"' . $txt;
-					$attributes = $this->processLn($txt);
+					$attributes = $this->processLn ($txt);
 					$attributes['txt'] = NULL;
-					$this->addOpenTag($element, $lvl, $attributes);
+					$this->addOpenTag ($element, $lvl, $attributes);
 
 				} else {
-					$macro = $compilationAllowed && $this->Macros->findMacro($element);
-					$content = $macro ? $this->Macros->replace($element, $txt) : $txt;
+					$macro = $compilationAllowed && $this->Macros->findMacro ($element);
+					$content = $macro ? $this->Macros->replace ($element, $txt) : $txt;
 					$type = $macro ? 'macro' : 'text';
-					$this->addToQueue($type, $content, $lvl);
+					$this->addToQueue ($type, $content, $lvl);
 				}
 			}
 		}
 
-		$this->addCloseTags();
-		$this->composeContent();
+		$this->addCloseTags ();
+		$this->composeContent ();
 
 		return $this->outputStorage;
 	}
@@ -167,16 +194,17 @@ class Compiler
 	 * @param string $ln
 	 * @return int
 	 */
-	private function getLnLvl($ln)
+	private function getLnLvl ($ln)
 	{
 		$method = $this->Setup->indentMethod;
-		preg_match('/^\s+/', $ln, $matches);
+		preg_match ('/^\s+/', $ln, $matches);
 		$whites = $matches ? $matches[0] : 0;
+
 		// Only for spaces and combined method
-		$spaces = $method === 'spaces' || $method === 'combined' ? preg_match_all('/ {' . $this->Setup->spacesPerIndent . '}/', $whites) : 0;
+		$spaces = $method === 'spaces' || $method === 'combined' ? preg_match_all ('/ {' . $this->Setup->spacesPerIndent . '}/', $whites) : 0;
 
 		// Only for tabulators and combined method
-		$tabulators = $method === 'tabs' || $method === 'combined' ? preg_match_all('/\t/', $whites) : 0;
+		$tabulators = $method === 'tabs' || $method === 'combined' ? preg_match_all ('/\t/', $whites) : 0;
 
 		if ($method === 'combined') $tabulators *= 2;
 
@@ -189,15 +217,15 @@ class Compiler
 	 * @param bool $elementExists
 	 * @return string
 	 */
-	private function getLnTxt($ln, $clean = FALSE, $elementExists = FALSE)
+	private function getLnTxt ($ln, $clean = FALSE, $elementExists = FALSE)
 	{
 		$find = ['/ *' . self::AREA_TAG . '(?:-CONTENT)?/'];
-		$txt = ltrim($ln);
+		$txt = ltrim ($ln);
 
-		if ($elementExists) $txt = strstr($txt, " ");
+		if ($elementExists) $txt = strstr ($txt, " ");
 		if ($clean) $find[] = '/^\|{1}/';
 
-		$txt = preg_replace($find, '', $txt, 1);
+		$txt = preg_replace ($find, '', $txt, 1);
 
 		return $txt;
 	}
@@ -206,9 +234,10 @@ class Compiler
 	 * @param string $txt
 	 * @return string
 	 */
-	private function getElement($txt)
+	private function getElement ($txt)
 	{
-		$element = explode(' ', trim($txt));
+		$element = explode (' ', trim ($txt));
+
 		return $element[0];
 	}
 
@@ -218,9 +247,9 @@ class Compiler
 	 * @param int $lvl
 	 * @return bool
 	 */
-	private function detectNoCompileArea($txt, $element, $lvl)
+	private function detectNoCompileArea ($txt, $element, $lvl)
 	{
-		$txt = trim($txt);
+		$txt = trim ($txt);
 		$skipContent = $skipRow = FALSE;
 
 		if ($this->skipRow) $this->skipRow = $this->inNoCompileArea = FALSE;
@@ -228,40 +257,49 @@ class Compiler
 		$areaClosed = !$this->inNoCompileArea;
 
 		if ($areaClosed) {
-			$txt2array = explode(' ', $txt);
-			$skipSelector = end($txt2array);
-			if ($skipSelector === self::AREA_TAG && count($txt2array) > 1) {
+			$txt2array = explode (' ', $txt);
+			$skipSelector = end ($txt2array);
+
+			if ($skipSelector === self::AREA_TAG && count ($txt2array) > 1) {
 				$skipRow = TRUE;
+
 			} elseif ($skipSelector === self::AREA_TAG . '-CONTENT') {
 				$skipContent = TRUE;
 			}
 		}
-		
-		if (in_array($element, $this->ncaSkipElements) && ($this->skippedElementLvl === NULL || $this->skippedElementLvl !== NULL && $lvl <= $this->skippedElementLvl) || $skipContent) {
+
+		if (in_array ($element, $this->ncaSkipElements) && ($this->skippedElementLvl === NULL || $this->skippedElementLvl !== NULL && $lvl <= $this->skippedElementLvl) || $skipContent) {
 			$this->skippedElementLvl = $lvl;
+
 		} elseif ($this->skippedElementLvl !== NULL && $lvl > $this->skippedElementLvl || $skipRow) {
 			$this->skipRow = TRUE;
+
 		} else {
 			$this->skippedElementLvl = NULL;
 		}
+
 		if (!$this->skippedElementLvl) {
-			if (in_array(trim($txt), $this->ncaOpenTags)) {
+			if (in_array (trim ($txt), $this->ncaOpenTags)) {
 				$this->inNoCompileArea = TRUE;
-			} elseif (in_array(trim($txt), $this->ncaCloseTags)) {
+
+			} elseif (in_array (trim ($txt), $this->ncaCloseTags)) {
 				$this->inNoCompileArea = FALSE;
+
 			} else {
 				$matchedTag = FALSE;
+
 				if (!$this->inNoCompileArea) {
 					foreach ($this->ncaRegExpInlineTags as $tag) {
-						if (preg_match('/^\s*' . $tag . '/', $txt)) {
+						if (preg_match ('/^\s*' . $tag . '/', $txt)) {
 							$matchedTag = $this->skipRow = TRUE;
 							break;
 						}
 					}
 				}
+
 				if (!$matchedTag && !$this->inNoCompileArea) {
 					foreach ($this->ncaRegExpOpenTags as $tag) {
-						if (preg_match('/^\s*' . $tag . '.*/', $txt)) {
+						if (preg_match ('/^\s*' . $tag . '.*/', $txt)) {
 							$matchedTag = $this->inNoCompileArea = TRUE;
 							break;
 						}
@@ -270,7 +308,7 @@ class Compiler
 
 				if (!$matchedTag && $this->inNoCompileArea) {
 					foreach ($this->ncaCloseTags as $tag) {
-						if (preg_match('/.*' . preg_quote($tag, '/') . '$/', $txt)) {
+						if (preg_match ('/.*' . preg_quote ($tag, '/') . '$/', $txt)) {
 							$this->skipRow = TRUE;
 							$this->inNoCompileArea = FALSE;
 							break;
@@ -281,8 +319,8 @@ class Compiler
 		}
 
 		$tagDetected = $txt === self::AREA_TAG || $txt === '/' . self::AREA_TAG;
-		// Set and return
 		$this->noCompileAreaClosed = $areaClosed;
+
 		return $tagDetected;
 	}
 
@@ -290,59 +328,59 @@ class Compiler
 	 * @param string $txt
 	 * @return array
 	 */
-	private function processLn($txt)
+	private function processLn ($txt)
 	{
 		// Store the text from the first tag to the end of the line
 		$re = '/ \<[\w-]+ .*$/';
 		$txtFromTag2End = '';
-		if (preg_match($re, $txt, $match)) {
-			$txt = preg_replace($re, '', $txt);
+
+		if (preg_match ($re, $txt, $match)) {
+			$txt = preg_replace ($re, '', $txt);
 			$txtFromTag2End .= $match[0];
 		}
 
 		// Preserve php
 		$preservedPhp = [];
-		while (preg_match('/\<(?:\?(?:php)?) .*?\?\>/', $txt, $matches)) {
-			$txt = preg_replace('/\<(?:\?(?:php)?)+ +.*?\?\>/', 'PHP_RESERVED_' . count($preservedPhp), $txt, 1);
+		while (preg_match ('/\<(?:\?(?:php)?) .*?\?\>/', $txt, $matches)) {
+			$txt = preg_replace ('/\<(?:\?(?:php)?)+ +.*?\?\>/', 'PHP_RESERVED_' . count ($preservedPhp), $txt, 1);
 			$preservedPhp[] = $matches;
 		}
 
 		// Replace -*= for data-*=
 		$re = '/ -([\w-]+)+=/';
-		if (preg_match_all($re, $txt, $matches)) {
+		if (preg_match_all ($re, $txt, $matches)) {
 			foreach ($matches[1] as $match) {
-				$txt = preg_replace($re, ' data-' . $match . '=', $txt, 1);
+				$txt = preg_replace ($re, ' data-' . $match . '=', $txt, 1);
 			}
 		}
 
 		// Get all html attributes
 		$re = '/ [\w:-]+="[^"]*"| [\w:-]+=\'[^\']*\'| [\w:-]+=\S+/';
 		$htmlAttributes = '';
-		if (preg_match_all($re, $txt, $matches)) {
-			$txt = preg_replace($re, '', $txt);
-			$htmlAttributes = implode('', $matches[0]);
+		if (preg_match_all ($re, $txt, $matches)) {
+			$txt = preg_replace ($re, '', $txt);
+			$htmlAttributes = implode ('', $matches[0]);
 		}
 
 		// Get the id selector
 		$re = '/ #(\S+)/';
-		$idSelector = preg_match($re, $txt, $matches);
-		if ($idSelector && !preg_match('/ id="[^"]+"|  id=\'[^\']+\'| id=[\S]+/', $htmlAttributes))
-			$htmlAttributes .= ' id="' . $matches[1] . '"';
-
-		if ($idSelector) $txt = preg_replace($re, '', $txt);
+		$idSelector = preg_match ($re, $txt, $matches);
+		if ($idSelector && !preg_match ('/ id="[^"]+"|  id=\'[^\']+\'| id=[\S]+/', $htmlAttributes)) $htmlAttributes .= ' id="' . $matches[1] . '"';
+		if ($idSelector) $txt = preg_replace ($re, '', $txt);
 
 		// Get all class selectors
 		$re = '/ \.(\S+)/';
-		$clsSelectors = preg_match_all($re, $txt, $matches);
+		$clsSelectors = preg_match_all ($re, $txt, $matches);
 		if ($clsSelectors) {
-			$txt = preg_replace($re, '', $txt);
-			$clsSelectors = implode(' ', $matches[1]);
+			$txt = preg_replace ($re, '', $txt);
+			$clsSelectors = implode (' ', $matches[1]);
 		}
 
 		// Synchronize class selectors
 		$re = '/ class="([^"]+)+"| class=\'([^\']+)+\'| class=([\S]+)+/';
-		if ($clsSelectors && preg_match($re, $htmlAttributes, $matches)) {
-			$htmlAttributes = preg_replace($re, ' class="' . end($matches) . ' ' . $clsSelectors . '"', $htmlAttributes);
+		if ($clsSelectors && preg_match ($re, $htmlAttributes, $matches)) {
+			$htmlAttributes = preg_replace ($re, ' class="' . end ($matches) . ' ' . $clsSelectors . '"', $htmlAttributes);
+
 		} elseif ($clsSelectors) {
 			$htmlAttributes .= ' class="' . $clsSelectors . '"';
 		}
@@ -350,14 +388,16 @@ class Compiler
 		// Get all quick attributes
 		$re = '/ ([\d]+)?\$(?:([^$;"]+);|(\S+)+)/';
 		$qkAttributes = [];
-		if (preg_match_all($re, $txt, $matches, PREG_SET_ORDER)) {
-			$txt = preg_replace($re, '', $txt);
+		if (preg_match_all ($re, $txt, $matches, PREG_SET_ORDER)) {
+			$txt = preg_replace ($re, '', $txt);
+			
 			foreach ($matches as $value) {
-				$paramVal = end($value);
-				if ($paramVal && strtolower($paramVal) !== 'null') {
-
+				$paramVal = end ($value);
+				
+				if ($paramVal && strtolower ($paramVal) !== 'null') {
+					
 					// If quick attribute is without index
-					$paramKey = is_numeric($value[1]) ? $value[1] : NULL;
+					$paramKey = is_numeric ($value[1]) ? $value[1] : NULL;
 					$qkAttributes[] = [
 						'key' => $paramKey,
 						'value' => $paramVal
@@ -366,16 +406,18 @@ class Compiler
 			}
 		}
 
-		$txt = $this->getLnTxt($txt, TRUE) . $txtFromTag2End;
+		$txt = $this->getLnTxt ($txt, TRUE) . $txtFromTag2End;
 
 		// Split the txt to an array in oder to get the boolean attributes
-		$txt2array = explode(' ', $txt);
+		$txt2array = explode (' ', $txt);
 		$booleanAttributes = '';
+
 		foreach ($txt2array as $attribute) {
-			if ($this->Elements->isBoolean($attribute)) {
-				$txt = str_replace($attribute, '', $txt);
+			if ($this->Elements->isBoolean ($attribute)) {
+				$txt = str_replace ($attribute, '', $txt);
 				$booleanAttributes .= ' ' . $attribute;
 				$booleanAttributes .= $this->Setup->booleansWithValue ? '="' . $attribute . '"' : '';
+
 			} else {
 				break;
 			}
@@ -395,9 +437,9 @@ class Compiler
 	 * @param int $lvl
 	 * @param array $attributes
 	 */
-	private function addOpenTag($element, $lvl, $attributes)
+	private function addOpenTag ($element, $lvl, $attributes)
 	{
-		$elementSettings = $this->Elements->findElement($element, TRUE);
+		$elementSettings = $this->Elements->findElement ($element, TRUE);
 		$openTag = '<' . $element;
 		$sQkAttributes = $elementSettings['qkAttributes'];
 		$qkAttributes = $attributes['qkAttributes'];
@@ -405,21 +447,26 @@ class Compiler
 		if ($sQkAttributes && $qkAttributes) {
 			$usedKeys = [];
 			$withoutKey = 0;
+
 			foreach ($qkAttributes as $attribute) {
 				$newAttr = NULL;
+
 				if ($attribute['key']) {
 					$paramKey = $attribute['key'] - 1;
+
 					if (isset($sQkAttributes[$paramKey])) {
 						$newAttr = $sQkAttributes[$paramKey] . '="' . $attribute['value'] . '"';
 						$usedKeys[] = $paramKey;
 					}
-				} elseif (!in_array($withoutKey, $usedKeys) && array_key_exists($withoutKey, $sQkAttributes)) {
+
+				} elseif (!in_array ($withoutKey, $usedKeys) && array_key_exists ($withoutKey, $sQkAttributes)) {
 					$newAttr = $sQkAttributes[$withoutKey] . '="' . $attribute['value'] . '"';
 					$withoutKey++;
 				}
 				$openTag .= $newAttr ? ' ' . $newAttr : '';
 			}
 		}
+
 		// Add html and boolean attributes
 		$openTag .= $attributes['htmlAttributes'] . $attributes['booleanAttributes'];
 
@@ -428,46 +475,51 @@ class Compiler
 		$openTag .= $selfClosing . '>';
 		$preservedPhp = $attributes['preservedPhp'];
 		$phpMark = 'PHP_RESERVED_';
+
 		if ($preservedPhp) {
 			foreach ($preservedPhp as $key => $code) {
-				if (preg_match("/" . $phpMark . $key . "/", $openTag)) {
-					$openTag = str_replace($phpMark . $key, $code[0], $openTag);
+				if (preg_match ("/" . $phpMark . $key . "/", $openTag)) {
+					$openTag = str_replace ($phpMark . $key, $code[0], $openTag);
 					$preservedPhp[$key] = FALSE;
 				}
 			}
 		}
-		$this->addCloseTags($lvl);
+
+		$this->addCloseTags ($lvl);
 		$type = $elementSettings['paired'] ? 'openTag' : 'inlineTag';
-		$this->addToQueue($type, $openTag, $lvl);
+		$this->addToQueue ($type, $openTag, $lvl);
+
 		// If the tag is paired add its close tag to the storage
 		if ($elementSettings['paired']) {
 			$txt = $attributes['txt'];
+
 			if ($txt) {
 				if ($preservedPhp) {
 					foreach ($preservedPhp as $key => $code) {
-						if ($code[0] && preg_match("/" . $phpMark . $key . "/", $txt))
-							$txt = str_replace($phpMark . $key, $code[0], $txt);
+						if ($code[0] && preg_match ("/" . $phpMark . $key . "/", $txt)) $txt = str_replace ($phpMark . $key, $code[0], $txt);
 					}
 				}
-				$this->addToQueue('text', $txt, $lvl);
+				$this->addToQueue ('text', $txt, $lvl);
 			}
+
 			$closeTag = '</' . $element . '>';
 			$this->closeTags[] = [$lvl, $closeTag];
 		}
 	}
 
 	/** @param int $lvl */
-	private function addCloseTags($lvl = 0)
+	private function addCloseTags ($lvl = 0)
 	{
-		$lastTag = $length = count($this->closeTags);
+		$lastTag = $length = count ($this->closeTags);
+
 		for ($i = $length - 1; $i >= 0; $i--) {
 			if ($lvl > $this->closeTags[$i][0]) break;
 
-			$this->addToQueue('closeTag', $this->closeTags[$i][1], $this->closeTags[$i][0]);
+			$this->addToQueue ('closeTag', $this->closeTags[$i][1], $this->closeTags[$i][0]);
 			$lastTag = $i;
-
 		}
-		array_splice($this->closeTags, $lastTag);
+
+		array_splice ($this->closeTags, $lastTag);
 	}
 
 	/**
@@ -475,27 +527,30 @@ class Compiler
 	 * @param string $content
 	 * @param int $lvl
 	 */
-	private function addToQueue($type, $content, $lvl)
+	private function addToQueue ($type, $content, $lvl)
 	{
 		$formatting = !$this->inNoCompileArea && !$this->skipRow;
-		$lastKey = count($this->outputQueue) - 1;
+		$lastKey = count ($this->outputQueue) - 1;
 		$contentArr = [
 			'type' => $type,
 			'content' => $content,
 			'lvl' => $lvl,
 			'formatting' => $formatting
 		];
+
 		if ($type === 'text' && $this->Setup->compressText && $formatting && isset($this->outputQueue[$lastKey]) && $this->outputQueue[$lastKey]['type'] === 'text' && $this->outputQueue[$lastKey]['formatting']) {
 			$this->outputQueue[$lastKey]['content'] .= $content;
+			
 			return;
 		}
-
+		
 		$this->outputQueue[] = $contentArr;
-		if ($type !== 'text') $this->composeContent();
+
+		if ($type !== 'text') $this->composeContent ();
 
 	}
 
-	private function composeContent()
+	private function composeContent ()
 	{
 		foreach ($this->outputQueue as $contentKey => $contentArr) {
 			if (!$this->Setup->compressCode) {
@@ -505,22 +560,22 @@ class Compiler
 
 				// WTF condition for output formatting
 				$trio = ['openTag', 'inlineTag', 'macro'];
-				if ($this->prevOutput['type'] !== NULL && (!$this->prevOutput['formatting'] || in_array($this->prevOutput['type'], ['closeTag', 'inlineTag', 'macro']) || in_array($contentArr['type'], $trio)
-						|| $contentArr['type'] === 'closeTag' && ($this->prevOutput['type'] === 'text' && (!$this->Setup->compressText || $this->prev2OutputType !== 'openTag'))
-						|| $contentArr['type'] === 'text' && (!$this->Setup->compressText || $this->Setup->compressText && (!$contentArr['formatting'] || $this->prevOutput['type'] === 'openTag' && in_array($nextOutputType, $trio))))
-				) {
 
+				if ($this->prevOutput['type'] !== NULL && (!$this->prevOutput['formatting'] || in_array ($this->prevOutput['type'], ['closeTag', 'inlineTag', 'macro']) || in_array ($contentArr['type'], $trio)
+						|| $contentArr['type'] === 'closeTag' && ($this->prevOutput['type'] === 'text' && (!$this->Setup->compressText || $this->prev2OutputType !== 'openTag'))
+						|| $contentArr['type'] === 'text' && (!$this->Setup->compressText || $this->Setup->compressText && (!$contentArr['formatting'] || $this->prevOutput['type'] === 'openTag' && in_array ($nextOutputType, $trio))))
+				) {
 					if ($contentArr['formatting'] && $contentArr['type'] === 'text') {
 						if (!$this->Setup->compressText && $lvl === $this->prevOutput['lvl'] && $this->prevOutput['type'] === 'openTag') {
 							$lvl++;
+
 						} elseif ($this->Setup->compressText && ($this->prevOutput['type'] === 'text' && $this->prevOutput['formatting'] || $this->prevOutput['type'] === 'openTag')) {
 							$lvl = $this->prevOutput['lvl'] + 1;
 						}
 					}
-
 					$lvl += $this->Setup->structureHtmlSkeleton && $lvl > 0 ? -1 : 0;
 					$method = $this->Setup->outputIndentation === 'spaces' ? '    ' : "\t";
-					$indentation = str_repeat($method, $lvl);
+					$indentation = str_repeat ($method, $lvl);
 					$lnBreak = $this->Setup->compressCode ? '' : "\n";
 					$this->outputStorage .= $lnBreak . $indentation;
 				}

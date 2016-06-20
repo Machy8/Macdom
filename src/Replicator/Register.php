@@ -23,9 +23,10 @@ class Register
 	 * @param string $ln
 	 * @return bool
 	 */
-	protected function deregisterLvl($lvl, $ln)
+	protected function deregisterLvl ($lvl, $ln)
 	{
 		$selected = $ln ? $lvl . '-' . $ln : $lvl . '-x';
+		
 		if (isset($this->register[$selected])) unset($this->register[$selected]);
 	}
 
@@ -34,14 +35,16 @@ class Register
 	 * @param $el
 	 * @return mixed|null
 	 */
-	protected function isRegistered($lvl, $el)
+	protected function isRegistered ($lvl, $el)
 	{
 		$ln = NULL;
 		$key = FALSE;
-		if (array_key_exists($lvl . '-' . $el, $this->register)) {
+		
+		if (array_key_exists ($lvl . '-' . $el, $this->register)) {
 			$ln = $this->register[$lvl . '-' . $el];
 			$key = TRUE;
-		} elseif (array_key_exists($lvl . '-x', $this->register)) {
+			
+		} elseif (array_key_exists ($lvl . '-x', $this->register)) {
 			$ln = $this->register[$lvl . '-x'];
 		}
 
@@ -56,7 +59,7 @@ class Register
 	 * @param int $lvl
 	 * @param string $ln
 	 */
-	protected function registerLvl($key, $lvl, $ln)
+	protected function registerLvl ($key, $lvl, $ln)
 	{
 		$registerId = $key ? $lvl . '-' . $key : $lvl . '-x';
 		$this->register[$registerId] = $ln;

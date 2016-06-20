@@ -16,38 +16,55 @@ class Setup
 {
 	/** @var string */
 	public $addBooleanAttributes = '';
+
 	/** @var string */
 	public $addElements = [];
+
 	/*** @var array */
 	public $addMacros = [];
+
 	/** @var array */
 	public $addQkAttributes = [];
+
 	/** @var bool */
 	public $booleansWithValue = FALSE;
+
 	/** @var array */
 	public $changeQkAttributes = [];
+
 	/** @var bool */
 	public $closeSelfClosingTags = FALSE;
+
 	/** @var bool */
 	public $compressCode = FALSE;
+
 	/** @var bool */
 	public $compressText = FALSE;
+
 	/** @var int */
 	public $indentMethod = 'combined';
+
 	/** @var string */
 	public $outputIndentation = "tabs";
+
 	/** @var bool */
 	public $preferXhtml = FALSE;
+
 	/** @var string */
 	public $removeBooleanAtributes = '';
+
 	/** @var string */
 	public $removeElements = '';
+
 	/** @var string */
 	public $removeMacros = '';
+
 	/** @var array */
 	public $skipElements = '';
+
 	/** @var int */
 	public $spacesPerIndent = 4;
+
 	/** @var bool */
 	public $structureHtmlSkeleton = TRUE;
 }
