@@ -16,7 +16,6 @@ use Machy8\Macdom\Compiler;
 use Machy8\Macdom\Setup\Setup;
 use Machy8\Macdom\Setup\SetupChecker;
 
-
 trait LoadersCore
 {
 	/** @var Setup */
@@ -26,7 +25,7 @@ trait LoadersCore
 	private $setupChecker;
 
 	/** Loader constructor */
-	public function __construct ()
+	public function __construct()
 	{
 		$this->setup = new Setup;
 		$this->setupChecker = new SetupChecker($this->setup);
@@ -36,12 +35,11 @@ trait LoadersCore
 	 * @param string $content
 	 * @return string
 	 */
-	public function compile ($content)
+	public function compile($content)
 	{
-		$this->setupChecker->check ($this->setup);
+		$this->setupChecker->check($this->setup);
 		$compiler = new Compiler($this->setup);
-		$compiled = $compiler->compile ($content);
-		
+		$compiled = $compiler->compile($content);
 		return $compiled;
 	}
 }

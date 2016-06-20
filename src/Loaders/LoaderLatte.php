@@ -14,7 +14,6 @@ namespace Machy8\Macdom\Loaders;
 
 use Latte\Loaders\FileLoader;
 
-
 class LoaderLatte extends FileLoader implements ILoader
 {
 	use LoadersCore;
@@ -23,11 +22,10 @@ class LoaderLatte extends FileLoader implements ILoader
 	 * @param string $file
 	 * @return string
 	 */
-	public function getContent ($file)
+	public function getContent($file)
 	{
-		$content = parent::getContent ($file);
-		$compiled = $this->compile ($content);
-		
+		$content = parent::getContent($file);
+		$compiled = $this->compile($content);
 		return $compiled;
 	}
 }

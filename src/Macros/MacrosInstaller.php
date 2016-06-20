@@ -19,11 +19,12 @@ class MacrosInstaller
 	protected $macros = [];
 
 	/** @param array $macros */
-	public function addCustomMacros ($macros)
+	public function addCustomMacros($macros)
 	{
 		if ($macros) {
 			foreach ($macros as $macro => $function) {
-				if (is_callable ($function)) $this->addMacro ($macro, $function);
+				if (is_callable($function))
+					$this->addMacro($macro, $function);
 			}
 		}
 	}
@@ -32,17 +33,18 @@ class MacrosInstaller
 	 * @param string $macro
 	 * @param callable $function
 	 */
-	protected function addMacro ($macro, $function)
+	protected function addMacro($macro, $function)
 	{
-		if (!array_key_exists ($macro, $this->macros)) $this->macros[$macro] = $function;
+		if (!array_key_exists($macro, $this->macros))
+			$this->macros[$macro] = $function;
 	}
 
 	/** @param array $macros */
-	public function removeMacros ($macros)
+	public function removeMacros($macros)
 	{
 		if ($macros) {
-			$macros = explode (' ', $macros);
-			$this->macros = array_diff_key ($this->macros, array_flip ($macros));
+			$macros = explode(' ', $macros);
+			$this->macros = array_diff_key($this->macros, array_flip($macros));
 		}
 	}
 }
