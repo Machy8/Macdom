@@ -16,7 +16,7 @@ class CoreMacros extends MacrosInstaller
 {
 
 	/** CoreMacros constructor */
-	public function __construct()
+	public function __construct ()
 	{
 		$this->addMacro('!5', function () {
 			return '<!DOCTYPE html>';
@@ -50,26 +50,29 @@ class CoreMacros extends MacrosInstaller
 			$viewport = '<meta name="viewport" content="';
 			$viewport .= !empty($line) ? $line : 'width=device-width, initial-scale=1';
 			$viewport .= '">';
+
 			return $viewport;
 		});
 
-		$this->addMacro('index-follow', function() {
+		$this->addMacro('index-follow', function () {
 			return '<meta name="robots" content="index, follow">';
 		});
 
-		$this->addMacro('no-index-follow', function() {
+		$this->addMacro('no-index-follow', function () {
 			return '<meta name="robots" content="noindex, nofollow">';
 		});
-		
+
 		$this->addMacro('fb', function ($line) {
 			$selected = strtok($line, " ");
 			$content = preg_replace("/" . $selected . " /", "", $line);
+
 			return '<meta property="og:' . $selected . '" content="' . $content . '">';
 		});
 
 		$this->addMacro('tw', function ($line) {
 			$selected = strtok($line, " ");
 			$content = trim(preg_replace("/" . $selected . "/", "", $line));
+
 			return '<meta name="twitter:' . $selected . '" content="' . $content . '">';
 		});
 

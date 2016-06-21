@@ -17,6 +17,7 @@ class BooleanAttributes
 
 	/** @var array */
 	protected $booleanAttributes = [
+		'allowfullscreen',
 		'autofocus',
 		'autoplay',
 		'async',
@@ -38,6 +39,5 @@ class BooleanAttributes
 		'required',
 		'selected',
 		'spellcheck',
-		'n:ifcontent'
 	];
 }
