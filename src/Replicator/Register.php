@@ -15,7 +15,9 @@ namespace Machy8\Macdom\Replicator;
 class Register
 {
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $register = [];
 
 	/**

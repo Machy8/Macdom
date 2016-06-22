@@ -14,7 +14,9 @@ namespace Machy8\Macdom\Loaders;
 
 interface ILoader
 {
-	/** Loader constructor */
+	/**
+	 * ILoader constructor.
+	 */
 	public function __construct ();
 
 	/**

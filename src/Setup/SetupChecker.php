@@ -39,7 +39,10 @@ class SetupChecker
 		}
 	}
 
-	/** @param object $setup */
+	/**
+	 * @param $setup
+	 * @throws Exception
+	 */
 	public function check ($setup)
 	{
 		$setupVars = get_object_vars($setup);

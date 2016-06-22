@@ -38,7 +38,7 @@ class Compiler
 	private $closeTags = [];
 
 	/** @var bool */
-	private $inNoCompileArea = FALSE;
+	private $inNoCompileArea;
 
 	/** @var array */
 	private $ncaCloseTags;
@@ -71,10 +71,10 @@ class Compiler
 	private $prev2OutputType;
 
 	/** @var bool */
-	private $skipRow = FALSE;
+	private $skipRow;
 
 	/** @var int */
-	private $skippedElementLvl = NULL;
+	private $skippedElementLvl;
 
 	/**
 	 * Compiler constructor.
@@ -558,13 +558,14 @@ class Compiler
 				$nextOutputKey = $contentKey + 1;
 				$nextOutputType = isset($this->outputQueue[$nextOutputKey]) ? $this->outputQueue[$nextOutputKey]['type'] : '';
 
-				// WTF condition for output formatting
 				$trio = ['openTag', 'inlineTag', 'macro'];
 
+				// WTF condition for output formatting
 				if ($this->prevOutput['type'] !== NULL && (!$this->prevOutput['formatting'] || in_array($this->prevOutput['type'], ['closeTag', 'inlineTag', 'macro']) || in_array($contentArr['type'], $trio)
 						|| $contentArr['type'] === 'closeTag' && ($this->prevOutput['type'] === 'text' && (!$this->Setup->compressText || $this->prev2OutputType !== 'openTag'))
 						|| $contentArr['type'] === 'text' && (!$this->Setup->compressText || $this->Setup->compressText && (!$contentArr['formatting'] || $this->prevOutput['type'] === 'openTag' && in_array($nextOutputType, $trio))))
 				) {
+
 					if ($contentArr['formatting'] && $contentArr['type'] === 'text') {
 						if (!$this->Setup->compressText && $lvl === $this->prevOutput['lvl'] && $this->prevOutput['type'] === 'openTag') {
 							$lvl++;
@@ -573,6 +574,7 @@ class Compiler
 							$lvl = $this->prevOutput['lvl'] + 1;
 						}
 					}
+
 					$lvl += $this->Setup->structureHtmlSkeleton && $lvl > 0 ? -1 : 0;
 					$method = $this->Setup->outputIndentation === 'spaces' ? '    ' : "\t";
 					$indentation = str_repeat($method, $lvl);

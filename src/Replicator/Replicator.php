@@ -16,6 +16,7 @@ class Replicator extends Register
 {
 
 	const
+	
 		/** @const regular expression */
 		REG_EXP_A = '/\[(.*?)\]/',
 
@@ -49,6 +50,7 @@ class Replicator extends Register
 
 			if ($regLn['ln']) {
 				if ($regLn['key']) $txt = preg_replace('/' . preg_quote($element) . '/', '', $txt, 1);
+				
 				$replacement = $this->synchronizeLines($txt, $regLn['ln']);
 			}
 

@@ -19,13 +19,19 @@ use Machy8\Macdom\Setup\SetupChecker;
 
 trait LoadersCore
 {
-	/** @var Setup */
+	/**
+	 * @var Setup
+	 */
 	public $setup;
 
-	/** @var SetupChecker */
+	/**
+	 * @var SetupChecker
+	 */
 	private $setupChecker;
 
-	/** Loader constructor */
+	/**
+	 * LoadersCore constructor.
+	 */
 	public function __construct ()
 	{
 		$this->setup = new Setup;
