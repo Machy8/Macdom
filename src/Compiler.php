@@ -134,7 +134,7 @@ class Compiler
 				if ($element === 'html') $lvl = 0;
 			}
 
-			if ($compilationAllowed && trim($ln) && !$this->Elements->findElement($element)) {
+			if ($compilationAllowed && trim($ln) && !$this->Elements->findElement($element) && !$this->Macros->findMacro($element)) {
 				$ln = preg_replace('/\|$/', '', $ln, 1);
 				$replicatorResult = $this->Replicator->detect($lvl, $element, $ln);
 
