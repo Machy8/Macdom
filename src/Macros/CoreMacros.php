@@ -64,14 +64,14 @@ class CoreMacros extends MacrosInstaller
 
 		$this->addMacro('fb', function ($line) {
 			$selected = strtok($line, " ");
-			$content = preg_replace("/" . $selected . " /", "", $line);
+			$content = trim(preg_replace("/" . $selected . "/", "", $line, 1));
 
 			return '<meta property="og:' . $selected . '" content="' . $content . '">';
 		});
 
 		$this->addMacro('tw', function ($line) {
 			$selected = strtok($line, " ");
-			$content = trim(preg_replace("/" . $selected . "/", "", $line));
+			$content = trim(preg_replace("/" . $selected . "/", "", $line, 1));
 
 			return '<meta name="twitter:' . $selected . '" content="' . $content . '">';
 		});
