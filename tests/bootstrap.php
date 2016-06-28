@@ -1,15 +1,12 @@
 <?php
 
-require __DIR__ . '/../../../autoload.php';
-require __DIR__ . '/../src/Loaders/Loader.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-const
+// Expected
+define('EXPECTED', __DIR__ . '/expected');
 
-	// Expected result
-EXPECTED = __DIR__ . '/expected',
-
-	// Compiled
-ACTUAL = __DIR__ . '/actual';
+// Compiled
+define('ACTUAL', __DIR__ . '/actual');
 
 $macdom = new Machy8\Macdom\Loaders\Loader;
 
