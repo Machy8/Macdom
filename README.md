@@ -17,7 +17,7 @@
 ```
 **2 - Usage:**
 
-*Normal:*
+*Typical:*
 
 ```php
 $macdom = new Machy8\Macdom\Loaders\Loader;
