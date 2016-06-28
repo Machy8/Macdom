@@ -3,13 +3,27 @@
 require __DIR__ . '/../../../autoload.php';
 require __DIR__ . '/../src/Loaders/Loader.php';
 
-const TEMPLATES = __DIR__.'/test-templates';
+const
 
-$o = new Machy8\Macdom\Loaders\Loader;
-$o->setup->structureHtmlSkeleton = FALSE;
+	// Expected result
+EXPECTED = __DIR__ . '/expected',
 
-function rewriteTest($testName, $loader) {
-	if(file_exists(TEMPLATES.'/'.$testName.'-b.html') && file_exists(TEMPLATES.'/'.$testName.'-a.html')) {
-		file_put_contents(TEMPLATES . '/' . $testName . "-b.html", $loader->compile(file_get_contents(TEMPLATES . '/' . $testName . '-a.html')));
+	// Compiled
+ACTUAL = __DIR__ . '/actual';
+
+$macdom = new Machy8\Macdom\Loaders\Loader;
+
+$macdom->setup->structureHtmlSkeleton = FALSE;
+
+Tester\Environment::setup();
+date_default_timezone_set('Europe/Prague');
+
+function rewriteTest ($testName, $macdom)
+{
+	if (file_exists(ACTUAL . '/' . $testName . '.html') && file_exists(EXPECTED . '/' . $testName . '.html')) {
+
+		file_put_contents(
+			EXPECTED . '/' . $testName . ".html",
+			$macdom->compile(file_get_contents(ACTUAL . '/' . $testName . '.html')));
 	}
 }

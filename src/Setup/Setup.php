@@ -43,6 +43,9 @@ class Setup
 
 	/** @var int */
 	public $indentMethod = 'combined';
+	
+	/** @var bool */
+	public $blankLine = FALSE;
 
 	/** @var string */
 	public $outputIndentation = "tabs";
@@ -67,4 +70,7 @@ class Setup
 
 	/** @var bool */
 	public $structureHtmlSkeleton = TRUE;
+
+	/** @var string */
+	public $trim = 'left';
 }

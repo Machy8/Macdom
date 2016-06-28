@@ -2,9 +2,10 @@
 
 use Tester\Assert;
 
-require 'bootstrap.php';
+
+require __DIR__ . '/bootstrap.php';
 
 Assert::matchFile(
-	TEMPLATES."/php-in-template-b.html",
-	$o->compile(file_get_contents(TEMPLATES."/php-in-template-a.html"))
+	EXPECTED . "/php-in-template.html",
+	$macdom->compile(file_get_contents(ACTUAL . "/php-in-template.html"))
 );

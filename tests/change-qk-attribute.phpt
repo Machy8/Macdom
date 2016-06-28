@@ -2,7 +2,8 @@
 
 use Tester\Assert;
 
-require '../bootstrap.php';
+
+require __DIR__ . '/bootstrap.php';
 
 $testedA = 'a $google.com $blank Some text';
 $resultA = '<a target="google.com" href="blank">Some text</a>';
@@ -10,21 +11,21 @@ $resultA = '<a target="google.com" href="blank">Some text</a>';
 $testedB = 'a $google.com $blank Some text';
 $resultB = '<a>Some text</a>';
 
-$o->setup->compressCode = TRUE;
-$o->setup->changeQkAttributes = [
+$macdom->setup->compressCode = TRUE;
+$macdom->setup->changeQkAttributes = [
 	'a' => [
 		'target' => 'href',
 		'href' => 'target',
 	]
 ];
 
-Assert::same($resultA, $o->compile($testedA));
+Assert::same($resultA, $macdom->compile($testedA));
 
-$o->setup->changeQkAttributes = [
+$macdom->setup->changeQkAttributes = [
 	'a' => [
 		'target' => NULL,
 		'href' => NULL
 	]
 ];
 
-Assert::same($resultB, $o->compile($testedB));
+Assert::same($resultB, $macdom->compile($testedB));

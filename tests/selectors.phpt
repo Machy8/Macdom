@@ -2,14 +2,15 @@
 
 use Tester\Assert;
 
-require 'bootstrap.php';
+
+require __DIR__ . '/bootstrap.php';
 
 Assert::matchFile(
-	TEMPLATES."/class-b.html",
-	$o->compile(file_get_contents(TEMPLATES."/class-a.html"))
+	EXPECTED . "/class.html",
+	$macdom->compile(file_get_contents(ACTUAL . "/class.html"))
 );
 
 Assert::matchFile(
-	TEMPLATES."/id-b.html",
-	$o->compile(file_get_contents(TEMPLATES."/id-a.html"))
+	EXPECTED . "/id.html",
+	$macdom->compile(file_get_contents(ACTUAL . "/id.html"))
 );

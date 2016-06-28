@@ -20,7 +20,8 @@ class SetupChecker
 	/** @var array */
 	private $options = [
 		'outputIndentation' => ['spaces', 'tabs'],
-		'indentMethod' => ['spaces', 'tabs', 'combined']
+		'indentMethod' => ['spaces', 'tabs', 'combined'],
+		'trim' => ['left', 'both']
 	];
 
 	/** @var array */

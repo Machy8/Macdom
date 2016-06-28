@@ -1,9 +1,10 @@
 <?php
 use Tester\Assert;
 
-require 'bootstrap.php';
+
+require __DIR__ . '/bootstrap.php';
 
 Assert::matchFile(
-	TEMPLATES."/check-js-css-b.html",
-	$o->compile(file_get_contents(TEMPLATES."/check-js-css-a.html"))
+	EXPECTED . "/check-js-css.html",
+	$macdom->compile(file_get_contents(ACTUAL . "/check-js-css.html"))
 );

@@ -186,6 +186,8 @@ class Compiler
 
 		$this->addCloseTags();
 		$this->composeContent();
+		
+		if($this->Setup->blankLine && !preg_match('/\n+$/', $this->outputStorage)) $this->outputStorage .= "\n";
 
 		return $this->outputStorage;
 	}
@@ -220,7 +222,8 @@ class Compiler
 	private function getLnTxt ($ln, $clean = FALSE, $elementExists = FALSE)
 	{
 		$find = ['/ *' . self::AREA_TAG . '(?:-CONTENT)?/'];
-		$txt = ltrim($ln);
+
+		$txt = $this->Setup->trim === 'left' ? ltrim($ln) : trim ($ln);
 
 		if ($elementExists) $txt = strstr($txt, " ");
 		if ($clean) $find[] = '/^\|/';
