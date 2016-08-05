@@ -12,6 +12,7 @@
 
 namespace Machy8\Macdom\Elements;
 
+
 class Elements extends ElementsSettings
 {
 
@@ -23,6 +24,7 @@ class Elements extends ElementsSettings
 			$this->booleanAttributes = array_merge($this->booleanAttributes, $attributes);
 		}
 	}
+
 
 	/** @param array $elements */
 	public function addElements ($elements)
@@ -47,6 +49,7 @@ class Elements extends ElementsSettings
 		}
 	}
 
+
 	/** @param array $elements */
 	public function addQkAttributes ($elements)
 	{
@@ -65,6 +68,7 @@ class Elements extends ElementsSettings
 			}
 		}
 	}
+
 
 	/** @param array $elements */
 	public function changeQkAttributes ($elements)
@@ -94,6 +98,7 @@ class Elements extends ElementsSettings
 		}
 	}
 
+
 	/**
 	 * @param string $el
 	 * @param string $returnSettings
@@ -107,6 +112,7 @@ class Elements extends ElementsSettings
 
 		return $return;
 	}
+
 
 	/**
 	 * @param string $el
@@ -131,6 +137,7 @@ class Elements extends ElementsSettings
 		];
 	}
 
+
 	/**
 	 * @param string $attribute
 	 * @return bool
@@ -139,6 +146,7 @@ class Elements extends ElementsSettings
 	{
 		return in_array($attribute, $this->booleanAttributes);
 	}
+
 
 	/** @param array $attributes */
 	public function removeBooleanAttributes ($attributes)
@@ -149,6 +157,7 @@ class Elements extends ElementsSettings
 		}
 	}
 
+
 	/** @param array $elements */
 	public function removeElements ($elements)
 	{
@@ -157,4 +166,5 @@ class Elements extends ElementsSettings
 			$this->elements = array_diff($this->elements, $elements);
 		}
 	}
+	
 }

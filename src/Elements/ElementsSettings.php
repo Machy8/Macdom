@@ -12,6 +12,7 @@
 
 namespace Machy8\Macdom\Elements;
 
+
 class ElementsSettings extends ElementsList
 {
 
@@ -140,4 +141,5 @@ class ElementsSettings extends ElementsList
 			'qkAttributes' => ['type']
 		],
 	];
+	
 }

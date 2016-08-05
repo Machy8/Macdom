@@ -12,6 +12,7 @@
 
 namespace Machy8\Macdom\Elements;
 
+
 class BooleanAttributes
 {
 
@@ -40,4 +41,5 @@ class BooleanAttributes
 		'selected',
 		'spellcheck',
 	];
+
 }

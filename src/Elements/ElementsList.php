@@ -12,6 +12,7 @@
 
 namespace Machy8\Macdom\Elements;
 
+
 class ElementsList extends BooleanAttributes
 {
 
@@ -139,4 +140,5 @@ class ElementsList extends BooleanAttributes
 		'picture',
 		'summary'
 	];
+	
 }

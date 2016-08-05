@@ -19,6 +19,7 @@ use Machy8\Macdom\Setup\SetupChecker;
 
 trait LoadersCore
 {
+
 	/**
 	 * @var Setup
 	 */
@@ -29,6 +30,7 @@ trait LoadersCore
 	 */
 	private $setupChecker;
 
+
 	/**
 	 * LoadersCore constructor.
 	 */
@@ -37,6 +39,7 @@ trait LoadersCore
 		$this->setup = new Setup;
 		$this->setupChecker = new SetupChecker($this->setup);
 	}
+
 
 	/**
 	 * @param string $content
@@ -50,4 +53,5 @@ trait LoadersCore
 
 		return $compiled;
 	}
+
 }

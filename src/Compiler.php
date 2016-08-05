@@ -19,6 +19,7 @@ use Machy8\Macdom\Replicator\Replicator;
 
 class Compiler
 {
+
 	/** @const string */
 	const AREA_TAG = 'SKIP';
 
@@ -76,6 +77,7 @@ class Compiler
 	/** @var int */
 	private $skippedElementLvl;
 
+
 	/**
 	 * Compiler constructor.
 	 * @param Setup\Setup $setup
@@ -111,6 +113,7 @@ class Compiler
 		$this->Macros->addCustomMacros($setup->addMacros);
 		$this->Macros->removeMacros($setup->removeMacros);
 	}
+
 
 	/**
 	 * @param string $content
@@ -186,11 +189,12 @@ class Compiler
 
 		$this->addCloseTags();
 		$this->composeContent();
-		
+
 		if($this->Setup->blankLine && !preg_match('/\n+$/', $this->outputStorage)) $this->outputStorage .= "\n";
 
 		return $this->outputStorage;
 	}
+
 
 	/**
 	 * @param string $ln
@@ -213,6 +217,7 @@ class Compiler
 		return $spaces + $tabulators;
 	}
 
+
 	/**
 	 * @param string $ln
 	 * @param bool $clean
@@ -233,6 +238,7 @@ class Compiler
 		return $txt;
 	}
 
+
 	/**
 	 * @param string $txt
 	 * @return string
@@ -243,6 +249,7 @@ class Compiler
 
 		return $element[0];
 	}
+
 
 	/**
 	 * @param string $txt
@@ -326,6 +333,7 @@ class Compiler
 
 		return $tagDetected;
 	}
+
 
 	/**
 	 * @param string $txt
@@ -435,12 +443,13 @@ class Compiler
 		];
 	}
 
+
 	/**
 	 * @param string $element
 	 * @param int $lvl
 	 * @param array $attributes
 	 */
-	private function addOpenTag ($element, $lvl, $attributes)
+	private function addOpenTag($element, $lvl, $attributes)
 	{
 		$elementSettings = $this->Elements->findElement($element, TRUE);
 		$openTag = '<' . $element;
@@ -510,8 +519,9 @@ class Compiler
 		}
 	}
 
+
 	/** @param int $lvl */
-	private function addCloseTags ($lvl = 0)
+	private function addCloseTags($lvl = 0)
 	{
 		$lastTag = $length = count($this->closeTags);
 
@@ -525,12 +535,13 @@ class Compiler
 		array_splice($this->closeTags, $lastTag);
 	}
 
+
 	/**
 	 * @param string $type
 	 * @param string $content
 	 * @param int $lvl
 	 */
-	private function addToQueue ($type, $content, $lvl)
+	private function addToQueue($type, $content, $lvl)
 	{
 		$formatting = !$this->inNoCompileArea && !$this->skipRow;
 		$lastKey = count($this->outputQueue) - 1;
@@ -553,7 +564,8 @@ class Compiler
 
 	}
 
-	private function composeContent ()
+
+	private function composeContent()
 	{
 		foreach ($this->outputQueue as $contentKey => $contentArr) {
 			if (!$this->Setup->compressCode) {
@@ -591,4 +603,5 @@ class Compiler
 		}
 		$this->outputQueue = [];
 	}
+
 }

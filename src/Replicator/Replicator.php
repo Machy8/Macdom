@@ -12,11 +12,12 @@
 
 namespace Machy8\Macdom\Replicator;
 
+
 class Replicator extends Register
 {
 
 	const
-	
+
 		/** @const regular expression */
 		REG_EXP_A = '/\[(.*?)\]/',
 
@@ -33,7 +34,7 @@ class Replicator extends Register
 	 * @param string $txt
 	 * @return array|bool
 	 */
-	public function detect ($lvl, $element, $txt)
+	public function detect($lvl, $element, $txt)
 	{
 		$clearLn = FALSE;
 		$replacement = NULL;
@@ -50,7 +51,7 @@ class Replicator extends Register
 
 			if ($regLn['ln']) {
 				if ($regLn['key']) $txt = preg_replace('/' . preg_quote($element) . '/', '', $txt, 1);
-				
+
 				$replacement = $this->synchronizeLines($txt, $regLn['ln']);
 			}
 
@@ -65,12 +66,13 @@ class Replicator extends Register
 		];
 	}
 
+
 	/**
 	 * @param string $ln
 	 * @param string $regLn
 	 * @return string
 	 */
-	private function synchronizeLines ($ln, $regLn)
+	private function synchronizeLines($ln, $regLn)
 	{
 		if (preg_match_all(self::REG_EXP_A, $ln, $matches)) {
 			$matches = $matches[1];
@@ -85,4 +87,5 @@ class Replicator extends Register
 
 		return trim($clear . $ln);
 	}
+
 }

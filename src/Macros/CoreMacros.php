@@ -12,6 +12,7 @@
 
 namespace Machy8\Macdom\Macros;
 
+
 class CoreMacros extends MacrosInstaller
 {
 
@@ -104,4 +105,5 @@ class CoreMacros extends MacrosInstaller
 			return '-->';
 		});
 	}
+	
 }

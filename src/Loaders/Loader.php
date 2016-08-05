@@ -14,5 +14,7 @@ namespace Machy8\Macdom\Loaders;
 
 class Loader implements ILoader
 {
+
 	use LoadersCore;
+
 }

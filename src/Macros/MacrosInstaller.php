@@ -12,6 +12,7 @@
 
 namespace Machy8\Macdom\Macros;
 
+
 class MacrosInstaller
 {
 
@@ -28,6 +29,7 @@ class MacrosInstaller
 		}
 	}
 
+
 	/**
 	 * @param string $macro
 	 * @param callable $function
@@ -37,6 +39,7 @@ class MacrosInstaller
 		if (!array_key_exists($macro, $this->macros)) $this->macros[$macro] = $function;
 	}
 
+
 	/** @param array $macros */
 	public function removeMacros ($macros)
 	{
@@ -45,4 +48,5 @@ class MacrosInstaller
 			$this->macros = array_diff_key($this->macros, array_flip($macros));
 		}
 	}
+
 }

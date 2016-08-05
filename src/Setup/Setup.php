@@ -14,6 +14,7 @@ namespace Machy8\Macdom\Setup;
 
 class Setup
 {
+	
 	/** @var string */
 	public $addBooleanAttributes = '';
 
@@ -43,7 +44,7 @@ class Setup
 
 	/** @var int */
 	public $indentMethod = 'combined';
-	
+
 	/** @var bool */
 	public $blankLine = FALSE;
 
@@ -73,4 +74,5 @@ class Setup
 
 	/** @var string */
 	public $trim = 'left';
+	
 }

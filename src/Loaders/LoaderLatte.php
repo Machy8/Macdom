@@ -17,8 +17,10 @@ use Latte\Loaders\FileLoader;
 
 class LoaderLatte extends FileLoader implements ILoader
 {
-	use LoadersCore;
 
+	use LoadersCore;
+	
+	
 	/**
 	 * @param string $file
 	 * @return string
@@ -30,4 +32,5 @@ class LoaderLatte extends FileLoader implements ILoader
 
 		return $compiled;
 	}
+
 }

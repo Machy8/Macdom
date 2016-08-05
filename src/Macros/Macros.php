@@ -24,6 +24,7 @@ class Macros extends CoreMacros
 		return array_key_exists($macro, $this->macros);
 	}
 
+
 	/**
 	 * @param string $macro
 	 * @param string $ln
@@ -35,4 +36,5 @@ class Macros extends CoreMacros
 
 		return call_user_func($this->macros[$macro], $ln);
 	}
+
 }

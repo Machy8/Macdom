@@ -17,6 +17,7 @@ use Exception;
 
 class SetupChecker
 {
+
 	/** @var array */
 	private $options = [
 		'outputIndentation' => ['spaces', 'tabs'],
@@ -27,11 +28,12 @@ class SetupChecker
 	/** @var array */
 	private $register = [];
 
+
 	/**
 	 * SetupChecker constructor.
 	 * @param object $setup
 	 */
-	public function __construct ($setup)
+	public function __construct($setup)
 	{
 		$setupVars = get_object_vars($setup);
 
@@ -40,11 +42,12 @@ class SetupChecker
 		}
 	}
 
+
 	/**
 	 * @param $setup
 	 * @throws Exception
 	 */
-	public function check ($setup)
+	public function check($setup)
 	{
 		$setupVars = get_object_vars($setup);
 
@@ -69,6 +72,7 @@ class SetupChecker
 		}
 	}
 
+
 	/**
 	 * @param string $var
 	 * @param array $options
@@ -76,7 +80,7 @@ class SetupChecker
 	 * @param string $exceptionType
 	 * @throws Exception
 	 */
-	private function throwException ($var, $options, $requiredType, $exceptionType)
+	private function throwException($var, $options, $requiredType, $exceptionType)
 	{
 		if ($exceptionType === 'type') {
 			$article = $requiredType === 'array' || $requiredType === 'integer' ? 'an' : 'a';
@@ -89,4 +93,5 @@ class SetupChecker
 
 		throw new Exception('Variable $' . $var . ' ' . $msg);
 	}
+
 }

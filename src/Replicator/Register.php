@@ -12,6 +12,7 @@
 
 namespace Machy8\Macdom\Replicator;
 
+
 class Register
 {
 
@@ -20,24 +21,26 @@ class Register
 	 */
 	private $register = [];
 
+
 	/**
 	 * @param int $lvl
 	 * @param string $ln
 	 * @return bool
 	 */
-	protected function deregisterLvl ($lvl, $ln)
+	protected function deregisterLvl($lvl, $ln)
 	{
 		$selected = $ln ? $lvl . '-' . $ln : $lvl . '-x';
 
 		if (isset($this->register[$selected])) unset($this->register[$selected]);
 	}
 
+
 	/**
 	 * @param $lvl
 	 * @param $el
 	 * @return mixed|null
 	 */
-	protected function isRegistered ($lvl, $el)
+	protected function isRegistered($lvl, $el)
 	{
 		$ln = NULL;
 		$key = FALSE;
@@ -56,14 +59,16 @@ class Register
 		];
 	}
 
+
 	/**
 	 * @param string $key
 	 * @param int $lvl
 	 * @param string $ln
 	 */
-	protected function registerLvl ($key, $lvl, $ln)
+	protected function registerLvl($key, $lvl, $ln)
 	{
 		$registerId = $key ? $lvl . '-' . $key : $lvl . '-x';
 		$this->register[$registerId] = $ln;
 	}
+
 }
