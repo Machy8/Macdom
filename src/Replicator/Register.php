@@ -25,7 +25,6 @@ class Register
 	/**
 	 * @param int $lvl
 	 * @param string $ln
-	 * @return bool
 	 */
 	protected function deregisterLvl($lvl, $ln)
 	{
@@ -36,9 +35,9 @@ class Register
 
 
 	/**
-	 * @param $lvl
-	 * @param $el
-	 * @return mixed|null
+	 * @param int $lvl
+	 * @param string $el
+	 * @return array
 	 */
 	protected function isRegistered($lvl, $el)
 	{

@@ -16,7 +16,9 @@ namespace Machy8\Macdom\Elements;
 class BooleanAttributes
 {
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	protected $booleanAttributes = [
 		'allowfullscreen',
 		'autofocus',

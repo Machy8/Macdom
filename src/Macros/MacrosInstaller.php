@@ -16,11 +16,16 @@ namespace Machy8\Macdom\Macros;
 class MacrosInstaller
 {
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	protected $macros = [];
 
-	/** @param array $macros */
-	public function addCustomMacros ($macros)
+
+	/**
+	 * @param array $macros
+	 */
+	public function addCustomMacros($macros)
 	{
 		if ($macros) {
 			foreach ($macros as $macro => $function) {
@@ -34,14 +39,16 @@ class MacrosInstaller
 	 * @param string $macro
 	 * @param callable $function
 	 */
-	protected function addMacro ($macro, $function)
+	protected function addMacro($macro, $function)
 	{
 		if (!array_key_exists($macro, $this->macros)) $this->macros[$macro] = $function;
 	}
 
 
-	/** @param array $macros */
-	public function removeMacros ($macros)
+	/**
+	 * @param string $macros
+	 */
+	public function removeMacros($macros)
 	{
 		if ($macros) {
 			$macros = explode(' ', $macros);

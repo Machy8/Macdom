@@ -12,67 +12,108 @@
 
 namespace Machy8\Macdom\Setup;
 
+
 class Setup
 {
-	
-	/** @var string */
+
+	/**
+	 * @var string
+	 */
 	public $addBooleanAttributes = '';
 
-	/** @var string */
+	/**
+	 * @var array
+	 */
 	public $addElements = [];
 
-	/*** @var array */
+	/**
+	 * @var array
+	 */
 	public $addMacros = [];
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	public $addQkAttributes = [];
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	public $booleansWithValue = FALSE;
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	public $changeQkAttributes = [];
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	public $closeSelfClosingTags = FALSE;
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	public $compressCode = FALSE;
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	public $compressText = FALSE;
 
-	/** @var int */
+	/**
+	 * @var string
+	 */
 	public $indentMethod = 'combined';
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	public $blankLine = FALSE;
 
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	public $outputIndentation = "tabs";
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	public $preferXhtml = FALSE;
 
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	public $removeBooleanAtributes = '';
 
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	public $removeElements = '';
 
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	public $removeMacros = '';
 
-	/** @var array */
+	/**
+	 * @var string
+	 */
 	public $skipElements = '';
 
-	/** @var int */
+	/**
+	 * @var int
+	 */
 	public $spacesPerIndent = 4;
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	public $structureHtmlSkeleton = TRUE;
 
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	public $trim = 'left';
-	
+
 }

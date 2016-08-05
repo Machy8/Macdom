@@ -16,7 +16,9 @@ namespace Machy8\Macdom\Elements;
 class ElementsSettings extends ElementsList
 {
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	protected $elementsSettings = [
 		'a' => [
 			'qkAttributes' => ['href', 'target', 'role']
@@ -141,5 +143,5 @@ class ElementsSettings extends ElementsList
 			'qkAttributes' => ['type']
 		],
 	];
-	
+
 }

@@ -19,13 +19,13 @@ class LoaderLatte extends FileLoader implements ILoader
 {
 
 	use LoadersCore;
-	
-	
+
+
 	/**
 	 * @param string $file
 	 * @return string
 	 */
-	public function getContent ($file)
+	public function getContent($file)
 	{
 		$content = parent::getContent($file);
 		$compiled = $this->compile($content);

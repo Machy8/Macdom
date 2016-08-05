@@ -34,7 +34,7 @@ trait LoadersCore
 	/**
 	 * LoadersCore constructor.
 	 */
-	public function __construct ()
+	public function __construct()
 	{
 		$this->setup = new Setup;
 		$this->setupChecker = new SetupChecker($this->setup);
@@ -45,7 +45,7 @@ trait LoadersCore
 	 * @param string $content
 	 * @return string
 	 */
-	public function compile ($content)
+	public function compile($content)
 	{
 		$this->setupChecker->check($this->setup);
 		$compiler = new Compiler($this->setup);

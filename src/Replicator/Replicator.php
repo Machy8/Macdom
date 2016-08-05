@@ -32,7 +32,7 @@ class Replicator extends Register
 	 * @param int $lvl
 	 * @param string $element
 	 * @param string $txt
-	 * @return array|bool
+	 * @return array
 	 */
 	public function detect($lvl, $element, $txt)
 	{

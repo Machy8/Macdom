@@ -16,8 +16,10 @@ namespace Machy8\Macdom\Elements;
 class Elements extends ElementsSettings
 {
 
-	/** @param array $attributes */
-	public function addBooleanAttributes ($attributes)
+	/**
+	 * @param string $attributes
+	 */
+	public function addBooleanAttributes($attributes)
 	{
 		if ($attributes) {
 			$attributes = array_filter(explode(' ', $attributes));
@@ -26,8 +28,10 @@ class Elements extends ElementsSettings
 	}
 
 
-	/** @param array $elements */
-	public function addElements ($elements)
+	/**
+	 * @param array $elements
+	 */
+	public function addElements($elements)
 	{
 		if ($elements) {
 			foreach ($elements as $element => $settings) {
@@ -50,8 +54,10 @@ class Elements extends ElementsSettings
 	}
 
 
-	/** @param array $elements */
-	public function addQkAttributes ($elements)
+	/**
+	 * @param array $elements
+	 */
+	public function addQkAttributes($elements)
 	{
 		if ($elements) {
 			foreach ($elements as $element => $attributes) {
@@ -70,8 +76,10 @@ class Elements extends ElementsSettings
 	}
 
 
-	/** @param array $elements */
-	public function changeQkAttributes ($elements)
+	/**
+	 * @param array $elements
+	 */
+	public function changeQkAttributes($elements)
 	{
 		if ($elements) {
 			$removeAttributes = [];
@@ -100,11 +108,11 @@ class Elements extends ElementsSettings
 
 
 	/**
-	 * @param string $el
-	 * @param string $returnSettings
-	 * @return bool|array
+	 * @param string|null $el
+	 * @param bool $returnSettings
+	 * @return array|bool
 	 */
-	public function findElement ($el, $returnSettings = NULL)
+	public function findElement($el, $returnSettings = FALSE)
 	{
 		$return = FALSE;
 
@@ -118,7 +126,7 @@ class Elements extends ElementsSettings
 	 * @param string $el
 	 * @return array
 	 */
-	private function getElementSettings ($el)
+	private function getElementSettings($el)
 	{
 		$qkAttributes = NULL;
 		$paired = TRUE;
@@ -142,14 +150,16 @@ class Elements extends ElementsSettings
 	 * @param string $attribute
 	 * @return bool
 	 */
-	public function isBoolean ($attribute)
+	public function isBoolean($attribute)
 	{
 		return in_array($attribute, $this->booleanAttributes);
 	}
 
 
-	/** @param array $attributes */
-	public function removeBooleanAttributes ($attributes)
+	/**
+	 * @param string $attributes
+	 */
+	public function removeBooleanAttributes($attributes)
 	{
 		if ($attributes) {
 			$attributes = explode(' ', $attributes);
@@ -158,13 +168,15 @@ class Elements extends ElementsSettings
 	}
 
 
-	/** @param array $elements */
-	public function removeElements ($elements)
+	/**
+	 * @param string $elements
+	 */
+	public function removeElements($elements)
 	{
 		if ($elements) {
 			$elements = explode(' ', $elements);
 			$this->elements = array_diff($this->elements, $elements);
 		}
 	}
-	
+
 }

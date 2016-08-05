@@ -20,61 +20,99 @@ use Machy8\Macdom\Replicator\Replicator;
 class Compiler
 {
 
-	/** @const string */
+	/**
+	 * @const string
+	 */
 	const AREA_TAG = 'SKIP';
 
-	/** @var Elements */
+	/**
+	 * @var Elements
+	 */
 	private $Elements;
 
-	/** @var Macros */
+	/**
+	 * @var Macros
+	 */
 	private $Macros;
 
-	/** @var Replicator */
+	/**
+	 * @var Replicator
+	 */
 	private $Replicator;
 
-	/** @var Setup\Setup */
+	/**
+	 * @var Setup\Setup
+	 */
 	private $Setup;
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $closeTags = [];
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	private $inNoCompileArea;
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $ncaCloseTags;
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $ncaOpenTags;
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $ncaSkipElements;
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $ncaRegExpInlineTags;
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $ncaRegExpOpenTags;
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	private $noCompileAreaClosed;
 
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	private $outputStorage = '';
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $outputQueue = [];
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $prevOutput;
 
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	private $prev2OutputType;
 
-	/** @var bool */
+	/**
+	 * @var bool
+	 */
 	private $skipRow;
 
-	/** @var int */
+	/**
+	 * @var int
+	 */
 	private $skippedElementLvl;
 
 
@@ -82,7 +120,7 @@ class Compiler
 	 * Compiler constructor.
 	 * @param Setup\Setup $setup
 	 */
-	public function __construct ($setup)
+	public function __construct($setup)
 	{
 		if ($setup->preferXhtml) $setup->closeSelfClosingTags = $setup->booleansWithValue = TRUE;
 
@@ -119,7 +157,7 @@ class Compiler
 	 * @param string $content
 	 * @return string
 	 */
-	public function compile ($content)
+	public function compile($content)
 	{
 		if (!$content) return '';
 
@@ -200,7 +238,7 @@ class Compiler
 	 * @param string $ln
 	 * @return int
 	 */
-	private function getLnLvl ($ln)
+	private function getLnLvl($ln)
 	{
 		$method = $this->Setup->indentMethod;
 		preg_match('/^\s+/', $ln, $matches);
@@ -219,12 +257,12 @@ class Compiler
 
 
 	/**
-	 * @param string $ln
+	 * @param string|null $ln
 	 * @param bool $clean
 	 * @param bool $elementExists
 	 * @return string
 	 */
-	private function getLnTxt ($ln, $clean = FALSE, $elementExists = FALSE)
+	private function getLnTxt($ln, $clean = FALSE, $elementExists = FALSE)
 	{
 		$find = ['/ *' . self::AREA_TAG . '(?:-CONTENT)?/'];
 
@@ -243,7 +281,7 @@ class Compiler
 	 * @param string $txt
 	 * @return string
 	 */
-	private function getElement ($txt)
+	private function getElement($txt)
 	{
 		$element = explode(' ', trim($txt));
 
@@ -257,7 +295,7 @@ class Compiler
 	 * @param int $lvl
 	 * @return bool
 	 */
-	private function detectNoCompileArea ($txt, $element, $lvl)
+	private function detectNoCompileArea($txt, $element, $lvl)
 	{
 		$txt = trim($txt);
 		$skipContent = $skipRow = FALSE;
@@ -339,7 +377,7 @@ class Compiler
 	 * @param string $txt
 	 * @return array
 	 */
-	private function processLn ($txt)
+	private function processLn($txt)
 	{
 		// Store the text from the first tag to the end of the line
 		$re = '/ \<[\w-]+ .*$/';
@@ -519,8 +557,9 @@ class Compiler
 		}
 	}
 
-
-	/** @param int $lvl */
+	/**
+	 * @param int $lvl
+	 */
 	private function addCloseTags($lvl = 0)
 	{
 		$lastTag = $length = count($this->closeTags);

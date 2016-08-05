@@ -18,22 +18,26 @@ use Exception;
 class SetupChecker
 {
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $options = [
 		'outputIndentation' => ['spaces', 'tabs'],
 		'indentMethod' => ['spaces', 'tabs', 'combined'],
 		'trim' => ['left', 'both']
 	];
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	private $register = [];
 
 
 	/**
 	 * SetupChecker constructor.
-	 * @param object $setup
+	 * @param Setup $setup
 	 */
-	public function __construct($setup)
+	public function __construct(Setup $setup)
 	{
 		$setupVars = get_object_vars($setup);
 
@@ -44,10 +48,10 @@ class SetupChecker
 
 
 	/**
-	 * @param $setup
+	 * @param Setup $setup
 	 * @throws Exception
 	 */
-	public function check($setup)
+	public function check(Setup $setup)
 	{
 		$setupVars = get_object_vars($setup);
 
@@ -75,7 +79,7 @@ class SetupChecker
 
 	/**
 	 * @param string $var
-	 * @param array $options
+	 * @param array|null $options
 	 * @param string $requiredType
 	 * @param string $exceptionType
 	 * @throws Exception

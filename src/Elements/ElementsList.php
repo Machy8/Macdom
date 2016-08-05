@@ -16,7 +16,9 @@ namespace Machy8\Macdom\Elements;
 class ElementsList extends BooleanAttributes
 {
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	protected $elements = [
 		'a',
 		'abbr',
@@ -140,5 +142,5 @@ class ElementsList extends BooleanAttributes
 		'picture',
 		'summary'
 	];
-	
+
 }
