@@ -6,10 +6,10 @@
  *
  * Copyright (c) 2015-2016 Vladimír Macháček
  *
- * For the full copyright and license information, please view the file license.md that was distributed with this source code.
+ * For the full copyright and license information, please view the file license.md
+ * that was distributed with this source code.
  *
  */
-
 namespace Machy8\Macdom\Loaders;
 
 use Machy8\Macdom\Compiler;

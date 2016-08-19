@@ -6,7 +6,8 @@
  *
  * Copyright (c) 2015-2016 Vladimír Macháček
  *
- * For the full copyright and license information, please view the file license.md that was distributed with this source code.
+ * For the full copyright and license information, please view the file license.md
+ * that was distributed with this source code.
  *
  */
 
@@ -62,7 +63,7 @@ class SetupChecker
 			$options = array_key_exists($key, $this->options) ? $this->options[$key] : NULL;
 
 			if ($type === $this->register[$key]) {
-				if ($options && !in_array($var, $options)) {
+				if ($options && ! in_array($var, $options)) {
 					$throw = TRUE;
 					$exceptionType = 'options';
 				}
@@ -72,7 +73,9 @@ class SetupChecker
 				$exceptionType = 'type';
 			}
 
-			if ($throw) $this->throwException($key, $options, $this->register[$key], $exceptionType);
+			if ($throw) {
+				$this->throwException($key, $options, $this->register[$key], $exceptionType);
+			}
 		}
 	}
 

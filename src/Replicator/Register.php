@@ -6,7 +6,8 @@
  *
  * Copyright (c) 2015-2016 Vladimír Macháček
  *
- * For the full copyright and license information, please view the file license.md that was distributed with this source code.
+ * For the full copyright and license information, please view the file license.md
+ * that was distributed with this source code.
  *
  */
 
@@ -30,7 +31,9 @@ class Register
 	{
 		$selected = $ln ? $lvl . '-' . $ln : $lvl . '-x';
 
-		if (isset($this->register[$selected])) unset($this->register[$selected]);
+		if (isset($this->register[$selected])) {
+			unset($this->register[$selected]);
+		}
 	}
 
 

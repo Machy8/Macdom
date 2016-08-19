@@ -6,7 +6,8 @@
  *
  * Copyright (c) 2015-2016 Vladimír Macháček
  *
- * For the full copyright and license information, please view the file license.md that was distributed with this source code.
+ * For the full copyright and license information, please view the file license.md
+ * that was distributed with this source code.
  *
  */
 
@@ -17,7 +18,7 @@ class CoreMacros extends MacrosInstaller
 {
 
 	/** CoreMacros constructor */
-	public function __construct ()
+	public function __construct()
 	{
 		$this->addMacro('!5', function () {
 			return '<!DOCTYPE html>';
@@ -49,7 +50,7 @@ class CoreMacros extends MacrosInstaller
 
 		$this->addMacro('viewport', function ($line) {
 			$viewport = '<meta name="viewport" content="';
-			$viewport .= !empty($line) ? $line : 'width=device-width, initial-scale=1';
+			$viewport .= ! empty($line) ? $line : 'width=device-width, initial-scale=1';
 			$viewport .= '">';
 
 			return $viewport;
@@ -105,5 +106,5 @@ class CoreMacros extends MacrosInstaller
 			return '-->';
 		});
 	}
-	
+
 }

@@ -6,7 +6,8 @@
  *
  * Copyright (c) 2015-2016 Vladimír Macháček
  *
- * For the full copyright and license information, please view the file license.md that was distributed with this source code.
+ * For the full copyright and license information, please view the file license.md
+ * that was distributed with this source code.
  *
  */
 
@@ -46,12 +47,13 @@ class Replicator extends Register
 			$this->registerLvl($key, $lvl, $txt);
 		}
 
-		if (!preg_match('/^\/' . self::REG_EXP_C . '/', $element, $deregLn) && !$key) {
+		if ( ! preg_match('/^\/' . self::REG_EXP_C . '/', $element, $deregLn) && ! $key) {
 			$regLn = $this->isRegistered($lvl, $element);
 
 			if ($regLn['ln']) {
-				if ($regLn['key']) $txt = preg_replace('/' . preg_quote($element) . '/', '', $txt, 1);
-
+				if ($regLn['key']) {
+					$txt = preg_replace('/' . preg_quote($element) . '/', '', $txt, 1);
+				}
 				$replacement = $this->synchronizeLines($txt, $regLn['ln']);
 			}
 

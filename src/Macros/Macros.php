@@ -6,11 +6,13 @@
  *
  * Copyright (c) 2015-2016 Vladimír Macháček
  *
- * For the full copyright and license information, please view the file license.md that was distributed with this source code.
+ * For the full copyright and license information, please view the file license.md
+ * that was distributed with this source code.
  *
  */
 
 namespace Machy8\Macdom\Macros;
+
 
 class Macros extends CoreMacros
 {
@@ -24,7 +26,7 @@ class Macros extends CoreMacros
 		return array_key_exists($macro, $this->macros);
 	}
 
-	
+
 	/**
 	 * @param string $macro
 	 * @param string $ln
