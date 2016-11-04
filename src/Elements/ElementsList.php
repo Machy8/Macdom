@@ -46,6 +46,7 @@ class ElementsList extends BooleanAttributes
 		'datalist',
 		'dd',
 		'del',
+		'details',
 		'dfn',
 		'div',
 		'dl',
@@ -112,6 +113,7 @@ class ElementsList extends BooleanAttributes
 		'strong',
 		'style',
 		'sub',
+		'summary',
 		'sup',
 		'table',
 		'tbody',
@@ -132,16 +134,13 @@ class ElementsList extends BooleanAttributes
 		'wbr',
 		//Experimental and not standardized API elements
 		'bgsound',
-		'details',
 		'dialog',
 		'hgroup',
 		'image',
 		'menu',
 		'menuitem',
-		'multicol',
 		'nobr',
-		'picture',
-		'summary'
+		'picture'
 	];
 
 }
