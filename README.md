@@ -1,4 +1,4 @@
-#Macdom
+# Macdom
 [![Build Status](https://travis-ci.org/Machy8/Macdom.svg?branch=master)](https://travis-ci.org/Machy8/Macdom)
 [![Packagist](https://img.shields.io/packagist/v/machy8/macdom.svg?maxAge=2592000)](https://packagist.org/packages/machy8/macdom)
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/Machy8/Macdom/blob/master/license.md)
@@ -7,7 +7,7 @@
 - For more information see [WIKI](https://github.com/Machy8/Macdom/wiki) *(always up to date to the newest stable version)*
 - **[Try it on CODEPEN](http://codepen.io/Machy8/pen/mPLdbg)** *(JavaScript version is always behind the php version so it may contain bugs and errors that have already been fixed in the PHP version)*
 
-##Sample
+## Sample
 
 **Macdom**
 ```` Slim
@@ -55,11 +55,11 @@ body
 </html>
 ````
 
-##Requirements
+## Requirements
 - php 5.4+
 - If you use Nette Framework - v2.3+
 
-##Installation
+## Installation
 **1 - Download the Macdom using composer:**
 ```
  composer require machy8/macdom
