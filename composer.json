@@ -4,10 +4,11 @@
     "keywords": ["macdom", "html", "preprocessor", "templating", "minification"],
     "license": "New BSD License",
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=7.0"
     },
     "require-dev": {
-        "nette/tester": "^1.7"
+        "nette/tester": "^1.7",
+        "tracy/tracy": "^2.4"
     },
     "authors": [
         {
@@ -16,8 +17,8 @@
         }
     ],
     "autoload": {
-        "psr-4": {
-            "Machy8\\Macdom\\": "src"
+        "psr-0": {
+            "Macdom": ""
         }
     }
 }
