@@ -56,7 +56,7 @@ body
 ````
 
 ## Requirements
-- php 5.4+
+- PHP 7.0+
 - If you use Nette Framework - v2.3+
 
 ## Installation
@@ -69,19 +69,9 @@ body
 *Typical:*
 
 ```php
-$macdom = new Machy8\Macdom\Loaders\Loader;
+$macdom = new Macdom\Engine;
 $compiled = $macdom->compile($content);
 ```
 
 *Nette framework:*
-
-Place the code bellow into your *base presenter*.
-
-```php
-protected function createTemplate()
-    {
-        $template = parent::createTemplate();
-        $template->getLatte()->setLoader(new \Machy8\Macdom\Loaders\LoaderLatte($this));
-        return $template;
-    }
-```
+- Soon, but first, let me take a selfie
