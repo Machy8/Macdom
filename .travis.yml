@@ -9,14 +9,17 @@ matrix:
     allow_failures:
         - php: hhvm
 
-script:
-  - vendor/bin/tester tests -s -p php
-
 before_install:
   - composer self-update
 
 install:
   - composer install --no-interaction --prefer-source
+
+before_script:
+  - composer dump-autoload -o
+
+script:
+  - vendor/bin/tester tests -s -p php
 
 services:
   - redis-server
