@@ -65,7 +65,7 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('figcaption')
 			->addElement('figure')
 			->addElement('footer')
-			->addElement('form', ['quickAttributes' => ['method']])
+			->addElement('form', ['quickAttributes' => ['action', 'method', 'target']])
 			->addElement('h1')
 			->addElement('h2')
 			->addElement('h3')
