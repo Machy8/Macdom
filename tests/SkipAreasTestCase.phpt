@@ -21,19 +21,19 @@ require_once 'bootstrap.php';
 final class SkipAreasTestCase extends AbstractTestCase
 {
 
-	public function testIndentedBlockMode(): void
+	public function testIndentedBlockMode()
 	{
 		$this->assertMatchFile('indentedBlockMode');
 	}
 
 
-	public function testInlineSkipAreas(): void
+	public function testInlineSkipAreas()
 	{
 		$this->assertMatchFile('inlineMode');
 	}
 
 
-	public function testTaggedBlockMode(): void
+	public function testTaggedBlockMode()
 	{
 		$this->macdom->addElement('skipthisarea', [$this->macdom::CONTENT_SKIPPED]);
 		$this->assertMatchFile('taggedBlockMode');

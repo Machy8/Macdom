@@ -22,7 +22,7 @@ use Macdom\Engine;
 final class CoreElements extends AbstractElementsManager
 {
 
-	public static function install(Compiler $compiler): void
+	public static function install(Compiler $compiler)
 	{
 		$elementsManager = new static($compiler);
 

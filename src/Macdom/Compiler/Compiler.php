@@ -91,7 +91,7 @@ final class Compiler
 	private $xmlSyntax = FALSE;
 
 
-	public function addElement(string $element, array $settings = NULL): void
+	public function addElement(string $element, array $settings = NULL)
 	{
 		$contentType = $settings && in_array(Engine::CONTENT_XML, $settings)
 			? Engine::CONTENT_XML
@@ -104,7 +104,7 @@ final class Compiler
 	}
 
 
-	public function addElementsBooleanAttribute(string $attribute, string $contentType = NULL): void
+	public function addElementsBooleanAttribute(string $attribute, string $contentType = NULL)
 	{
 		$booleanAttributes = Helpers::explodeString($attribute);
 		$contentType = $contentType ? $contentType : Engine::CONTENT_HTML;
@@ -119,7 +119,7 @@ final class Compiler
 	}
 
 
-	public function addElementsInlineSkipArea(string $regularExpression): void
+	public function addElementsInlineSkipArea(string $regularExpression)
 	{
 		if ( ! in_array($regularExpression, $this->elementsInlineSkipAreas)) {
 			$this->elementsInlineSkipAreas[] = $regularExpression;
@@ -127,7 +127,7 @@ final class Compiler
 	}
 
 
-	public function addMacro(string $keyword, \closure $macro, array $flags = NULL): void
+	public function addMacro(string $keyword, \closure $macro, array $flags = NULL)
 	{
 		$contentType = $flags && in_array(Engine::CONTENT_XML, $flags)
 			? Engine::CONTENT_XML
@@ -140,7 +140,7 @@ final class Compiler
 	}
 
 
-	public function changeElementQuickAttributes(string $element, array $quickAttributes): void
+	public function changeElementQuickAttributes(string $element, array $quickAttributes)
 	{
 		if ( ! $this->findElement($element)) {
 			throw new SetupException('Can\'t change quick attributes for undefined element "' . $element . '"');
@@ -231,7 +231,7 @@ final class Compiler
 	}
 
 
-	public function refactorToken(Token $token, string $output): void
+	public function refactorToken(Token $token, string $output)
 	{
 		$tokenKeyword = Helpers::getFirstWord($output);
 		$token->type = Token::TEXT;
@@ -316,7 +316,7 @@ final class Compiler
 	}
 
 
-	private function addCloseTags(int $tokenIndentationLevel = NULL): void
+	private function addCloseTags(int $tokenIndentationLevel = NULL)
 	{
 		foreach ($this->closeTags as $closeTag) {
 			if ($tokenIndentationLevel !== NULL && $tokenIndentationLevel > $closeTag['indentationLevel']) {
@@ -329,7 +329,7 @@ final class Compiler
 	}
 
 
-	private function addElementCustomTags(array $openTags, array $closeTags): void
+	private function addElementCustomTags(array $openTags, array $closeTags)
 	{
 		foreach ($openTags as $openTag) {
 			if ($this->elementsCustomOpenTags && preg_match('/' . $this->elementsCustomOpenTags . '/', $openTag)) {
@@ -359,7 +359,7 @@ final class Compiler
 	}
 
 
-	private function addOutput(string $type, string $code): void
+	private function addOutput(string $type, string $code)
 	{
 		$this->output[] = [
 			'type' => $type,

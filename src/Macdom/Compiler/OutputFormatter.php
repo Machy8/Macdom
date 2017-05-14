@@ -143,7 +143,7 @@ final class OutputFormatter
 	}
 
 
-	private function formatToken(string $token, string $tokenType): void
+	private function formatToken(string $token, string $tokenType)
 	{
 		$previousTokenIsOpenTag = $this->previousTokenType === Token::ELEMENT_OPEN_TAG;
 		$previousTokenIsText = $this->previousTokenType === Token::TEXT;

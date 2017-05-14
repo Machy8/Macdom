@@ -22,7 +22,7 @@ use Macdom\Engine;
 final class CoreMacros extends AbstractMacrosManager
 {
 
-	public static function install(Compiler $compiler): void
+	public static function install(Compiler $compiler)
 	{
 		$macrosManager = new static($compiler);
 

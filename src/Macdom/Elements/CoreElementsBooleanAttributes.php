@@ -21,7 +21,7 @@ use Macdom\Compiler;
 final class CoreElementsBooleanAttributes extends AbstractElementsManager
 {
 
-	public static function install(Compiler $compiler): void
+	public static function install(Compiler $compiler)
 	{
 		$elementsManager = new static($compiler);
 

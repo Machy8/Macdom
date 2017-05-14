@@ -21,7 +21,7 @@ use Macdom\Compiler;
 class CoreElementsInlineSkipAreas extends AbstractElementsManager
 {
 
-	public static function install(Compiler $compiler): void
+	public static function install(Compiler $compiler)
 	{
 		$elementsManager = new static($compiler);
 

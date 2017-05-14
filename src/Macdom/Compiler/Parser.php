@@ -176,7 +176,7 @@ final class Parser
 	}
 
 
-	private function addToken(string $type, array $parameters = NULL): void
+	private function addToken(string $type, array $parameters = NULL)
 	{
 		$this->output[] = $token = new Token;
 		$token->text = $parameters['text'] ?? $this->processedLine['text'];
@@ -417,7 +417,7 @@ final class Parser
 	}
 
 
-	private function setProcessedLine(string $line, int $lineNumber): void
+	private function setProcessedLine(string $line, int $lineNumber)
 	{
 		$tokenInfo = $this->analyzeString($line);
 
@@ -438,7 +438,7 @@ final class Parser
 	 * @param string|NULL $mode
 	 * @param string|array|NULL $closeTags
 	 */
-	private function setSkippedArea($mode, $closeTags = NULL): void
+	private function setSkippedArea($mode, $closeTags = NULL)
 	{
 		if ($mode === self::SKIPPED_AREA_INDENTED_BLOCK_MODE) {
 			$indentationLevel = $this->processedLine['indentationLevel'] + 1;

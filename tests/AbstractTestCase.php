@@ -42,7 +42,7 @@ abstract class AbstractTestCase extends TestCase
 	}
 
 
-	protected function assertMatchFile(string $fileName): void
+	protected function assertMatchFile(string $fileName)
 	{
 		Assert::matchFile(
 			$this->getExpectedFilePath($fileName),
@@ -50,7 +50,7 @@ abstract class AbstractTestCase extends TestCase
 	}
 
 
-	protected function assertSame(string $expected, string $actual): void
+	protected function assertSame(string $expected, string $actual)
 	{
 		Assert::same($expected . "\n", $this->macdom->disableOutputFormatter()->compile($actual));
 	}
@@ -62,7 +62,7 @@ abstract class AbstractTestCase extends TestCase
 	}
 
 
-	protected function rewriteTest(string $testName): void
+	protected function rewriteTest(string $testName)
 	{
 		file_put_contents(
 			$this->getExpectedFilePath($testName),
@@ -71,7 +71,7 @@ abstract class AbstractTestCase extends TestCase
 	}
 
 
-	protected function setActualTestsDirectoryNamePrefix(): void
+	protected function setActualTestsDirectoryNamePrefix()
 	{
 		if ($this->actualTestsDirectoryNamePrefix) {
 			return;

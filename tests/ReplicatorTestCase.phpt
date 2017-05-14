@@ -21,19 +21,19 @@ require_once 'bootstrap.php';
 final class ReplicatorTestCase extends AbstractTestCase
 {
 
-	public function testElementsWithPlaceholders(): void
+	public function testElementsWithPlaceholders()
 	{
 		$this->assertMatchFile('elementsWithPlaceholders');
 	}
 
 
-	public function testReplicantWithKey(): void
+	public function testReplicantWithKey()
 	{
 		$this->assertMatchFile('replicantWithKey');
 	}
 
 
-	public function testSimpleText(): void
+	public function testSimpleText()
 	{
 		$this->assertMatchFile('simpleText');
 	}
@@ -42,7 +42,7 @@ final class ReplicatorTestCase extends AbstractTestCase
 	/**
 	 * @throws\Macdom\CompileException No replicated line can be deregistered on line 2 near "	/@"
 	 */
-	public function testUnnecessaryReplicatorDeregistration(): void
+	public function testUnnecessaryReplicatorDeregistration()
 	{
 		$this->assertMatchFile('unnecessaryReplicatorDeregistration');
 	}

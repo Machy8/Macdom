@@ -21,31 +21,31 @@ require_once 'bootstrap.php';
 final class TextTestCase extends AbstractTestCase
 {
 
-	public function testConnectedParagraphs(): void
+	public function testConnectedParagraphs()
 	{
 		$this->assertMatchFile('connectedParagraph');
 	}
 
 
-	public function testParagraph(): void
+	public function testParagraph()
 	{
 		$this->assertMatchFile('paragraph');
 	}
 
 
-	public function testParagraphWithConnector(): void
+	public function testParagraphWithConnector()
 	{
 		$this->assertMatchFile('paragraphWithConnector');
 	}
 
 
-	public function testParagraphWithElements(): void
+	public function testParagraphWithElements()
 	{
 		$this->assertMatchFile('paragraphWithElements');
 	}
 
 
-	public function testSavedTrailingSpace(): void
+	public function testSavedTrailingSpace()
 	{
 		$expected = "<div>Text </div>";
 		$actual = "div Text |";
@@ -53,7 +53,7 @@ final class TextTestCase extends AbstractTestCase
 	}
 
 
-	public function testTrailingSpaceTrimming(): void
+	public function testTrailingSpaceTrimming()
 	{
 		$expected = "<div>Text</div>";
 		$actual = "div Text ";

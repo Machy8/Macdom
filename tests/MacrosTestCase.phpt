@@ -21,7 +21,7 @@ require_once 'bootstrap.php';
 final class MacrosTestCase extends AbstractTestCase
 {
 
-	public function testMacrosAddition(): void
+	public function testMacrosAddition()
 	{
 		$quickList = function ($content) {
 			$listItems = explode(' ', $content);
@@ -50,21 +50,21 @@ final class MacrosTestCase extends AbstractTestCase
 	}
 
 
-	public function testMacrosContentType(): void
+	public function testMacrosContentType()
 	{
 		$this->macdom->setContentType($this->macdom::CONTENT_XML);
 		$this->assertMatchFile('macrosContentType');
 	}
 
 
-	public function testMacrosDeletion(): void
+	public function testMacrosDeletion()
 	{
 		$this->macdom->removeMacro('utf-8 charset');
 		$this->assertMatchFile('macrosDeletion');
 	}
 
 
-	public function testMacrosOverwriting(): void
+	public function testMacrosOverwriting()
 	{
 		$this->macdom
 			->addMacro('charset', function ($charset) {
