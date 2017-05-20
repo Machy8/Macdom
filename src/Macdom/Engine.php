@@ -22,6 +22,7 @@ final class Engine
 	const
 		VERSION = '3.0.0',
 
+		DEFAULT_CONTENT_TYPE = self::CONTENT_HTML,
 		CONTENT_HTML = 'contentHtml',
 		CONTENT_XHTML = 'contentXhtml',
 		CONTENT_XML = 'contentXml',
@@ -43,7 +44,7 @@ final class Engine
 	/**
 	 * @var string
 	 */
-	private $contentType = self::CONTENT_HTML;
+	private $contentType = self::DEFAULT_CONTENT_TYPE;
 
 	/**
 	 * @var OutputFormatter

@@ -38,7 +38,7 @@ final class Compiler
 	/**
 	 * @var string
 	 */
-	public $contentType;
+	public $contentType = Engine::DEFAULT_CONTENT_TYPE;
 
 	/**
 	 * @var array
@@ -442,14 +442,16 @@ final class Compiler
 		$skipAreasPlaceholders = [];
 		$elementAttributes = [];
 
-		foreach ($this->elementsInlineSkipAreas as $skipAreaRegularExpression) {
-			$tokenText = preg_replace_callback('/' . $skipAreaRegularExpression . '/',
-				function ($matches) use ($skipAreaRegularExpression, &$skipAreasPlaceholders) {
-					$placeholderKey = uniqid();
-					$skipAreasPlaceholders[$placeholderKey] = $matches[0];
+		if (isset($this->elementsInlineSkipAreas[$this->contentType])) {
+			foreach ($this->elementsInlineSkipAreas[$this->contentType] as $skipAreaRegularExpression) {
+				$tokenText = preg_replace_callback('/' . $skipAreaRegularExpression . '/',
+					function ($matches) use ($skipAreaRegularExpression, &$skipAreasPlaceholders) {
+						$placeholderKey = uniqid();
+						$skipAreasPlaceholders[$placeholderKey] = $matches[0];
 
-					return $placeholderKey;
-				}, $tokenText);
+						return $placeholderKey;
+					}, $tokenText);
+			}
 		}
 
 		$attributesTypes = [
