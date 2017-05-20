@@ -1,5 +1,5 @@
 # Macdom
-[![Build Status](https://travis-ci.org/Machy8/Macdom.svg?branch=master)](https://travis-ci.org/Machy8/Macdom)
+[![Build Status](https://travis-ci.org/Machy8/Macdom.svg?branch=3.0)](https://travis-ci.org/Machy8/Macdom)
 [![Packagist](https://img.shields.io/packagist/v/machy8/macdom.svg?maxAge=2592000)](https://packagist.org/packages/machy8/macdom)
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/Machy8/Macdom/blob/master/license.md)
 [![Join the chat at https://gitter.im/Machy8/Macdom](https://badges.gitter.im/Machy8/Macdom.svg)](https://gitter.im/Machy8/Macdom?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
