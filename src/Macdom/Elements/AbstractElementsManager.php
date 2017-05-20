@@ -49,9 +49,9 @@ abstract class AbstractElementsManager
 	}
 
 
-	public function addInlineSkipArea(string $regularExpression): self
+	public function addInlineSkipArea(string $regularExpression, string $contentType = NULL): self
 	{
-		$this->compiler->addElementsInlineSkipArea($regularExpression);
+		$this->compiler->addElementsInlineSkipArea($regularExpression, $contentType);
 
 		return $this;
 	}

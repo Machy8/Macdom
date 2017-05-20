@@ -41,6 +41,11 @@ final class Engine
 	private $compiler;
 
 	/**
+	 * @var string
+	 */
+	private $contentType = self::CONTENT_HTML;
+
+	/**
 	 * @var OutputFormatter
 	 */
 	private $outputFormatter;
@@ -67,9 +72,9 @@ final class Engine
 	}
 
 
-	public function addElementsInlineSkipArea(string $regularExpression): self
+	public function addElementsInlineSkipArea(string $regularExpression, string $contentType = NULL): self
 	{
-		$this->getCompiler()->addElementsInlineSkipArea($regularExpression);
+		$this->getCompiler()->addElementsInlineSkipArea($regularExpression, $contentType);
 
 		return $this;
 	}
@@ -94,7 +99,7 @@ final class Engine
 	public function compile(string $content): string
 	{
 		try {
-			$compiler = $this->getCompiler();
+			$compiler = $this->getCompiler()->setContentType($this->contentType);
 
 			$tokens = $this->getParser()->parse($content);
 
@@ -115,6 +120,36 @@ final class Engine
 		$this->getOutputFormatter()->disableOutputFormatter();
 
 		return $this;
+	}
+
+
+	public function getContentType(): string
+	{
+		return $this->contentType;
+	}
+
+
+	public function getElements(): array
+	{
+		return $this->getCompiler()->getElements();
+	}
+
+
+	public function getElementsBooleanAttributes(): array
+	{
+		return $this->getCompiler()->getElementsBooleanAttributes();
+	}
+
+
+	public function getInlineSkipAreas(): array
+	{
+		return $this->getCompiler()->getElementsInlineSkipAreas();
+	}
+
+
+	public function getMacros(): array
+	{
+		return $this->getCompiler()->getMacros();
 	}
 
 
@@ -144,7 +179,7 @@ final class Engine
 
 	public function setContentType(string $type): self
 	{
-		$this->getCompiler()->setContentType($type);
+		$this->contentType = $type;
 
 		return $this;
 	}

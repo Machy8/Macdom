@@ -38,7 +38,7 @@ final class Compiler
 	/**
 	 * @var string
 	 */
-	public $contentType = Engine::CONTENT_HTML;
+	public $contentType;
 
 	/**
 	 * @var array
@@ -119,11 +119,13 @@ final class Compiler
 	}
 
 
-	public function addElementsInlineSkipArea(string $regularExpression)
+	public function addElementsInlineSkipArea(string $regularExpression, string $contentType = NULL)
 	{
-		if ( ! in_array($regularExpression, $this->elementsInlineSkipAreas)) {
-			$this->elementsInlineSkipAreas[] = $regularExpression;
-		}
+		$contentType = $contentType
+			? $contentType
+			: Engine::CONTENT_HTML;
+
+		$this->elementsInlineSkipAreas[$contentType][] = $regularExpression;
 	}
 
 
@@ -213,6 +215,18 @@ final class Compiler
 	}
 
 
+	public function getElements(): array
+	{
+		return $this->elements;
+	}
+
+
+	public function getElementsBooleanAttributes(): array
+	{
+		return $this->elementsBooleanAttributes;
+	}
+
+
 	public function getElementsCustomCloseTags(): string
 	{
 		return $this->elementsCustomCloseTags ?? '';
@@ -222,6 +236,18 @@ final class Compiler
 	public function getElementsCustomOpenTags(): string
 	{
 		return $this->elementsCustomOpenTags ?? '';
+	}
+
+
+	public function getElementsInlineSkipAreas(): array
+	{
+		return $this->elementsInlineSkipAreas;
+	}
+
+
+	public function getMacros(): array
+	{
+		return $this->macros;
 	}
 
 
@@ -260,6 +286,7 @@ final class Compiler
 			if ( ! $this->findElement($element, $contentType)) {
 				throw new SetupException('Can\'t remove undefined element "' . $element . '"');
 			}
+
 			unset($this->elements[$contentType][$element]);
 		}
 
@@ -341,7 +368,6 @@ final class Compiler
 			}
 
 			$this->elementsCustomOpenTags .= preg_quote($openTag);
-
 		}
 
 		foreach ($closeTags as $closeTag) {
@@ -583,6 +609,7 @@ final class Compiler
 			if ($this->xmlSyntax) {
 				$elementToken .= ' /';
 			}
+
 			$elementTokenType = Token::UNPAIRED_ELEMENT;
 
 		} else {
