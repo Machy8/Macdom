@@ -31,10 +31,8 @@ class MacdomPanel implements IBarPanel
 	 */
 	private $macdom;
 
-
-	public function __construct(Macdom\Engine $macdom = NULL)
+	public function __construct()
 	{
-		$this->macdom = $macdom ?? new Macdom\Engine;
 		Debugger::getBar()->addPanel($this);
 	}
 
@@ -68,7 +66,16 @@ class MacdomPanel implements IBarPanel
 
 		ob_start();
 		require self::TEMPLATES_DIR . '/tab.phtml';
+
 		return ob_get_clean();
+	}
+
+
+	public function setMacdom(Macdom\Engine $macdom): self
+	{
+		$this->macdom = $macdom;
+
+		return $this;
 	}
 
 
