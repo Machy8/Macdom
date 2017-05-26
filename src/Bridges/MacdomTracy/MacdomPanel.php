@@ -47,7 +47,7 @@ class MacdomPanel implements IBarPanel
 			'elements' => $this->getElements(),
 			'macros' => $this->getMacros(),
 			'elementsBooleanAttributes' => $this->macdom->getElementsBooleanAttributes(),
-			'elementsInlineSkipAreas' => $this->macdom->getInlineSkipAreas()
+			'skipAreas' => $this->macdom->getSkipAreas()
 		];
 		require self::TEMPLATES_DIR . '/panel.phtml';
 
