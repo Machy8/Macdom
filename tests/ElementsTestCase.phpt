@@ -21,6 +21,13 @@ require_once 'bootstrap.php';
 final class ElementsTestCase extends AbstractTestCase
 {
 
+	public function testBooleanAttributeDeletion()
+	{
+		$this->macdom->removeBooleanAttribute('disabled readonly');
+		$this->assertSame('<input type="text">', 'input $text disabled readonly');
+	}
+
+
 	public function testBooleanAttributes()
 	{
 		$this->assertMatchFile('booleanAttributes');
@@ -29,7 +36,7 @@ final class ElementsTestCase extends AbstractTestCase
 
 	public function testBooleanAttributesAddition()
 	{
-		$this->macdom->addElementsBooleanAttribute('whisky beer');
+		$this->macdom->addBooleanAttribute('whisky beer');
 		$this->assertSame('<input type="text" whisky beer>', 'input $text whisky beer');
 	}
 
@@ -55,7 +62,8 @@ final class ElementsTestCase extends AbstractTestCase
 
 	public function testElementsAddition()
 	{
-		$this->macdom->addElement('beer', ['quickAttributes' => ['brand']])
+		$this->macdom
+			->addElement('beer', ['quickAttributes' => ['brand']])
 			->addElement('pong', [$this->macdom::UNPAIRED_ELEMENT, 'quickAttributes' => ['score', 'winner']]);
 		$this->assertMatchFile('elementsAddition');
 	}
