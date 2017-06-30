@@ -17,15 +17,19 @@ code
 			Some text here
 
 div #wrapper
-	SKIP
-		div
+	macdom-off
+		<formatter-off>
 			div
 				div
+					div
+		</formatter-off>
 
 <div>
 	<div>
-		SKIP
-			div
-				h1 Some text inside
+		macdom-off
+			<formatter-off>
+				div
+						h1 Some text inside
+			</formatter-off>
 	</div>
 </div>
