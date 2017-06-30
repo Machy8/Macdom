@@ -18,7 +18,7 @@ namespace Macdom\Elements;
 use Macdom\Compiler;
 
 
-final class CoreElementsBooleanAttributes extends AbstractElementsManager
+final class CoreBooleanAttributes extends AbstractElementsManager
 {
 
 	public static function install(Compiler $compiler)
