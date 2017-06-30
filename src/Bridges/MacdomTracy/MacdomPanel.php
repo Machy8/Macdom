@@ -16,6 +16,7 @@ declare(strict_types = 1);
 namespace Macdom\Bridges\MacdomTracy;
 
 use Macdom;
+use Macdom\Engine;
 use Macdom\Token;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
@@ -27,9 +28,10 @@ class MacdomPanel implements IBarPanel
 	const TEMPLATES_DIR = __DIR__ . '/templates';
 
 	/**
-	 * @var Macdom\Engine
+	 * @var Engine
 	 */
 	private $macdom;
+
 
 	public function __construct()
 	{
@@ -43,12 +45,13 @@ class MacdomPanel implements IBarPanel
 	public function getPanel()
 	{
 		ob_start();
+
 		$installed = [
 			'elements' => $this->getElements(),
 			'macros' => $this->getMacros(),
 			'elementsBooleanAttributes' => $this->macdom->getElementsBooleanAttributes(),
-			'skipAreas' => $this->macdom->getSkipAreas()
 		];
+
 		require self::TEMPLATES_DIR . '/panel.phtml';
 
 		return ob_get_clean();
@@ -65,13 +68,14 @@ class MacdomPanel implements IBarPanel
 		}
 
 		ob_start();
+
 		require self::TEMPLATES_DIR . '/tab.phtml';
 
 		return ob_get_clean();
 	}
 
 
-	public function setMacdom(Macdom\Engine $macdom): self
+	public function setMacdom(Engine $macdom): self
 	{
 		$this->macdom = $macdom;
 
