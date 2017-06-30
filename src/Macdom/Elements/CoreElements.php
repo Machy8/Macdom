@@ -27,7 +27,7 @@ final class CoreElements extends AbstractElementsManager
 		$elementsManager = new static($compiler);
 
 		$elementsManager
-			// Standart HTML elements
+			// Standard HTML elements
 			->addElement('a', ['quickAttributes' => ['href', 'target', 'role']])
 			->addElement('abbr', ['quickAttributes' => ['title']])
 			->addElement('address')
@@ -139,6 +139,7 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('var')
 			->addElement('video')
 			->addElement('wbr', [Engine::UNPAIRED_ELEMENT])
+
 			// Experimental and not standardized API elements
 			->addElement('bgsound')
 			->addElement('dialog')
@@ -148,6 +149,7 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('menuitem', ['quickAttributes' => ['type']])
 			->addElement('nobr')
 			->addElement('picture')
+
 			// XML elements
 			->addElement('xml', [Engine::CONTENT_XML, 'quickAttributes' => ['version', 'encoding'], 'openTags' => ['<?'], 'closeTags' => ['?>']])
 			->addElement('category', [Engine::CONTENT_XML])
@@ -177,11 +179,7 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('title', [Engine::CONTENT_XML])
 			->addElement('ttl', [Engine::CONTENT_XML])
 			->addElement('url', [Engine::CONTENT_XML])
-			->addElement('webMaster', [Engine::CONTENT_XML])
-
-			// Other
-			->addElement('php', [Engine::SKIPPED_ELEMENT, Engine::CONTENT_SKIPPED, 'openTags' => ['<?'], 'closeTags' => ['?>']])
-			->addElement('php', [Engine::SKIPPED_ELEMENT, Engine::CONTENT_SKIPPED, Engine::CONTENT_XML, 'openTags' => ['<?'], 'closeTags' => ['?>']]);
+			->addElement('webMaster', [Engine::CONTENT_XML]);
 	}
 
 }
