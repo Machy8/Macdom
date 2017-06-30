@@ -126,8 +126,7 @@ final class Parser
 					continue;
 				}
 
-				$placeholderId = uniqid();
-				$codePlaceholder = self::CODE_PLACEHOLDER_NAMESPACE_PREFIX . $placeholderId;
+				$codePlaceholder = uniqid(self::CODE_PLACEHOLDER_NAMESPACE_PREFIX);
 
 				if ($surroundByIndentation) {
 					$indentation = $this->indentationMethod === Engine::TABS_INDENTATION ? "\t" : " ";
@@ -139,7 +138,7 @@ final class Parser
 			}
 		}
 
-		$string = preg_replace('/<\/?' . self::SKIP_TAG . '>|' . self::SKIP_TAG . '/', '', $string);
+		$string = preg_replace('/<\/?' . self::SKIP_TAG . '>|' . self::SKIP_TAG . '\s*/', '', $string);
 
 		return $string;
 	}
@@ -326,11 +325,22 @@ final class Parser
 			? '\t'
 			: ' {' . $this->indentationSize . '}*';
 
+		$skippedElements = [self::SKIP_TAG];
+		$elements = $this->compiler->getElements(TRUE);
+
+		foreach ($elements as $element => $settings) {
+			if (in_array(Engine::CONTENT_SKIPPED, $settings)) {
+				$skippedElements[] = $element;
+			}
+		}
+
+		$skippedElements = join('|', $skippedElements);
+
 		// Regular expression => indented from left
 		$this->codePlaceholdersRegularExpression = [
 			'/<\?php(?: |\n)(?:.|\n)*\?>/Um' => FALSE, // PHP code
-			'/(' . $indentation . '*)(?<! |\S)(?:' . self::SKIP_TAG . '|code|style|script)((?= ) \S+(?:.*\n\1' . $indentation . '.*)*|((?= *\n)(?:.*\n\1' . $indentation . '.*)+))/' => TRUE, // indented block
-			'/<(' . self::SKIP_TAG . '|code|script|style)(?:[-\w]+)?(?:[^>]+)?>([\s\S]*?)<\/\1>/' => FALSE // tags
+			'/(' . $indentation . '*)(?<! |\S)(?:' . $skippedElements . ')((?= ) \S+(?:.*\n\1' . $indentation . '.*)*|((?= *\n)(?:.*\n\1' . $indentation . '.*)+))/' => TRUE, // indented block
+			'/<(' . $skippedElements . ')(?:[-\w]+)?(?:[^>]+)?>([\s\S]*?)<\/\1>/' => FALSE // tags
 		];
 	}
 
