@@ -16,6 +16,7 @@ declare(strict_types = 1);
 namespace Macdom\Tests;
 
 use Macdom;
+use Macdom\Engine;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -24,7 +25,7 @@ abstract class AbstractTestCase extends TestCase
 {
 
 	/**
-	 * @var Macdom\Engine
+	 * @var Engine
 	 */
 	public $macdom;
 
@@ -38,7 +39,7 @@ abstract class AbstractTestCase extends TestCase
 	{
 		parent::setUp();
 		$this->setActualTestsDirectoryNamePrefix();
-		$this->macdom = new Macdom\Engine;
+		$this->macdom = new Engine;
 	}
 
 
@@ -52,7 +53,7 @@ abstract class AbstractTestCase extends TestCase
 
 	protected function assertSame(string $expected, string $actual)
 	{
-		Assert::same($expected . "\n", $this->macdom->disableOutputFormatter()->compile($actual));
+		Assert::same($expected, $this->macdom->disableOutputFormatter()->compile($actual));
 	}
 
 
