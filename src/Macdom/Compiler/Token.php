@@ -21,18 +21,14 @@ final class Token
 
 	const
 		ELEMENT = 'element',
-		ELEMENT_OPEN_TAG = 'elementOpenTag',
-		ELEMENT_CLOSE_TAG = 'elementCloseTag',
 		MACRO = 'macro',
 		REPLICATOR_OPEN_TAG = 'replicatorOpenTag',
-		REPLICATOR_REPLICANT = 'replicatorReplicant',
+		REPLICATOR_REPLICA = 'replicatorReplica',
 		REPLICATOR_CLOSE_TAG = 'replicatorCloseTag',
 		TEXT = 'text',
-		UNFORMABLE_TEXT = 'unformableText',
 
 		REGULAR_EXPRESSION_MACRO = 'regularExpressionMacro',
 		CONTENT_SKIPPED = 'contentSkipped',
-		SKIPPED_ELEMENT = 'skippedElement',
 		UNPAIRED_ELEMENT = 'unpairedElement';
 
 	/**
