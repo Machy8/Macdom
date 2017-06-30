@@ -15,6 +15,8 @@ declare(strict_types = 1);
 
 namespace Macdom;
 
+use XhtmlFormatter\Formatter;
+
 
 final class Engine
 {
@@ -32,7 +34,6 @@ final class Engine
 		TABS_INDENTATION = 'tabsIndentation',
 
 		CONTENT_SKIPPED = Token::CONTENT_SKIPPED,
-		SKIPPED_ELEMENT = Token::SKIPPED_ELEMENT,
 		UNPAIRED_ELEMENT = Token::UNPAIRED_ELEMENT,
 		REGULAR_EXPRESSION_MACRO = Token::REGULAR_EXPRESSION_MACRO;
 
@@ -47,14 +48,32 @@ final class Engine
 	private $contentType = self::DEFAULT_CONTENT_TYPE;
 
 	/**
-	 * @var OutputFormatter
+	 * @var Formatter
 	 */
 	private $outputFormatter;
+
+	/**
+	 * @var bool
+	 */
+	private $outputFormatterEnabled = TRUE;
 
 	/**
 	 * @var Parser
 	 */
 	private $parser;
+
+
+	/**
+	 * @param string $attribute
+	 * @param string|array|NULL $contentType
+	 * @return Engine
+	 */
+	public function addBooleanAttribute(string $attribute, $contentType = NULL): self
+	{
+		$this->getCompiler()->addBooleanAttribute($attribute, $contentType);
+
+		return $this;
+	}
 
 
 	public function addElement(string $element, array $settings = NULL): self
@@ -65,23 +84,7 @@ final class Engine
 	}
 
 
-	public function addElementsBooleanAttribute(string $attribute, string $contentType = NULL): self
-	{
-		$this->getCompiler()->addElementsBooleanAttribute($attribute, $contentType);
-
-		return $this;
-	}
-
-
-	public function addElementsInlineSkipArea(string $regularExpression, string $contentType = NULL): self
-	{
-		$this->getCompiler()->addElementsInlineSkipArea($regularExpression, $contentType);
-
-		return $this;
-	}
-
-
-	public function addMacro(string $keyword, \closure $macro, array $flags = NULL): self
+	public function addMacro(string $keyword, Callable $macro, array $flags = NULL): self
 	{
 		$this->getCompiler()->addMacro($keyword, $macro, $flags);
 
@@ -101,12 +104,12 @@ final class Engine
 	{
 		try {
 			$compiler = $this->getCompiler()->setContentType($this->contentType);
-
 			$tokens = $this->getParser()->parse($content);
+			$code = $compiler->compile($tokens);
 
-			$tokens = $compiler->compile($tokens);
-
-			$code = $this->getOutputFormatter()->format($tokens);
+			if ($this->outputFormatterEnabled) {
+				$code = $this->getOutputFormatter()->format($code);
+			}
 
 		} catch (\Exception $exception) {
 			throw $exception;
@@ -118,7 +121,7 @@ final class Engine
 
 	public function disableOutputFormatter(): self
 	{
-		$this->getOutputFormatter()->disableOutputFormatter();
+		$this->outputFormatterEnabled = FALSE;
 
 		return $this;
 	}
@@ -142,29 +145,23 @@ final class Engine
 	}
 
 
-	public function getInlineSkipAreas(): array
-	{
-		return $this->getCompiler()->getElementsInlineSkipAreas();
-	}
-
-
 	public function getMacros(): array
 	{
 		return $this->getCompiler()->getMacros();
 	}
 
 
-	public function removeElement(string $element): self
+	public function removeBooleanAttribute(string $attribute): self
 	{
-		$this->getCompiler()->removeElement($element);
+		$this->getCompiler()->removeBooleanAttribute($attribute);
 
 		return $this;
 	}
 
 
-	public function removeElementsBooleanAttribute(string $attribute): self
+	public function removeElement(string $element): self
 	{
-		$this->getCompiler()->removeElementsBooleanAttribute($attribute);
+		$this->getCompiler()->removeElement($element);
 
 		return $this;
 	}
@@ -200,8 +197,7 @@ final class Engine
 		if ( ! $this->compiler) {
 			$this->compiler = new Compiler;
 			Elements\CoreElements::install($this->compiler);
-			Elements\CoreElementsBooleanAttributes::install($this->compiler);
-			Elements\CoreElementsInlineSkipAreas::install($this->compiler);
+			Elements\CoreBooleanAttributes::install($this->compiler);
 			Macros\CoreMacros::install($this->compiler);
 		}
 
@@ -209,10 +205,15 @@ final class Engine
 	}
 
 
-	private function getOutputFormatter(): OutputFormatter
+	private function getOutputFormatter(): Formatter
 	{
 		if ( ! $this->outputFormatter) {
-			$this->outputFormatter = new OutputFormatter($this->getParser());
+			$this->outputFormatter = new Formatter;
+			$unpairedElements = $this->getCompiler()->getUnpairedElements();
+
+			$this->outputFormatter
+				->addUnpairedElements($unpairedElements)
+				->setContentType($this->contentType);
 		}
 
 		return $this->outputFormatter;
