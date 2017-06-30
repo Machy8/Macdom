@@ -27,9 +27,9 @@ final class ReplicatorTestCase extends AbstractTestCase
 	}
 
 
-	public function testReplicantWithKey()
+	public function testReplicaWithKey()
 	{
-		$this->assertMatchFile('replicantWithKey');
+		$this->assertMatchFile('replicaWithKey');
 	}
 
 
