@@ -33,9 +33,14 @@ abstract class AbstractElementsManager
 	}
 
 
-	public function addBooleanAttribute(string $attribute, string $contentType = NULL): self
+	/**
+	 * @param string $attribute
+	 * @param string|array|NULL $contentType
+	 * @return AbstractElementsManager
+	 */
+	public function addBooleanAttribute(string $attribute, $contentType = NULL): self
 	{
-		$this->compiler->addElementsBooleanAttribute($attribute, $contentType);
+		$this->compiler->addBooleanAttribute($attribute, $contentType);
 
 		return $this;
 	}
@@ -44,14 +49,6 @@ abstract class AbstractElementsManager
 	public function addElement(string $element, array $settings = NULL): self
 	{
 		$this->compiler->addElement($element, $settings);
-
-		return $this;
-	}
-
-
-	public function addInlineSkipArea(string $regularExpression, string $contentType = NULL): self
-	{
-		$this->compiler->addElementsInlineSkipArea($regularExpression, $contentType);
 
 		return $this;
 	}
