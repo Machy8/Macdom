@@ -28,17 +28,17 @@ final class Compiler
 		QUICK_ATTRIBUTES = 'quickAttributes',
 
 		REPLICATOR_PLACEHOLDERS_RE = '/\[\@\]/',
-		REPLICATOR_PLACEHOLDERS_REPLACEMENTS_RE = '/\[(?<replacement>.*?)\]/',
-
-		SIMPLE_OUTPUT_ADDITION_TYPES = [
-			Token::ELEMENT_OPEN_TAG,
-			Token::ELEMENT_CLOSE_TAG
-		];
+		REPLICATOR_PLACEHOLDERS_REPLACEMENTS_RE = '/\[(?<replacement>.*?)\]/';
 
 	/**
 	 * @var string
 	 */
 	public $contentType = Engine::DEFAULT_CONTENT_TYPE;
+
+	/**
+	 * @var array
+	 */
+	private $booleanAttributes = [];
 
 	/**
 	 * @var array
@@ -49,11 +49,6 @@ final class Compiler
 	 * @var array
 	 */
 	private $elements = [];
-
-	/**
-	 * @var array
-	 */
-	private $elementsBooleanAttributes = [];
 
 	/**
 	 * @var string
@@ -68,17 +63,12 @@ final class Compiler
 	/**
 	 * @var array
 	 */
-	private $elementsInlineSkipAreas = [];
-
-	/**
-	 * @var array
-	 */
 	private $macros = [];
 
 	/**
-	 * @var array
+	 * @var string
 	 */
-	private $output = [];
+	private $output;
 
 	/**
 	 * @var Token
@@ -91,11 +81,34 @@ final class Compiler
 	private $xmlSyntax = FALSE;
 
 
+	/**
+	 * @param string $attribute
+	 * @param string|array|NULL $contentType
+	 */
+	public function addBooleanAttribute(string $attribute, $contentType = NULL)
+	{
+		$booleanAttributes = Helpers::explodeString($attribute);
+		$contentType = $contentType ?? Engine::CONTENT_HTML;
+		$contentTypes = is_array($contentType) ? $contentType : [$contentType];
+
+		foreach ($booleanAttributes as $booleanAttribute) {
+			foreach ($contentTypes as $contentType) {
+				if ($this->findBooleanAttribute($booleanAttribute, $contentType)) {
+					continue;
+				}
+
+				$this->booleanAttributes[$contentType][] = $booleanAttribute;
+			}
+		}
+	}
+
+
 	public function addElement(string $element, array $settings = NULL)
 	{
 		$contentType = $settings && in_array(Engine::CONTENT_XML, $settings)
 			? Engine::CONTENT_XML
 			: Engine::CONTENT_HTML;
+
 		$openTags = $settings['openTags'] ?? [];
 		$closeTags = $settings['closeTags'] ?? [];
 
@@ -104,32 +117,7 @@ final class Compiler
 	}
 
 
-	public function addElementsBooleanAttribute(string $attribute, string $contentType = NULL)
-	{
-		$booleanAttributes = Helpers::explodeString($attribute);
-		$contentType = $contentType ? $contentType : Engine::CONTENT_HTML;
-
-		foreach ($booleanAttributes as $booleanAttribute) {
-			if ($this->findBooleanAttribute($booleanAttribute, $contentType)) {
-				continue;
-			}
-
-			$this->elementsBooleanAttributes[$contentType][] = $booleanAttribute;
-		}
-	}
-
-
-	public function addElementsInlineSkipArea(string $regularExpression, string $contentType = NULL)
-	{
-		$contentType = $contentType
-			? $contentType
-			: Engine::CONTENT_HTML;
-
-		$this->elementsInlineSkipAreas[$contentType][] = $regularExpression;
-	}
-
-
-	public function addMacro(string $keyword, \closure $macro, array $flags = NULL)
+	public function addMacro(string $keyword, Callable $macro, array $flags = NULL)
 	{
 		$contentType = $flags && in_array(Engine::CONTENT_XML, $flags)
 			? Engine::CONTENT_XML
@@ -152,30 +140,20 @@ final class Compiler
 	}
 
 
-	/**
-	 * @param Token[] $tokens
-	 * @return array
-	 */
-	public function compile(array $tokens): array
+	public function compile(array $parserOutput): string
 	{
-		$this->output = [];
+		$this->output = '';
 		$this->closeTags = [];
 
-		foreach ($tokens as $token) {
+		foreach ($parserOutput['tokens'] as $token) {
 			$this->processedToken = $token;
 
-			if ( ! ( ! $token->text && in_array($token->type, [Token::TEXT, Token::UNFORMABLE_TEXT]))) {
+			if ( ! ! $token->text) {
 				$this->addCloseTags($token->indentationLevel);
 			}
 
 			do {
-				if (in_array($this->processedToken->type, self::SIMPLE_OUTPUT_ADDITION_TYPES)) {
-					$this->addOutput($token->type, $this->getTokenText($token->text));
-					$processed = TRUE;
-
-				} else {
-					$processed = $this->{'process' . ucfirst($this->processedToken->type)}($this->processedToken);
-				}
+				$processed = $this->{'process' . ucfirst($this->processedToken->type)}($this->processedToken);
 
 			} while ( ! $processed);
 		}
@@ -183,6 +161,8 @@ final class Compiler
 		if ($this->closeTags) {
 			$this->addCloseTags();
 		}
+
+		$this->output = $this->unsetCodePlaceholders($parserOutput['codePlaceholders'], $this->output);
 
 		return $this->output;
 	}
@@ -203,7 +183,7 @@ final class Compiler
 	/**
 	 * @param string $element
 	 * @param string|NULL $contentType
-	 * @return null|array
+	 * @return array|NULL
 	 */
 	public function getElement(string $element, string $contentType = NULL)
 	{
@@ -215,15 +195,15 @@ final class Compiler
 	}
 
 
-	public function getElements(): array
+	public function getElements(bool $byContentType = NULL): array
 	{
-		return $this->elements;
+		return $byContentType ? $this->elements[$this->contentType] : $this->elements;
 	}
 
 
 	public function getElementsBooleanAttributes(): array
 	{
-		return $this->elementsBooleanAttributes;
+		return $this->booleanAttributes;
 	}
 
 
@@ -239,12 +219,6 @@ final class Compiler
 	}
 
 
-	public function getElementsInlineSkipAreas(): array
-	{
-		return $this->elementsInlineSkipAreas;
-	}
-
-
 	public function getMacros(): array
 	{
 		return $this->macros;
@@ -254,6 +228,20 @@ final class Compiler
 	public function getTokenText(string $string): string
 	{
 		return preg_replace('/\|$/', '', trim($string), 1);
+	}
+
+
+	public function getUnpairedElements(): array
+	{
+		$unpairedElements = [];
+
+		foreach ($this->getElements(TRUE) as $element => $settings) {
+			if (in_array(Engine::UNPAIRED_ELEMENT, $settings)) {
+				$unpairedElements[] = $element;
+			}
+		}
+
+		return $unpairedElements;
 	}
 
 
@@ -277,6 +265,25 @@ final class Compiler
 	}
 
 
+	public function removeBooleanAttribute(string $booleanAttribute, string $contentType = NULL): self
+	{
+		$booleanAttributes = Helpers::explodeString($booleanAttribute);
+		$contentType = $contentType ?? Engine::CONTENT_HTML;
+
+		foreach ($booleanAttributes as $booleanAttribute) {
+			$booleanAttributeKey = array_search($booleanAttribute, $this->booleanAttributes[$contentType]);
+
+			if ($booleanAttributeKey === FALSE) {
+				throw new SetupException('Can\'t remove undefined boolean attribute "' . $booleanAttribute . '"');
+			}
+
+			unset($this->booleanAttributes[$contentType][$booleanAttributeKey]);
+		}
+
+		return $this;
+	}
+
+
 	public function removeElement(string $element, string $contentType = NULL): self
 	{
 		$elements = Helpers::explodeString($element);
@@ -288,24 +295,6 @@ final class Compiler
 			}
 
 			unset($this->elements[$contentType][$element]);
-		}
-
-		return $this;
-	}
-
-
-	public function removeElementsBooleanAttribute(string $booleanAttribute): self
-	{
-		$booleanAttributes = Helpers::explodeString($booleanAttribute);
-
-		foreach ($booleanAttributes as $booleanAttribute) {
-			$booleanAttributeKey = array_search($booleanAttribute, $this->elementsBooleanAttributes);
-
-			if ($booleanAttributeKey === FALSE) {
-				throw new SetupException('Can\'t remove undefined boolean attribute "' . $booleanAttribute . '"');
-			}
-
-			unset($this->elementsBooleanAttributes[$booleanAttributeKey]);
 		}
 
 		return $this;
@@ -343,6 +332,18 @@ final class Compiler
 	}
 
 
+	public function unsetCodePlaceholders(array $codePlaceholders, string $string): string
+	{
+		$codePlaceholders = array_reverse($codePlaceholders);
+
+		foreach ($codePlaceholders as $codePlaceholder => $code) {
+			$string = str_replace($codePlaceholder, $code, $string);
+		}
+
+		return $string;
+	}
+
+
 	private function addCloseTags(int $tokenIndentationLevel = NULL)
 	{
 		foreach ($this->closeTags as $closeTag) {
@@ -350,7 +351,7 @@ final class Compiler
 				break;
 			}
 
-			$this->addOutput(Token::ELEMENT_CLOSE_TAG, $closeTag['tag']);
+			$this->addOutput($closeTag['tag']);
 			array_shift($this->closeTags);
 		}
 	}
@@ -359,7 +360,9 @@ final class Compiler
 	private function addElementCustomTags(array $openTags, array $closeTags)
 	{
 		foreach ($openTags as $openTag) {
-			if ($this->elementsCustomOpenTags && preg_match('/' . $this->elementsCustomOpenTags . '/', $openTag)) {
+			if ($this->elementsCustomOpenTags
+				&& preg_match('/' . $this->elementsCustomOpenTags . '/', $openTag)
+			) {
 				continue;
 			}
 
@@ -371,7 +374,9 @@ final class Compiler
 		}
 
 		foreach ($closeTags as $closeTag) {
-			if ($this->elementsCustomCloseTags && preg_match('/' . $this->elementsCustomCloseTags . '/', $closeTag)) {
+			if ($this->elementsCustomCloseTags
+				&& preg_match('/' . $this->elementsCustomCloseTags . '/', $closeTag)
+			) {
 				continue;
 			}
 
@@ -385,12 +390,9 @@ final class Compiler
 	}
 
 
-	private function addOutput(string $type, string $code)
+	private function addOutput(string $code)
 	{
-		$this->output[] = [
-			'type' => $type,
-			'code' => $code
-		];
+		$this->output .= $code;
 	}
 
 
@@ -398,15 +400,15 @@ final class Compiler
 	{
 		$contentType = $contentType ?? $this->contentType;
 
-		return isset($this->elementsBooleanAttributes[$contentType])
-			&& in_array($attribute, $this->elementsBooleanAttributes[$contentType]);
+		return isset($this->booleanAttributes[$contentType])
+			&& in_array($attribute, $this->booleanAttributes[$contentType]);
 	}
 
 
 	/**
 	 * @param string $macro
 	 * @param string|NULL $contentType
-	 * @return \Closure|NULL
+	 * @return Callable|NULL
 	 */
 	private function getMacro(string $macro, string $contentType = NULL)
 	{
@@ -435,33 +437,20 @@ final class Compiler
 
 	private function processElement(Token $token): bool
 	{
-		$elementTokenType = Token::ELEMENT_OPEN_TAG;
 		$element = $this->getElement($token->keyword);
 		$tokenText = Helpers::removeFirstWord($token->text);
 		$elementCloseTags = $element['closeTags'] ?? NULL;
 		$skipAreasPlaceholders = [];
 		$elementAttributes = [];
 
-		if (isset($this->elementsInlineSkipAreas[$this->contentType])) {
-			foreach ($this->elementsInlineSkipAreas[$this->contentType] as $skipAreaRegularExpression) {
-				$tokenText = preg_replace_callback('/' . $skipAreaRegularExpression . '/',
-					function ($matches) use ($skipAreaRegularExpression, &$skipAreasPlaceholders) {
-						$placeholderKey = uniqid();
-						$skipAreasPlaceholders[$placeholderKey] = $matches[0];
-
-						return $placeholderKey;
-					}, $tokenText);
-			}
-		}
-
 		$attributesTypes = [
-			self::DATA_ATTRIBUTES => '/ -(?<attributeName>[\w::-]+)=(?<attributeValue>"[^"]*"|\'[^\']*\'|\S+)/',
-			self::HTML_ATTRIBUTES => '/ (?<attributeName>[\w::-]+)=(?<attributeValue>"[^"]*"|\'[^\']*\'|\S+)/',
-			self::ID_SELECTOR => '/ #(?<attributeValue>\S+)/',
-			self::CLASS_SELECTORS => '/ \.(?<attributeValue>\S+)/',
+			self::DATA_ATTRIBUTES => '/\s-(?<attributeName>[\w\:-]+)=(?<attributeValue>"[^"]*"|\'[^\']*\'|\S+)/',
+			self::HTML_ATTRIBUTES => '/\s(?<attributeName>[\w\:-]+)=(?<attributeValue>"[^"]*"|\'[^\']*\'|\S+)/',
+			self::ID_SELECTOR => '/\s#(?<attributeValue>\S+)/',
+			self::CLASS_SELECTORS => '/\s\.(?<attributeValue>\S+)/',
 			self::QUICK_ATTRIBUTES =>
-				'/ (?<attributeKey>[\d]+)?\$(?:(?<wrappedAttributeValue>[^$;"]+);|(?<attributeValue>\S+)+)/',
-			self::BOOLEAN_ATTRIBUTES => '/ (?<attributeValue>\S+)/'
+				'/\s(?<attributeKey>[\d]+)?\$(?:(?<wrappedAttributeValue>[^$;"]+);|(?<attributeValue>\S+)+)/',
+			self::BOOLEAN_ATTRIBUTES => '/\s(?<attributeValue>\S+)/'
 		];
 
 		$openTag = isset($element['openTags'])
@@ -607,12 +596,12 @@ final class Compiler
 			}
 		}
 
-		if (is_array($element) && in_array(Token::UNPAIRED_ELEMENT, $element) && ! $elementCloseTags) {
+		$elementIsUnpaired = in_array(Token::UNPAIRED_ELEMENT, $element);
+
+		if (is_array($element) && $elementIsUnpaired && ! $elementCloseTags) {
 			if ($this->xmlSyntax) {
 				$elementToken .= ' /';
 			}
-
-			$elementTokenType = Token::UNPAIRED_ELEMENT;
 
 		} else {
 			$closeTag = $elementCloseTags
@@ -630,7 +619,7 @@ final class Compiler
 			$elementToken .= '>';
 		}
 
-		$this->addOutput($elementTokenType, $elementToken);
+		$this->addOutput($elementToken);
 		$elementText = $this->getTokenText($tokenText);
 
 		if ($skipAreasPlaceholders) {
@@ -639,8 +628,8 @@ final class Compiler
 			}
 		}
 
-		if ($elementText) {
-			$this->addOutput(Token::TEXT, $elementText);
+		if ($elementText && ! $elementIsUnpaired) {
+			$this->addOutput($elementText);
 		}
 
 		return TRUE;
@@ -658,14 +647,10 @@ final class Compiler
 	}
 
 
-	private function processReplicatorReplicant(Token $token): bool
+	private function processReplicatorReplica(Token $token): bool
 	{
-		$replicatedText = Helpers::removeFirstWord($token->text['replicated']);
+		$replicatedText = $token->text['replicated'];
 		$synchronizedText = $token->text['synchronized'];
-
-		if ($token->keyword) {
-			$synchronizedText = Helpers::removeFirstWord($synchronizedText);
-		}
 
 		if (preg_match_all(self::REPLICATOR_PLACEHOLDERS_REPLACEMENTS_RE, $synchronizedText, $matches)) {
 			$matches = $matches['replacement'];
@@ -674,13 +659,13 @@ final class Compiler
 					return array_shift($matches);
 				}, $replicatedText);
 
-			$synchronizedText = preg_replace(self::REPLICATOR_PLACEHOLDERS_REPLACEMENTS_RE,
-				'', $synchronizedText);
+			$synchronizedText =
+				preg_replace(self::REPLICATOR_PLACEHOLDERS_REPLACEMENTS_RE, '', $synchronizedText);
 
 			$replicatedText = preg_replace(self::REPLICATOR_PLACEHOLDERS_RE, '', $replicatedText);
 		}
-		$replicatorOutput = $this->getTokenText($replicatedText) . $this->getTokenText($synchronizedText);
 
+		$replicatorOutput = $this->getTokenText($replicatedText) . $this->getTokenText($synchronizedText);
 		$this->refactorToken($token, $replicatorOutput);
 
 		return FALSE;
@@ -690,16 +675,7 @@ final class Compiler
 	private function processText(Token $token): bool
 	{
 		$text = $this->getTokenText($token->text);
-
-		$this->addOutput($token->type, $text);
-
-		return TRUE;
-	}
-
-
-	private function processUnformableText(Token $token): bool
-	{
-		$this->addOutput($token->type, $token->text);
+		$this->addOutput($text);
 
 		return TRUE;
 	}
