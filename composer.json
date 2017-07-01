@@ -4,7 +4,8 @@
     "keywords": ["macdom", "html", "preprocessor", "templating", "minification"],
     "license": "New BSD License",
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.0",
+        "machy8/xhtml-formatter": "0.1.x-dev"
     },
     "require-dev": {
         "nette/tester": "^1.7",
@@ -17,8 +18,6 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "Macdom": ""
-        }
+        "classmap": [""]
     }
 }
