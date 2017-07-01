@@ -43,8 +43,12 @@ abstract class AbstractTestCase extends TestCase
 	}
 
 
-	protected function assertMatchFile(string $fileName)
+	protected function assertMatchFile(string $fileName, bool $rewriteExpectedFile = NULL)
 	{
+		if ($rewriteExpectedFile) {
+			$this->rewriteExpectedFile($fileName);
+		}
+
 		Assert::matchFile(
 			$this->getExpectedFilePath($fileName),
 			$this->macdom->compile($this->getCompiledFileContent($this->getActualFilePath($fileName))));
@@ -63,7 +67,7 @@ abstract class AbstractTestCase extends TestCase
 	}
 
 
-	protected function rewriteTest(string $testName)
+	protected function rewriteExpectedFile(string $testName)
 	{
 		file_put_contents(
 			$this->getExpectedFilePath($testName),
