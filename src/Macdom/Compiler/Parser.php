@@ -120,9 +120,11 @@ final class Parser
 			preg_match_all($codePlaceholderRe, $string, $matches, PREG_SET_ORDER);
 
 			foreach ($matches as $match) {
-				$code = end($match);
+				$fullMatch = $match[0];
+				$fullMatchCopy = $fullMatch;
+				$codeToReplace = end($match);
 
-				if ( ! trim($code)) {
+				if ( ! trim($codeToReplace)) {
 					continue;
 				}
 
@@ -133,12 +135,13 @@ final class Parser
 					$codePlaceholder = $indentation . $codePlaceholder;
 				}
 
-				$string = preg_replace('/' . preg_quote($code, '/') . '/', $codePlaceholder, $string, 1);
-				$codePlaceholders[trim($codePlaceholder)] = $code;
+				$fullMatch = str_replace($codeToReplace, $codePlaceholder, $fullMatch);
+				$string = preg_replace('/' . preg_quote($fullMatchCopy, '/') . '/', $fullMatch, $string, 1);
+				$codePlaceholders[trim($codePlaceholder)] = $codeToReplace;
 			}
 		}
 
-		$string = preg_replace('/<\/?' . self::SKIP_TAG . '>|' . self::SKIP_TAG . '\s*/', '', $string);
+		$string = preg_replace('/(?:<\/?' . self::SKIP_TAG . '>|' . self::SKIP_TAG . ')\s*/', '', $string);
 
 		return $string;
 	}
@@ -339,7 +342,7 @@ final class Parser
 		// Regular expression => indented from left
 		$this->codePlaceholdersRegularExpression = [
 			'/<\?php(?: |\n)(?:.|\n)*\?>/Um' => FALSE, // PHP code
-			'/(' . $indentation . '*)(?<! |\S)(?:' . $skippedElements . ')((?= ) \S+(?:.*\n\1' . $indentation . '.*)*|((?= *\n)(?:.*\n\1' . $indentation . '.*)+))/' => TRUE, // indented block
+			'/(' . $indentation . '*)(?<! |\S)(?:' . $skippedElements . ')((?= ) [\S\h]+(?:.*\n\1' . $indentation . '.*)*|((?= *\n)(?:.*\n\1' . $indentation . '.*)+))/' => TRUE, // indented block
 			'/<(' . $skippedElements . ')(?:[-\w]+)?(?:[^>]+)?>([\s\S]*?)<\/\1>/' => FALSE // tags
 		];
 	}
