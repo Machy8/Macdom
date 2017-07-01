@@ -23,13 +23,21 @@ final class SkipAreasTestCase extends AbstractTestCase
 
 	public function testIndentedBlockMode()
 	{
+		$this->macdom->addElement('skipthisarea', [$this->macdom::CONTENT_SKIPPED]);
 		$this->assertMatchFile('indentedBlockMode');
 	}
 
 
 	public function testInlineSkipAreas()
 	{
+		$this->macdom->addElement('skipthisarea', [$this->macdom::CONTENT_SKIPPED]);
 		$this->assertMatchFile('inlineMode');
+	}
+
+
+	public function testPhtmlSkipAreas()
+	{
+		$this->assertMatchFile('phtml');
 	}
 
 
