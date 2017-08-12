@@ -15,15 +15,15 @@ declare(strict_types = 1);
 
 namespace Macdom\Elements;
 
-use Macdom\Compiler;
+use Macdom\Register;
 
 
 final class CoreBooleanAttributes extends AbstractElementsManager
 {
 
-	public static function install(Compiler $compiler)
+	public static function install(Register $register)
 	{
-		$elementsManager = new static($compiler);
+		$elementsManager = new static($register);
 
 		$elementsManager
 			->addBooleanAttribute('allowfullscreen')

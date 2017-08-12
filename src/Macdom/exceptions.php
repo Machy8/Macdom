@@ -16,13 +16,13 @@ declare(strict_types = 1);
 namespace Macdom;
 
 
-class CompileException extends \Exception
+final class CompileException extends \Exception
 {
 
 }
 
 
-class SetupException extends \Exception
+final class SetupException extends \Exception
 {
 
 }

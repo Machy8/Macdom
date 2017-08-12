@@ -15,27 +15,27 @@ declare(strict_types = 1);
 
 namespace Macdom\Macros;
 
-use Macdom\Compiler;
+use Macdom\Register;
 
 
 abstract class AbstractMacrosManager
 {
 
 	/**
-	 * @var Compiler
+	 * @var Register
 	 */
-	private $compiler;
+	private $register;
 
 
-	public function __construct(Compiler $compiler)
+	public function __construct(Register $register)
 	{
-		$this->compiler = $compiler;
+		$this->register = $register;
 	}
 
 
 	public function addMacro(string $keyword, \closure $macro, array $flags = NULL): self
 	{
-		$this->compiler->addMacro($keyword, $macro, $flags);
+		$this->register->addMacro($keyword, $macro, $flags);
 
 		return $this;
 	}

@@ -62,15 +62,19 @@ final class Engine
 	 */
 	private $parser;
 
+	/**
+	 * @var Register
+	 */
+	private $register;
+
 
 	/**
-	 * @param string $attribute
 	 * @param string|array|NULL $contentType
 	 * @return Engine
 	 */
 	public function addBooleanAttribute(string $attribute, $contentType = NULL): self
 	{
-		$this->getCompiler()->addBooleanAttribute($attribute, $contentType);
+		$this->getRegister()->addBooleanAttribute($attribute, $contentType);
 
 		return $this;
 	}
@@ -78,7 +82,7 @@ final class Engine
 
 	public function addElement(string $element, array $settings = NULL): self
 	{
-		$this->getCompiler()->addElement($element, $settings);
+		$this->getRegister()->addElement($element, $settings);
 
 		return $this;
 	}
@@ -86,7 +90,7 @@ final class Engine
 
 	public function addMacro(string $keyword, Callable $macro, array $flags = NULL): self
 	{
-		$this->getCompiler()->addMacro($keyword, $macro, $flags);
+		$this->getRegister()->addMacro($keyword, $macro, $flags);
 
 		return $this;
 	}
@@ -94,7 +98,7 @@ final class Engine
 
 	public function changeElementQuickAttributes(string $element, array $quickAttributes): self
 	{
-		$this->getCompiler()->changeElementQuickAttributes($element, $quickAttributes);
+		$this->getRegister()->changeElementQuickAttributes($element, $quickAttributes);
 
 		return $this;
 	}
@@ -103,8 +107,15 @@ final class Engine
 	public function compile(string $content): string
 	{
 		try {
-			$compiler = $this->getCompiler()->setContentType($this->contentType);
-			$tokens = $this->getParser()->parse($content);
+			$register = $this->getRegister()->setContentType($this->contentType);
+			$compiler = $this->getCompiler()
+				->setRegister($register)
+				->setXmlSyntax($this->contentType);
+
+			$tokens = $this->getParser()
+				->setRegister($register)
+				->parse($content);
+
 			$code = $compiler->compile($tokens);
 
 			if ($this->outputFormatterEnabled) {
@@ -135,25 +146,25 @@ final class Engine
 
 	public function getElements(): array
 	{
-		return $this->getCompiler()->getElements();
+		return $this->getRegister()->getElements();
 	}
 
 
 	public function getElementsBooleanAttributes(): array
 	{
-		return $this->getCompiler()->getElementsBooleanAttributes();
+		return $this->getRegister()->getElementsBooleanAttributes();
 	}
 
 
 	public function getMacros(): array
 	{
-		return $this->getCompiler()->getMacros();
+		return $this->getRegister()->getMacros();
 	}
 
 
 	public function removeBooleanAttribute(string $attribute): self
 	{
-		$this->getCompiler()->removeBooleanAttribute($attribute);
+		$this->getRegister()->removeBooleanAttribute($attribute);
 
 		return $this;
 	}
@@ -161,7 +172,7 @@ final class Engine
 
 	public function removeElement(string $element): self
 	{
-		$this->getCompiler()->removeElement($element);
+		$this->getRegister()->removeElement($element);
 
 		return $this;
 	}
@@ -169,7 +180,7 @@ final class Engine
 
 	public function removeMacro(string $macro): self
 	{
-		$this->getCompiler()->removeMacro($macro);
+		$this->getRegister()->removeMacro($macro);
 
 		return $this;
 	}
@@ -196,9 +207,6 @@ final class Engine
 	{
 		if ( ! $this->compiler) {
 			$this->compiler = new Compiler;
-			Elements\CoreElements::install($this->compiler);
-			Elements\CoreBooleanAttributes::install($this->compiler);
-			Macros\CoreMacros::install($this->compiler);
 		}
 
 		return $this->compiler;
@@ -209,7 +217,7 @@ final class Engine
 	{
 		if ( ! $this->outputFormatter) {
 			$this->outputFormatter = new Formatter;
-			$unpairedElements = $this->getCompiler()->getUnpairedElements();
+			$unpairedElements = $this->getRegister()->getUnpairedElements();
 
 			$this->outputFormatter
 				->addUnpairedElements($unpairedElements)
@@ -223,10 +231,23 @@ final class Engine
 	private function getParser(): Parser
 	{
 		if ( ! $this->parser) {
-			$this->parser = new Parser($this->getCompiler());
+			$this->parser = new Parser;
 		}
 
 		return $this->parser;
+	}
+
+
+	private function getRegister(): Register
+	{
+		if ( ! $this->register) {
+			$this->register = new Register;
+			Elements\CoreElements::install($this->register);
+			Elements\CoreBooleanAttributes::install($this->register);
+			Macros\CoreMacros::install($this->register);
+		}
+
+		return $this->register;
 	}
 
 }

@@ -27,9 +27,7 @@ final class Helpers
 
 	public static function getFirstWord(string $string): string
 	{
-		return preg_match('/^(?<firstWord>\S+)(?:(?=\S+)\s)?/', trim($string), $match)
-			? $match['firstWord']
-			: '';
+		return preg_match('/^(?<firstWord>\S+)(?:(?=\S+)\s)?/', trim($string), $match) ? $match['firstWord'] : '';
 	}
 
 

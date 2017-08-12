@@ -15,21 +15,21 @@ declare(strict_types = 1);
 
 namespace Macdom\Elements;
 
-use Macdom\Compiler;
+use Macdom\Register;
 
 
 abstract class AbstractElementsManager
 {
 
 	/**
-	 * @var Compiler
+	 * @var Register
 	 */
-	private $compiler;
+	private $register;
 
 
-	public function __construct(Compiler $compiler)
+	public function __construct(Register $register)
 	{
-		$this->compiler = $compiler;
+		$this->register = $register;
 	}
 
 
@@ -40,7 +40,7 @@ abstract class AbstractElementsManager
 	 */
 	public function addBooleanAttribute(string $attribute, $contentType = NULL): self
 	{
-		$this->compiler->addBooleanAttribute($attribute, $contentType);
+		$this->register->addBooleanAttribute($attribute, $contentType);
 
 		return $this;
 	}
@@ -48,7 +48,7 @@ abstract class AbstractElementsManager
 
 	public function addElement(string $element, array $settings = NULL): self
 	{
-		$this->compiler->addElement($element, $settings);
+		$this->register->addElement($element, $settings);
 
 		return $this;
 	}

@@ -15,16 +15,16 @@ declare(strict_types = 1);
 
 namespace Macdom\Elements;
 
-use Macdom\Compiler;
+use Macdom\Register;
 use Macdom\Engine;
 
 
 final class CoreElements extends AbstractElementsManager
 {
 
-	public static function install(Compiler $compiler)
+	public static function install(Register $register)
 	{
-		$elementsManager = new static($compiler);
+		$elementsManager = new static($register);
 
 		$elementsManager
 			// Standard HTML elements

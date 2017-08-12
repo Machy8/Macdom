@@ -29,10 +29,10 @@ final class Parser
 			Token::TEXT
 		],
 
-		REPLICATOR_REGISTER_PREFIX = '#',
-		REPLICATOR_PREFIX = '@',
-		REPLICATOR_OPEN_TAG_RE = '/^' . self::REPLICATOR_PREFIX . '(?<keyword>[\S]*)/',
 		REPLICATOR_CLOSE_TAG_RE = '/^\/' . self::REPLICATOR_PREFIX . '(?<keyword>[\S]*)/',
+		REPLICATOR_OPEN_TAG_RE = '/^' . self::REPLICATOR_PREFIX . '(?<keyword>[\S]*)/',
+		REPLICATOR_PREFIX = '@',
+		REPLICATOR_REGISTER_PREFIX = '#',
 
 		SKIP_TAG = 'macdom-off',
 
@@ -43,11 +43,6 @@ final class Parser
 	 * @var array
 	 */
 	private $codePlaceholdersRegularExpression = [];
-
-	/**
-	 * @var Compiler
-	 */
-	private $compiler;
 
 	/**
 	 * @var string
@@ -70,15 +65,14 @@ final class Parser
 	private $processedLine;
 
 	/**
+	 * @var Register
+	 */
+	private $register;
+
+	/**
 	 * @var array
 	 */
 	private $replicatorRegister = [];
-
-
-	public function __construct(Compiler $compiler)
-	{
-		$this->compiler = $compiler;
-	}
 
 
 	public function isElementUnpaired(array $elementSettings): bool
@@ -89,10 +83,10 @@ final class Parser
 
 	public function parse(string $input): array
 	{
-		$this->setCodePlaceholdersRegularExpressions();
-
-		$input = str_replace("\r\n", "\n", $input);
+		$this->codePlaceholdersRegularExpression = [];
 		$this->output = [];
+		$this->setCodePlaceholdersRegularExpressions();
+		$input = str_replace("\r\n", "\n", $input);
 		$input = $this->setCodePlaceholders($input, $codePlaceholders);
 
 		foreach (preg_split("/\\r|\\n/", $input, -1, PREG_SPLIT_DELIM_CAPTURE) as $lineNumber => $line) {
@@ -141,9 +135,15 @@ final class Parser
 			}
 		}
 
-		$string = preg_replace('/(?:<\/?' . self::SKIP_TAG . '>|' . self::SKIP_TAG . ')\s*/', '', $string);
+		return preg_replace('/(?:<\/?' . self::SKIP_TAG . '>|' . self::SKIP_TAG . ')\s*/', '', $string);
+	}
 
-		return $string;
+
+	public function setRegister(Register $register): self
+	{
+		$this->register = $register;
+
+		return $this;
 	}
 
 
@@ -201,7 +201,7 @@ final class Parser
 
 	private function matchElement(): bool
 	{
-		if ( ! $this->compiler->findElement($this->processedLine['keyword'])) {
+		if ( ! $this->register->findElement($this->processedLine['keyword'])) {
 			return FALSE;
 		}
 
@@ -215,7 +215,7 @@ final class Parser
 
 	private function matchMacro(): bool
 	{
-		if ( ! $this->compiler->findMacro($this->processedLine['keyword'])) {
+		if ( ! $this->register->findMacro($this->processedLine['keyword'])) {
 			return FALSE;
 		}
 
@@ -235,9 +235,7 @@ final class Parser
 
 		$keyword = preg_replace('/^\/@/', '', $this->processedLine['keyword'], 1);
 		$processedLineLevel = $this->processedLine['indentationLevel'];
-		$replicatedLineKey = (bool) $keyword
-			? $keyword
-			: '#' . $processedLineLevel;
+		$replicatedLineKey = (bool) $keyword ? $keyword : '#' . $processedLineLevel;
 
 		if (array_key_exists($replicatedLineKey, $this->replicatorRegister)) {
 			unset($this->replicatorRegister[$replicatedLineKey]);
@@ -271,9 +269,8 @@ final class Parser
 			];
 
 		} else {
-			$this->replicatorRegister[
-				self::REPLICATOR_REGISTER_PREFIX . $this->processedLine['indentationLevel']
-			] = $this->processedLine['text'];
+			$newReplicatorRegisterItemKey = self::REPLICATOR_REGISTER_PREFIX . $this->processedLine['indentationLevel'];
+			$this->replicatorRegister[$newReplicatorRegisterItemKey] = $this->processedLine['text'];
 		}
 
 		return TRUE;
@@ -327,9 +324,8 @@ final class Parser
 		$indentation = $this->indentationMethod === Engine::TABS_INDENTATION
 			? '\t'
 			: ' {' . $this->indentationSize . '}*';
-
 		$skippedElements = [self::SKIP_TAG];
-		$elements = $this->compiler->getElements(TRUE);
+		$elements = $this->register->getElements(TRUE);
 
 		foreach ($elements as $element => $settings) {
 			if (in_array(Engine::CONTENT_SKIPPED, $settings)) {
@@ -353,7 +349,7 @@ final class Parser
 		$this->processedLine = [
 			'keyword' => Helpers::getFirstWord($line),
 			'text' => $line,
-			'line' => $lineNumber + 1,
+			'line' => $lineNumber + 1
 		];
 
 		$this->processedLine['indentationLevel'] = $this->getIndentationLevel($line);

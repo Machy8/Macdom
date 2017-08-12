@@ -15,16 +15,16 @@ declare(strict_types = 1);
 
 namespace Macdom\Macros;
 
-use Macdom\Compiler;
+use Macdom\Register;
 use Macdom\Engine;
 
 
 final class CoreMacros extends AbstractMacrosManager
 {
 
-	public static function install(Compiler $compiler)
+	public static function install(Register $register)
 	{
-		$macrosManager = new static($compiler);
+		$macrosManager = new static($register);
 
 		$macrosManager
 			->addMacro('!5', function () {
