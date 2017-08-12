@@ -44,4 +44,5 @@ class MacdomExtension extends CompilerExtension
 			$compiler->addSetup('@' . $this->prefix('tracyPanel') . '::setMacdom', ['@' . $this->prefix('engine')]);
 		}
 	}
+
 }

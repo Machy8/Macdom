@@ -112,9 +112,7 @@ class MacdomPanel implements IBarPanel
 			$panelMacros[$contentType] = [];
 
 			foreach ($macros as $macro => $macroObject) {
-				if (isset($macroObject['flags'])
-					&& in_array(Token::REGULAR_EXPRESSION_MACRO, $macroObject['flags'])
-				) {
+				if (isset($macroObject['flags']) && in_array(Token::REGULAR_EXPRESSION_MACRO, $macroObject['flags'])) {
 					$type = 'Regular expression';
 				}
 
@@ -128,4 +126,5 @@ class MacdomPanel implements IBarPanel
 
 		return $panelMacros;
 	}
+
 }

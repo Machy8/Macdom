@@ -35,9 +35,8 @@ final class MacdomLoader extends FileLoader
 	public function getContent($file): string
 	{
 		$content = parent::getContent($file);
-		$compiled = $this->macdom->compile($content);
 
-		return $compiled;
+		return $this->macdom->compile($content);
 	}
 
 
