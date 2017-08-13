@@ -3,4 +3,6 @@
 .github export-ignore
 .travis.yml export-ignore
 tests/ export-ignore
+docker-compose.yml export-ignore
+Dockerfile export-ignore
 *.sh eol=lf
