@@ -67,6 +67,11 @@ final class Engine
 	 */
 	private $register;
 
+	/**
+	 * @var INT|NULL
+	 */
+	private $spacesIndentationMethod = NULL;
+
 
 	/**
 	 * @param string|array|NULL $contentType
@@ -196,6 +201,7 @@ final class Engine
 
 	public function setSpacesIndentationMethod(int $indentationSize = Engine::DEFAULT_INDENTATION_SIZE): self
 	{
+		$this->spacesIndentationMethod = $indentationSize;
 		$this->getParser()->setSpacesIndentationMethod($indentationSize);
 		$this->getOutputFormatter()->setSpacesIndentationMethod($indentationSize);
 
@@ -217,11 +223,15 @@ final class Engine
 	{
 		if ( ! $this->outputFormatter) {
 			$this->outputFormatter = new Formatter;
-			$unpairedElements = $this->getRegister()->getUnpairedElements();
 
 			$this->outputFormatter
-				->addUnpairedElements($unpairedElements)
+				->addSkippedElement($this->getRegister()->getSkippedElements())
+				->addUnpairedElements($this->getRegister()->getUnpairedElements())
 				->setContentType($this->contentType);
+
+			if ($this->spacesIndentationMethod) {
+				$this->outputFormatter->setSpacesIndentationMethod($this->spacesIndentationMethod);
+			}
 		}
 
 		return $this->outputFormatter;

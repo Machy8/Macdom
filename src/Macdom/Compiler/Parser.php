@@ -34,8 +34,6 @@ final class Parser
 		REPLICATOR_PREFIX = '@',
 		REPLICATOR_REGISTER_PREFIX = '#',
 
-		SKIP_TAG = 'macdom-off',
-
 		CODE_PLACEHOLDER_NAMESPACE_PREFIX = 'codePlaceholder_',
 		CODE_PLACEHOLDER_RE = '/' . self::CODE_PLACEHOLDER_NAMESPACE_PREFIX . '\d+/';
 
@@ -135,7 +133,7 @@ final class Parser
 			}
 		}
 
-		return preg_replace('/(?:<\/?' . self::SKIP_TAG . '>|' . self::SKIP_TAG . ')\s*/', '', $string);
+		return preg_replace('/(?:<\/?' . Register::SKIP_TAG . '>|' . Register::SKIP_TAG . ')\s*/', '', $string);
 	}
 
 
@@ -324,15 +322,7 @@ final class Parser
 		$indentation = $this->indentationMethod === Engine::TABS_INDENTATION
 			? '\t'
 			: ' {' . $this->indentationSize . '}*';
-		$skippedElements = [self::SKIP_TAG];
-		$elements = $this->register->getElements(TRUE);
-
-		foreach ($elements as $element => $settings) {
-			if (in_array(Engine::CONTENT_SKIPPED, $settings)) {
-				$skippedElements[] = $element;
-			}
-		}
-
+		$skippedElements = $this->register->getSkippedElements();
 		$skippedElements = join('|', $skippedElements);
 
 		// Regular expression => indented from left

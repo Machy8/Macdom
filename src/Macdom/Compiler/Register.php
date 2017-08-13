@@ -19,6 +19,9 @@ namespace Macdom;
 final class Register
 {
 
+
+	const SKIP_TAG = 'macdom-off';
+
 	/**
 	 * @var array
 	 */
@@ -197,6 +200,21 @@ final class Register
 	public function getMacros(): array
 	{
 		return $this->macros;
+	}
+
+
+	public function getSkippedElements(): array
+	{
+		$elements = $this->getElements(TRUE);
+		$skippedElements = [self::SKIP_TAG];
+
+		foreach ($elements as $element => $settings) {
+			if (in_array(Engine::CONTENT_SKIPPED, $settings)) {
+				$skippedElements[] = $element;
+			}
+		}
+
+		return $skippedElements;
 	}
 
 
