@@ -36,7 +36,7 @@ final class MacdomLoader extends FileLoader
 	{
 		$content = parent::getContent($file);
 
-		return $this->macdom->compile($content);
+		return $this->getMacdom()->compile($content);
 	}
 
 
@@ -45,6 +45,12 @@ final class MacdomLoader extends FileLoader
 		$this->macdom = $macdom;
 
 		return $this;
+	}
+
+
+	private function getMacdom(): Engine
+	{
+		return $this->macdom ?? new Engine();
 	}
 
 }
