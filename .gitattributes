@@ -5,4 +5,7 @@
 tests/ export-ignore
 docker-compose.yml export-ignore
 Dockerfile export-ignore
+index.php export-ignore
+input.html export-ignore
+output.html export-ignore
 *.sh eol=lf
