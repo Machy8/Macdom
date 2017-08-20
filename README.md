@@ -74,4 +74,40 @@ $compiled = $macdom->compile($content);
 ```
 
 *Nette framework:*
-- Soon, but first, let me take a selfie
+```PHP
+
+	use Macdom\Engine;
+	use Macdom\Bridges\MacdomLatte\MacdomLoader;
+    
+	/**
+	 * @var Engine
+	 */
+	private $macdom;
+
+	/**
+	 * @var MacdomLoader
+	 */
+	private $macdom;
+
+	public function __construct(Macdom\Engine $macdom, MacdomLoader $macdomLoader) {
+		$this->macdom = $macdom;
+		$this->macdomLoader = $macdom;
+	}
+
+	protected function createTemplate()
+	{
+		$template = parent::createTemplate();
+		$this->macdomLoader->setMacdom($this->macdom);
+		$template->getLatte()->setLoader($this->macdomLoader);
+		return $template;
+	}
+```
+
+And in the config neon
+```
+extensions:
+    macdom: Macdom\Bridges\MacdomNette\MacdomExtension
+  
+macdom:
+    debugger: TRUE
+```
