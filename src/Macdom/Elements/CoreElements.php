@@ -174,7 +174,7 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('rss', [Engine::CONTENT_XML, 'quickAttributes' => ['version']])
 			->addElement('skipDays', [Engine::CONTENT_XML])
 			->addElement('skipHours', [Engine::CONTENT_XML])
-			->addElement('source', [Engine::CONTENT_XML, 'url'])
+			->addElement('source', [Engine::CONTENT_XML,'quickAttributes' => ['url']])
 			->addElement('textInput', [Engine::CONTENT_XML])
 			->addElement('title', [Engine::CONTENT_XML])
 			->addElement('ttl', [Engine::CONTENT_XML])

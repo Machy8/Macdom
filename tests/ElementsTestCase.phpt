@@ -97,7 +97,10 @@ final class ElementsTestCase extends AbstractTestCase
 
 	public function testQuickAttributes()
 	{
-		$this->assertMatchFile('quickAttributes');
+	    $this->macdom
+	        ->changeElementQuickAttributes('div', 'id class')
+	        ->changeElementQuickAttributes('i', ['data-my-data', 'data-some-data']);
+		$this->assertMatchFile('quickAttributes', TRUE);
 	}
 
 

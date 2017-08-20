@@ -319,16 +319,21 @@ final class Parser
 
 	private function setCodePlaceholdersRegularExpressions()
 	{
-		$indentation = $this->indentationMethod === Engine::TABS_INDENTATION
-			? '\t'
-			: ' {' . $this->indentationSize . '}*';
+		$indentation = '\t';
+		$firstIndentationMultiplier = '*';
+
+		if ($this->indentationMethod !== Engine::TABS_INDENTATION) {
+			$indentation = ' {' . $this->indentationSize . '}';
+			$firstIndentationMultiplier = '';
+		}
+
 		$skippedElements = $this->register->getSkippedElements();
 		$skippedElements = join('|', $skippedElements);
 
 		// Regular expression => indented from left
 		$this->codePlaceholdersRegularExpression = [
 			'/<\?php(?: |\n)(?:.|\n)*\?>/Um' => FALSE, // PHP code
-			'/(' . $indentation . '*)(?<! |\S)(?:' . $skippedElements . ')((?= ) [\S\h]+(?:.*\n\1' . $indentation . '.*)*|((?= *\n)(?:.*\n\1' . $indentation . '.*)+))/' => TRUE, // indented block
+			'/(' . $indentation . $firstIndentationMultiplier . ')(?<! |\S)(?:' . $skippedElements . ')((?= ) [\S\h]+(?:.*\n\1' . $indentation . '.*)*|((?= *\n)(?:.*\n\1' . $indentation . '.*)+))/' => TRUE, // indented block
 			'/<(' . $skippedElements . ')(?:[-\w]+)?(?:[^>]+)?>([\s\S]*?)<\/\1>/' => FALSE // tags
 		];
 	}

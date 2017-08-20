@@ -18,7 +18,7 @@ namespace Macdom\Tests;
 require_once 'bootstrap.php';
 
 
-final class SkipAreasTestCase extends AbstractTestCase
+final class FormattingTestCase extends AbstractTestCase
 {
 
 	public function testIndentedBlockMode()
@@ -47,6 +47,13 @@ final class SkipAreasTestCase extends AbstractTestCase
 		$this->assertMatchFile('taggedBlockMode');
 	}
 
+
+    public function testSpacesIndendation()
+    {
+        $this->macdom->setSpacesIndentation(8);
+        $this->assertMatchFile('spacesIndentation');
+    }
+
 }
 
-run(new SkipAreasTestCase());
+run(new FormattingTestCase());

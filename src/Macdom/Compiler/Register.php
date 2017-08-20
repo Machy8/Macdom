@@ -19,7 +19,6 @@ namespace Macdom;
 final class Register
 {
 
-
 	const SKIP_TAG = 'macdom-off';
 
 	/**
@@ -101,13 +100,30 @@ final class Register
 	}
 
 
-	public function changeElementQuickAttributes(string $element, array $quickAttributes)
+	/**
+	 * @param string|array $quickAttributes
+	 * @throws SetupException
+	 */
+	public function changeElementQuickAttributes(string $element, $quickAttributes)
 	{
+		$quickAttributesType = gettype($quickAttributes);
+
 		if ( ! $this->findElement($element)) {
 			throw new SetupException('Can\'t change quick attributes for undefined element "' . $element . '"');
 		}
 
-		$this->elements[$element]['quickAttributes'] = $quickAttributes;
+		if ( ! in_array($quickAttributesType, ['string', 'array'])) {
+			throw new SetupException(
+				'Unsupported type for parameter $quickAttributes. 
+				Allowed types are array or string. "' . $quickAttributesType . '" given.'
+			);
+		}
+
+		if ($quickAttributesType === 'string') {
+			$quickAttributes = Helpers::explodeString($quickAttributes);
+		}
+
+		$this->elements[$this->contentType][$element]['quickAttributes'] = $quickAttributes;
 	}
 
 

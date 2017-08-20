@@ -70,7 +70,7 @@ final class Engine
 	/**
 	 * @var INT|NULL
 	 */
-	private $spacesIndentationMethod = NULL;
+	private $spacesIndentationSize = NULL;
 
 
 	/**
@@ -101,7 +101,10 @@ final class Engine
 	}
 
 
-	public function changeElementQuickAttributes(string $element, array $quickAttributes): self
+	/**
+	 * @param string|array $quickAttributes
+	 */
+	public function changeElementQuickAttributes(string $element, $quickAttributes): self
 	{
 		$this->getRegister()->changeElementQuickAttributes($element, $quickAttributes);
 
@@ -109,8 +112,13 @@ final class Engine
 	}
 
 
-	public function compile(string $content): string
+	public function compile(string $content = NULL): string
 	{
+
+		if ( ! $content) {
+			return '';
+		}
+
 		try {
 			$register = $this->getRegister()->setContentType($this->contentType);
 			$compiler = $this->getCompiler()
@@ -199,11 +207,11 @@ final class Engine
 	}
 
 
-	public function setSpacesIndentationMethod(int $indentationSize = Engine::DEFAULT_INDENTATION_SIZE): self
+	public function setSpacesIndentation(int $indentationSize = NULL): self
 	{
-		$this->spacesIndentationMethod = $indentationSize;
-		$this->getParser()->setSpacesIndentationMethod($indentationSize);
-		$this->getOutputFormatter()->setSpacesIndentationMethod($indentationSize);
+		$this->spacesIndentationSize = $indentationSize ?? Engine::DEFAULT_INDENTATION_SIZE;
+		$this->getParser()->setSpacesIndentationMethod($this->spacesIndentationSize);
+		$this->getOutputFormatter()->setSpacesIndentationMethod($this->spacesIndentationSize);
 
 		return $this;
 	}
@@ -229,8 +237,8 @@ final class Engine
 				->addUnpairedElements($this->getRegister()->getUnpairedElements())
 				->setContentType($this->contentType);
 
-			if ($this->spacesIndentationMethod) {
-				$this->outputFormatter->setSpacesIndentationMethod($this->spacesIndentationMethod);
+			if ($this->spacesIndentationSize) {
+				$this->outputFormatter->setSpacesIndentationMethod($this->spacesIndentationSize);
 			}
 		}
 

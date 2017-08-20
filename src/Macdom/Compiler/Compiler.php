@@ -357,8 +357,7 @@ final class Compiler
 		if (preg_match_all(self::REPLICATOR_PLACEHOLDERS_REPLACEMENTS_RE, $synchronizedText, $matches)) {
 			$matches = $matches['replacement'];
 			$replicatedText = preg_replace_callback(self::REPLICATOR_PLACEHOLDERS_RE,
-				function () use (&$matches)
-				{
+				function () use (&$matches) {
 					return array_shift($matches);
 				}, $replicatedText);
 
