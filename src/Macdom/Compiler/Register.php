@@ -53,77 +53,96 @@ final class Register
 
 
 	/**
-	 * @param string|array|NULL $contentType
+	 * @param array|string $booleanAttribute
 	 */
-	public function addBooleanAttribute(string $attribute, $contentType = NULL)
+	public function addBooleanAttribute($booleanAttribute, string $contentType = NULL)
 	{
-		$booleanAttributes = Helpers::explodeString($attribute);
-		$contentType = $contentType ?? Engine::CONTENT_HTML;
-		$contentTypes = is_array($contentType) ? $contentType : [$contentType];
+		$contentType = $this->getCorrectContentType($contentType, $isXhtmlContentType);
 
-		foreach ($booleanAttributes as $booleanAttribute) {
-			foreach ($contentTypes as $contentType) {
-				if ($this->findBooleanAttribute($booleanAttribute, $contentType)) {
-					continue;
+		if (is_string($booleanAttribute)) {
+			$booleanAttribute = Helpers::explodeString($booleanAttribute);
+		}
+
+		foreach ($booleanAttribute as $booleanAttributeToAdd) {
+			if ($isXhtmlContentType) {
+				if ( ! $this->findBooleanAttribute($booleanAttributeToAdd, Engine::CONTENT_HTML)) {
+					$this->booleanAttributes[Engine::CONTENT_HTML][] = $booleanAttributeToAdd;
 				}
 
-				$this->booleanAttributes[$contentType][] = $booleanAttribute;
+				if ( ! $this->findBooleanAttribute($booleanAttributeToAdd, Engine::CONTENT_XML)) {
+					$this->booleanAttributes[Engine::CONTENT_XML][] = $booleanAttributeToAdd;
+				}
+
+				continue;
 			}
+
+			$this->booleanAttributes[$contentType][] = $booleanAttributeToAdd;
 		}
 	}
 
 
 	public function addElement(string $element, array $settings = NULL)
 	{
+		$settings = $settings ?? [];
+		$xhtmlElement = $settings && in_array(Engine::CONTENT_XHTML, $settings);
 		$contentType = $settings && in_array(Engine::CONTENT_XML, $settings)
 			? Engine::CONTENT_XML
 			: Engine::CONTENT_HTML;
 
-		$openTags = $settings['openTags'] ?? [];
-		$closeTags = $settings['closeTags'] ?? [];
+		if ($settings) {
+			$openTags = $settings['openTags'] ?? [];
+			$closeTags = $settings['closeTags'] ?? [];
+			$this->addElementCustomTags($openTags, $closeTags);
+		}
 
-		$this->addElementCustomTags($openTags, $closeTags);
-		$this->elements[$contentType][$element] = $settings ?? [];
+		if ($xhtmlElement) {
+			$this->elements[Engine::CONTENT_HTML][$element] = $settings;
+			$this->elements[Engine::CONTENT_XML][$element] = $settings;
+
+			return;
+		}
+
+		$this->elements[$contentType][$element] = $settings;
 	}
 
 
 	public function addMacro(string $keyword, Callable $macro, array $flags = NULL)
 	{
-		$contentType = $flags && in_array(Engine::CONTENT_XML, $flags)
-			? Engine::CONTENT_XML
-			: Engine::CONTENT_HTML;
-
-		$this->macros[$contentType][$keyword] = [
+		$xhtmlMacro = $flags && in_array(Engine::CONTENT_XHTML, $flags);
+		$contentType = $flags && in_array(Engine::CONTENT_XML, $flags) ? Engine::CONTENT_XML : Engine::CONTENT_HTML;
+		$macroSettings = [
 			'flags' => $flags ?? [],
 			'callback' => $macro
 		];
+
+		if ($xhtmlMacro) {
+			$this->macros[Engine::CONTENT_HTML][$keyword] = $macroSettings;
+			$this->macros[Engine::CONTENT_XML][$keyword] = $macroSettings;
+
+			return;
+		}
+
+		$this->macros[$contentType][$keyword] = $macroSettings;
 	}
 
 
 	/**
-	 * @param string|array $quickAttributes
+	 * @param array|string $quickAttributes
 	 * @throws SetupException
 	 */
-	public function changeElementQuickAttributes(string $element, $quickAttributes)
+	public function changeElementQuickAttributes(string $element, $quickAttributes, string $contentType = NULL)
 	{
-		$quickAttributesType = gettype($quickAttributes);
+		$contentType = $this->getCorrectContentType($contentType);
 
-		if ( ! $this->findElement($element)) {
+		if ( ! $this->findElement($element, $contentType)) {
 			throw new SetupException('Can\'t change quick attributes for undefined element "' . $element . '"');
 		}
 
-		if ( ! in_array($quickAttributesType, ['string', 'array'])) {
-			throw new SetupException(
-				'Unsupported type for parameter $quickAttributes. 
-				Allowed types are array or string. "' . $quickAttributesType . '" given.'
-			);
-		}
-
-		if ($quickAttributesType === 'string') {
+		if (is_string($quickAttributes)) {
 			$quickAttributes = Helpers::explodeString($quickAttributes);
 		}
 
-		$this->elements[$this->contentType][$element]['quickAttributes'] = $quickAttributes;
+		$this->elements[$contentType][$element]['quickAttributes'] = $quickAttributes;
 	}
 
 
@@ -194,18 +213,17 @@ final class Register
 
 		if (array_key_exists($macro, $this->macros[$contentType])) {
 			return $this->macros[$contentType][$macro]['callback'];
+		}
 
-		} else {
-			$text = $macro;
+		$text = $macro;
 
-			foreach ($this->macros[$contentType] as $regularExpression => $macroObject) {
-				if ( ! in_array(Token::REGULAR_EXPRESSION_MACRO, $macroObject['flags'])) {
-					continue;
-				}
+		foreach ($this->macros[$contentType] as $regularExpression => $macroObject) {
+			if ( ! in_array(Token::REGULAR_EXPRESSION_MACRO, $macroObject['flags'])) {
+				continue;
+			}
 
-				if (preg_match('/' . $regularExpression . '/', $text)) {
-					return $macroObject['callback'];
-				}
+			if (preg_match('/' . $regularExpression . '/', $text)) {
+				return $macroObject['callback'];
 			}
 		}
 
@@ -248,53 +266,102 @@ final class Register
 	}
 
 
-	public function removeBooleanAttribute(string $booleanAttribute, string $contentType = NULL): self
+	/**
+	 * @param array|string $booleanAttribute
+	 */
+	public function removeBooleanAttribute($booleanAttribute, string $contentType = NULL): self
 	{
-		$booleanAttributes = Helpers::explodeString($booleanAttribute);
-		$contentType = $contentType ?? Engine::CONTENT_HTML;
+		$contentType = $this->getCorrectContentType($contentType, $isXhtmlContentType);
 
-		foreach ($booleanAttributes as $booleanAttribute) {
-			$booleanAttributeKey = array_search($booleanAttribute, $this->booleanAttributes[$contentType]);
+		if (is_string($booleanAttribute)) {
+			$booleanAttribute = Helpers::explodeString($booleanAttribute);
+		}
 
-			if ($booleanAttributeKey === FALSE) {
-				throw new SetupException('Can\'t remove undefined boolean attribute "' . $booleanAttribute . '"');
+		foreach ($booleanAttribute as $booleanAttributeToRemove) {
+
+			if ($isXhtmlContentType) {
+				if ($this->findBooleanAttribute($booleanAttributeToRemove, Engine::CONTENT_HTML)) {
+					$booleanAttributeKey = array_search($booleanAttributeToRemove, $this->booleanAttributes[Engine::CONTENT_HTML]);
+					unset($this->booleanAttributes[Engine::CONTENT_HTML][$booleanAttributeKey]);
+				}
+
+				if ($this->findBooleanAttribute($booleanAttributeToRemove, Engine::CONTENT_XML)) {
+					$booleanAttributeKey = array_search($booleanAttributeToRemove, $this->booleanAttributes[Engine::CONTENT_XML]);
+					unset($this->booleanAttributes[Engine::CONTENT_HTML][$booleanAttributeKey]);
+				}
+
+			} elseif ($this->findBooleanAttribute($booleanAttributeToRemove, $contentType)) {
+				$booleanAttributeKey = array_search($booleanAttributeToRemove, $this->booleanAttributes[$contentType]);
+				unset($this->booleanAttributes[$contentType][$booleanAttributeKey]);
 			}
-
-			unset($this->booleanAttributes[$contentType][$booleanAttributeKey]);
 		}
 
 		return $this;
 	}
 
 
-	public function removeElement(string $element, string $contentType = NULL): self
+	/**
+	 * @param array|string $element
+	 */
+	public function removeElement($element, string $contentType = NULL): self
 	{
-		$elements = Helpers::explodeString($element);
-		$contentType = $contentType ?? Engine::CONTENT_HTML;
+		$contentType = $this->getCorrectContentType($contentType, $isXhtmlContentType);
 
-		foreach ($elements as $element) {
-			if ( ! $this->findElement($element, $contentType)) {
-				throw new SetupException('Can\'t remove undefined element "' . $element . '"');
+		if (is_string($element)) {
+			$element = Helpers::explodeString($element);
+		}
+
+		foreach ($element as $elementToRemove) {
+			if ($isXhtmlContentType) {
+				if ($this->findElement($elementToRemove, Engine::CONTENT_HTML)) {
+					unset($this->elements[Engine::CONTENT_HTML][$elementToRemove]);
+				}
+
+				if ($this->findElement($elementToRemove, Engine::CONTENT_XML)) {
+					unset($this->elements[Engine::CONTENT_XML][$elementToRemove]);
+				}
+
+			} elseif ($this->findElement($elementToRemove, $contentType)) {
+				unset($this->elements[$contentType][$elementToRemove]);
 			}
-
-			unset($this->elements[$contentType][$element]);
 		}
 
 		return $this;
 	}
 
 
-	public function removeMacro(string $macro, string $contentType = NULL): self
+	/**
+	 * @param array|string $macro
+	 */
+	public function removeMacro($macro, string $contentType = NULL): self
 	{
-		$macros = Helpers::explodeString($macro);
-		$contentType = $contentType ?? Engine::CONTENT_HTML;
+		$contentType = $this->getCorrectContentType($contentType, $isXhtmlContentType);
 
-		foreach ($macros as $macro) {
-			if ( ! $this->findMacro($macro)) {
-				throw new SetupException('Can\'t remove undefined macro "' . $macro . '"');
+		if (is_string($macro)) {
+			$macro = Helpers::explodeString($macro);
+		}
+
+		foreach ($macro as $macroToRemove) {
+			if ($isXhtmlContentType) {
+				$removed = FALSE;
+				if ($this->findMacro($macroToRemove, Engine::CONTENT_HTML)) {
+					unset($this->macros[Engine::CONTENT_HTML][$macroToRemove]);
+					$removed = TRUE;
+				}
+
+				if ($this->findMacro($macroToRemove, Engine::CONTENT_XML)) {
+					unset($this->macros[Engine::CONTENT_XML][$macroToRemove]);
+					$removed = TRUE;
+				}
+
+				if ($removed) {
+					continue;
+				}
 			}
 
-			unset($this->macros[$contentType][$macro]);
+			if ($this->findMacro($macroToRemove)) {
+				unset($this->macros[$contentType][$macroToRemove]);
+			}
 		}
 
 		return $this;
@@ -303,11 +370,7 @@ final class Register
 
 	public function setContentType(string $contentType): self
 	{
-		if ($contentType === Engine::CONTENT_XHTML) {
-			$contentType = Engine::CONTENT_HTML;
-		}
-
-		$this->contentType = $contentType;
+		$this->contentType = $this->getCorrectContentType($contentType);
 
 		return $this;
 	}
@@ -338,6 +401,21 @@ final class Register
 
 			$this->elementsCustomCloseTags .= preg_quote($closeTag);
 		}
+	}
+
+
+	private function getCorrectContentType(string $contentType = NULL, bool &$isXhtmlContentType = NULL): string
+	{
+		if ( ! $contentType) {
+			return Engine::DEFAULT_CONTENT_TYPE;
+		}
+
+		if ($contentType === Engine::CONTENT_XHTML) {
+			$isXhtmlContentType = TRUE;
+			return Engine::CONTENT_HTML;
+		}
+
+		return $contentType;
 	}
 
 }

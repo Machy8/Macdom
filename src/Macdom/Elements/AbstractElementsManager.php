@@ -34,13 +34,11 @@ abstract class AbstractElementsManager
 
 
 	/**
-	 * @param string $attribute
-	 * @param string|array|NULL $contentType
-	 * @return AbstractElementsManager
+	 * @param array|string $booleanAttribute
 	 */
-	public function addBooleanAttribute(string $attribute, $contentType = NULL): self
+	public function addBooleanAttribute($booleanAttribute, string $contentType = NULL): self
 	{
-		$this->register->addBooleanAttribute($attribute, $contentType);
+		$this->register->addBooleanAttribute($booleanAttribute, $contentType);
 
 		return $this;
 	}

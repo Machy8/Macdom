@@ -74,12 +74,11 @@ final class Engine
 
 
 	/**
-	 * @param string|array|NULL $contentType
-	 * @return Engine
+	 * @param string|array $booleanAttribute
 	 */
-	public function addBooleanAttribute(string $attribute, $contentType = NULL): self
+	public function addBooleanAttribute($booleanAttribute, string $contentType = NULL): self
 	{
-		$this->getRegister()->addBooleanAttribute($attribute, $contentType);
+		$this->getRegister()->addBooleanAttribute($booleanAttribute, $contentType);
 
 		return $this;
 	}
@@ -104,9 +103,9 @@ final class Engine
 	/**
 	 * @param string|array $quickAttributes
 	 */
-	public function changeElementQuickAttributes(string $element, $quickAttributes): self
+	public function changeElementQuickAttributes(string $element, $quickAttributes, string $contentType = NULL): self
 	{
-		$this->getRegister()->changeElementQuickAttributes($element, $quickAttributes);
+		$this->getRegister()->changeElementQuickAttributes($element, $quickAttributes, $contentType);
 
 		return $this;
 	}
@@ -151,49 +150,70 @@ final class Engine
 	}
 
 
+	/**
+	 * @internal
+	 */
 	public function getContentType(): string
 	{
 		return $this->contentType;
 	}
 
 
+	/**
+	 * @internal
+	 */
 	public function getElements(): array
 	{
 		return $this->getRegister()->getElements();
 	}
 
 
+	/**
+	 * @internal
+	 */
 	public function getElementsBooleanAttributes(): array
 	{
 		return $this->getRegister()->getElementsBooleanAttributes();
 	}
 
 
+	/**
+	 * @internal
+	 */
 	public function getMacros(): array
 	{
 		return $this->getRegister()->getMacros();
 	}
 
 
-	public function removeBooleanAttribute(string $attribute): self
+	/**
+	 * @param array|string $booleanAttribute
+	 */
+	public function removeBooleanAttribute(string $booleanAttribute): self
 	{
-		$this->getRegister()->removeBooleanAttribute($attribute);
+		$this->getRegister()->removeBooleanAttribute($booleanAttribute);
 
 		return $this;
 	}
 
 
-	public function removeElement(string $element): self
+	/**
+	 * @param array|string $element
+	 */
+	public function removeElement($element, string $contentType = NULL): self
 	{
-		$this->getRegister()->removeElement($element);
+		$this->getRegister()->removeElement($element, $contentType);
 
 		return $this;
 	}
 
 
-	public function removeMacro(string $macro): self
+	/**
+	 * @param array|string $macro
+	 */
+	public function removeMacro(string $macro, string $contentType = NULL): self
 	{
-		$this->getRegister()->removeMacro($macro);
+		$this->getRegister()->removeMacro($macro, $contentType);
 
 		return $this;
 	}
