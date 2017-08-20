@@ -42,14 +42,14 @@ class MacdomPanel implements IBarPanel
 	/**
 	 * @return string
 	 */
-	public function getPanel()
+	public function getPanel(): string
 	{
 		ob_start();
 
 		$installed = [
 			'elements' => $this->getElements(),
 			'macros' => $this->getMacros(),
-			'elementsBooleanAttributes' => $this->macdom->getElementsBooleanAttributes(),
+			'elementsBooleanAttributes' => $this->getMacdom()->getElementsBooleanAttributes(),
 		];
 
 		require self::TEMPLATES_DIR . '/panel.phtml';
@@ -58,15 +58,8 @@ class MacdomPanel implements IBarPanel
 	}
 
 
-	/**
-	 * @return string|void
-	 */
-	public function getTab()
+	public function getTab(): string
 	{
-		if (headers_sent() && ! session_id()) {
-			return;
-		}
-
 		ob_start();
 
 		require self::TEMPLATES_DIR . '/tab.phtml';
@@ -83,9 +76,19 @@ class MacdomPanel implements IBarPanel
 	}
 
 
+	private function getMacdom(): Engine
+	{
+		if ( ! $this->macdom) {
+			$this->macdom = new Engine;
+		}
+
+		return $this->macdom;
+	}
+
+
 	private function getElements(): array
 	{
-		$elementsByContentType = $this->macdom->getElements();
+		$elementsByContentType = $this->getMacdom()->getElements();
 		$panelElements = [];
 
 		foreach ($elementsByContentType as $contentType => $elements) {
@@ -104,7 +107,7 @@ class MacdomPanel implements IBarPanel
 
 	private function getMacros(): array
 	{
-		$macrosByContentType = $this->macdom->getMacros();
+		$macrosByContentType = $this->getMacdom()->getMacros();
 		$panelMacros = [];
 		$type = 'Normal';
 
