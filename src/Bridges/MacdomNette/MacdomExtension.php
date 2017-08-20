@@ -34,6 +34,9 @@ class MacdomExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig($this->config);
 
+		$builder->addDefinition($this->prefix('loader'))
+			->setClass('Macdom\Bridges\MacdomLatte\MacdomLoader');
+
 		$compiler = $builder->addDefinition($this->prefix('engine'))
 			->setClass('Macdom\Engine');
 
