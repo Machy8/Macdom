@@ -16,7 +16,7 @@ div (0 tabulators)
 ````
 
 ### Spaces
-If you want to to use spaces indentation use `$macdom->setSpacesIndentation(length)`.
+If you want to to use spaces indentation use `$macdom->setSpacesIndentation(4)`.
 
 *Example:*
 ```` Slim

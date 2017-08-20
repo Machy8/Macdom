@@ -44,7 +44,8 @@ div class=myClass .myClass2 => <div class="myClass myClass2"></div>
 ````
 
 ## Boolean attributes 
-You can add another boolean attributes via `$macdom->addBooleanAttribute('attribute1 attribute2)`.
+- Adding - `$macdom->addBooleanAttribute('attribute1 attribute2', Engine::CONTENT_HTML)`
+- Removing - `$macdom->removeBooleanAttribute('attribute1 attribute2', Engine::CONTENT_HTML)`
 
 ```` Slim
 input $text disabled readonly => <input type="text" disabled readonly>
@@ -55,7 +56,8 @@ Two options
 * For short values or values without spaces use *$attributeValue*.
 * For long values like text in a placeholder use *$attribute value;* (closed by a semicolon).
 
-You can change element quick attributes by calling `$macdom->changeElementQuickAttributes('element', 'attributeA attributeB')`.
+You can change element quick attributes by calling 
+`$macdom->changeElementQuickAttributes('element', 'attributeA attributeB', Engine::CONTENT_HTML)`.
 
 ### Default settings for each element
 

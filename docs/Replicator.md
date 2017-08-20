@@ -1,7 +1,6 @@
 # Replicator
-
-Replicator replicates lines content according to levels. 
-Lines are replicated only, if the actual compiled line is not within non-compile area and an html element wasn't detected.
+Replicator replicates lines content according to levels. Lines are replicated only, if the actual compiled line
+is not within non-compile area and an html element wasn't detected.
 
 ## How to use replicator
 * Constructor
@@ -10,7 +9,6 @@ Lines are replicated only, if the actual compiled line is not within non-compile
 * Destructor
  1. /@ 
  2. /@selector
-
 
 ### @
 If there is only *@* at the beginning of the actual compiled line then its content will be used on each following line 
@@ -97,7 +95,8 @@ Second
 ````
 
 ### Destructor
-Destructor is used when we want to deregister line content and it must be on the same level on which the line content was registered.
+Destructor is used when we want to deregister line content 
+and it must be on the same level on which the line content was registered.
 
 *Example:*
 ````
@@ -126,6 +125,7 @@ block B1
 A2
 block B2
 ````
+
 *Result:*
 ````   
 <div class="a">A1</div>
@@ -133,6 +133,7 @@ block B2
 <div class="a">A2</div>
 <div class="b">B2</div>
 ````
+
 ### With different levels
 ````
 @column div .column
@@ -145,6 +146,7 @@ column
    Title 2
    content Text 2
 ````
+
 *Result:*
 ````    
 <div class="column">

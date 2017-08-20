@@ -1,5 +1,4 @@
 # Macros
-
 Macros in Macdom are "prearranged code".
 
 ## Default macros
@@ -29,8 +28,9 @@ Macros in Macdom are "prearranged code".
 | \.js$                         | script $' . $keyword . ' $text/javascript ' . $line                |
 | \.css$                        | link $' . $keyword . ' $stylesheet $text/css ' . $line             |
 
-## Macros addition
-Is possible to add new macro by calling `$macdom->addMacro()`.
+## Managing macros
+- Adding `$macdom->addMacro()`
+- Removing `$macdom->removeMacro('macroname', Engine::CONTENT_HTML)`
 
 ````
 $quickList = function ($content) {
