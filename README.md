@@ -90,7 +90,7 @@ $compiled = $macdom->compile($content);
 	 */
 	private $macdom;
 
-	public function __construct(Macdom\Engine $macdom, MacdomLoader $macdomLoader) {
+	public function __construct(Engine $macdom, MacdomLoader $macdomLoader) {
 		$this->macdom = $macdom;
 		$this->macdomLoader = $macdom;
 	}
