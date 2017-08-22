@@ -1,0 +1,13 @@
+<?php foreach ($items as $element => $details) {; ?>
+	<tr>
+		<td><?php echo $element; ?></td>
+		<td>
+			<?php
+				if (isset($details['quickAttributes'])) {
+					echo join(', ', $details['quickAttributes']);
+				}
+			?>
+		</td>
+		<td><?php echo $contentType; ?></td>
+	</tr>
+<?php }; ?>

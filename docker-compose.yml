@@ -1,0 +1,10 @@
+version: "3"
+services:
+    macdom:
+        container_name: macdom
+        working_dir: /var/www/html
+        build: .
+        volumes:
+            - .:/var/www/html:delegated
+        ports:
+            - "82:82"

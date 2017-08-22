@@ -1,5 +1,6 @@
 # Macdom
-[![Build Status](https://travis-ci.org/Machy8/Macdom.svg?branch=master)](https://travis-ci.org/Machy8/Macdom)
+[![Build Status](https://travis-ci.org/Machy8/Macdom.svg?branch=3.0)](https://travis-ci.org/Machy8/Macdom)
+[![Coverage Status](https://coveralls.io/repos/github/Machy8/Macdom/badge.svg?branch=3.0)](https://coveralls.io/github/Machy8/Macdom?branch=3.0)
 [![Packagist](https://img.shields.io/packagist/v/machy8/macdom.svg?maxAge=2592000)](https://packagist.org/packages/machy8/macdom)
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/Machy8/Macdom/blob/master/license.md)
 [![Join the chat at https://gitter.im/Machy8/Macdom](https://badges.gitter.im/Machy8/Macdom.svg)](https://gitter.im/Machy8/Macdom?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -56,7 +57,7 @@ body
 ````
 
 ## Requirements
-- php 5.4+
+- PHP 7.0+
 - If you use Nette Framework - v2.3+
 
 ## Installation
@@ -69,19 +70,47 @@ body
 *Typical:*
 
 ```php
-$macdom = new Machy8\Macdom\Loaders\Loader;
+$macdom = new Macdom\Engine;
 $compiled = $macdom->compile($content);
 ```
 
 *Nette framework:*
+```PHP
 
-Place the code bellow into your *base presenter*.
+	use Macdom\Engine;
+	use Macdom\Bridges\MacdomLatte\FileLoader;
 
-```php
-protected function createTemplate()
-    {
-        $template = parent::createTemplate();
-        $template->getLatte()->setLoader(new \Machy8\Macdom\Loaders\LoaderLatte($this));
-        return $template;
-    }
+	/**
+	 * @var Engine
+	 */
+	private $macdom;
+
+	/**
+	 * @var FileLoader
+	 */
+	private $fileLoader;
+
+	
+	public function __construct(Engine $macdom, FileLoader $fileLoader) {
+		$this->macdom = $macdom;
+		$this->fileLoader = $fileLoader;
+	}
+
+	
+	protected function createTemplate()
+	{
+		$template = parent::createTemplate();
+		$this->fileLoader->setMacdom($this->macdom);
+		$template->getLatte()->setLoader($this->fileLoader);
+		return $template;
+	}
+```
+
+And in the config neon
+```
+extensions:
+    macdom: Macdom\Bridges\MacdomNette\MacdomExtension
+  
+macdom:
+    debugger: TRUE
 ```

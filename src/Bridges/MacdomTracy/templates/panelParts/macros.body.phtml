@@ -1,0 +1,8 @@
+<?php foreach ($items as $macro => $details) {; ?>
+	<tr>
+		<td><?php echo $macro; ?></td>
+		<td><?php echo htmlspecialchars($details['output']); ?></td>
+		<td><?php echo $details['type']; ?></td>
+		<td><?php echo $contentType; ?></td>
+	</tr>
+<?php }; ?>

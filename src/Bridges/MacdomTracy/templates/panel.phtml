@@ -1,0 +1,24 @@
+<h1>Macdom</h1>
+<div class="tracy-inner">
+	<?php foreach ($installed as $installedItemsType => $installedItems) {; ?>
+		<div>
+			<?php $elementId = 'tracy-addons-collapsed-' . $installedItemsType; ?>
+			<a href="#<?php echo $elementId; ?>" class="tracy-toggle"><?php echo ucfirst($installedItemsType); ?></a>
+			<table id="<?php echo $elementId; ?>" style="width: 100%">
+				<thead>
+					<tr>
+						<?php require_once 'panelParts/' . $installedItemsType . '.header.phtml'; ?>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+						foreach ($installedItems as $contentType => $items) {
+							require 'panelParts/' . $installedItemsType . '.body.phtml';
+						};
+					?>
+				</tbody>
+			</table>
+			<br>
+		</div>
+	<?php };?>
+</div>
