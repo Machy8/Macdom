@@ -24,7 +24,7 @@ Third
 ````
 
 *Result:*
-````
+```` HTML
 <div class="block">First</div>
 <div class="block">Second</div>
 <div class="block">Third</div>
@@ -42,7 +42,7 @@ and the content that will replace this mark must be within *[]*.
 ````
 
 *Result:*
-````
+```` HTML
 <div id="first" class="block">First</div>
 <div id="second" class="block">Second</div>
 <div id="third" class="block">Third</div>
@@ -60,7 +60,7 @@ in which they are on the registration line. If one variable place should be skip
 ````
 
 *Result:*
-````
+```` HTML
 <div id="first" class="block1">First</div>
 <div id="second" class="block2">Second</div>
 <div id="third" class="block3">Third</div>
@@ -81,7 +81,7 @@ block Third
 ````
 
 *Result:*
-````
+```` HTML
 <div class="block">First</div>
 Second
 <div class="block">
@@ -109,7 +109,7 @@ Just a text
 ````
 
 *Result:*
-````
+```` HTML
 <div class="registered">Text inside 1</div>
 <div class="registered">Text inside 2</div>
 Just a text
@@ -128,7 +128,7 @@ block B2
 ````
 
 *Result:*
-````   
+```` HTML
 <div class="a">A1</div>
 <div class="b">B1</div>
 <div class="a">A2</div>
@@ -149,7 +149,7 @@ column
 ````
 
 *Result:*
-````    
+```` HTML
 <div class="column">
     <h1 class="title">Title 1</h1>
     <p class="text">Text 1</p>
