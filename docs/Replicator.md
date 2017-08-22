@@ -3,10 +3,11 @@ Replicator replicates lines content according to levels. Lines are replicated on
 is not within non-compile area and an html element wasn't detected.
 
 ## How to use replicator
-* Constructor
+**Constructor:**
  1. @ - Only *at*
  2. @my - *at* + *selector*
-* Destructor
+ 
+**Destructor:**
  1. /@ 
  2. /@selector
 
