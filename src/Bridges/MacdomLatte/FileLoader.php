@@ -15,11 +15,11 @@ declare(strict_types = 1);
 
 namespace Macdom\Bridges\MacdomLatte;
 
-use Latte\Loaders\FileLoader;
+use Latte\Loaders\FileLoader as LatteFileLoader;
 use Macdom\Engine;
 
 
-final class MacdomLoader extends FileLoader
+final class FileLoader extends LatteFileLoader
 {
 
 	/**

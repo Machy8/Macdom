@@ -281,12 +281,16 @@ final class Register
 
 			if ($isXhtmlContentType) {
 				if ($this->findBooleanAttribute($booleanAttributeToRemove, Engine::CONTENT_HTML)) {
-					$booleanAttributeKey = array_search($booleanAttributeToRemove, $this->booleanAttributes[Engine::CONTENT_HTML]);
+					$booleanAttributeKey = array_search(
+						$booleanAttributeToRemove, $this->booleanAttributes[Engine::CONTENT_HTML]
+					);
 					unset($this->booleanAttributes[Engine::CONTENT_HTML][$booleanAttributeKey]);
 				}
 
 				if ($this->findBooleanAttribute($booleanAttributeToRemove, Engine::CONTENT_XML)) {
-					$booleanAttributeKey = array_search($booleanAttributeToRemove, $this->booleanAttributes[Engine::CONTENT_XML]);
+					$booleanAttributeKey = array_search(
+						$booleanAttributeToRemove, $this->booleanAttributes[Engine::CONTENT_XML]
+					);
 					unset($this->booleanAttributes[Engine::CONTENT_HTML][$booleanAttributeKey]);
 				}
 

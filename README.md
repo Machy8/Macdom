@@ -78,28 +78,30 @@ $compiled = $macdom->compile($content);
 ```PHP
 
 	use Macdom\Engine;
-	use Macdom\Bridges\MacdomLatte\MacdomLoader;
-    
+	use Macdom\Bridges\MacdomLatte\FileLoader;
+
 	/**
 	 * @var Engine
 	 */
 	private $macdom;
 
 	/**
-	 * @var MacdomLoader
+	 * @var FileLoader
 	 */
-	private $macdom;
+	private $fileLoader;
 
-	public function __construct(Engine $macdom, MacdomLoader $macdomLoader) {
+	
+	public function __construct(Engine $macdom, FileLoader $fileLoader) {
 		$this->macdom = $macdom;
-		$this->macdomLoader = $macdom;
+		$this->fileLoader = $fileLoader;
 	}
 
+	
 	protected function createTemplate()
 	{
 		$template = parent::createTemplate();
-		$this->macdomLoader->setMacdom($this->macdom);
-		$template->getLatte()->setLoader($this->macdomLoader);
+		$this->fileLoader->setMacdom($this->macdom);
+		$template->getLatte()->setLoader($this->fileLoader);
 		return $template;
 	}
 ```
