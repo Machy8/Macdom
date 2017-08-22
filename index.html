@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="grid.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="prism.css">
+    <title>Macdom HTML preprocessor</title>
+    <meta name="description" content="The best, highly customizable HTML preprocessor with many amazing features 😎. Elements customization, macros, replicator, output formatter, PHP 7⃣️ .">
+</head>
+<body>
+
+    <main class="s-95 m-80 x-centered">
+        <h1 class="text-centered">
+            Macdom HTML preprocessor
+        </h1>
+        <p class="shortDescription text-centered">
+            The best, highly customizable HTML preprocessor with many amazing features.
+            <br>
+            <a href="https://github.com/Machy8/Macdom/blob/master/docs/Elements.md" target="_blank" rel="noopener"><strong>Elements customization</strong></a>,
+            <a href="https://github.com/Machy8/Macdom/blob/master/docs/Macros.md" target="_blank" rel="noopener"><strong>macros</strong></a>,
+            <a href="https://github.com/Machy8/Macdom/blob/master/docs/Replicator.md" target="_blank" rel="noopener"><strong>replicator</strong></a>,
+            <a href="https://github.com/Machy8/xhtml-formatter" target="_blank" rel="noopener"><strong>output formatter</strong></a>,
+            PHP 7⃣️ .
+            <a href="https://github.com/Machy8/Macdom" target="_blank" rel="noopener" class="visit display-inline-block">
+                See Github Repo!
+            </a>
+            <img src="https://assets-cdn.github.com/images/icons/emoji/octocat.png" alt="" class="valign-middle" width="30px" height="30px">
+        </p>
+        <p class="note composerCode text-centered text-bold">
+            composer require machy8/macdom
+        </p>
+        <div class="s-direction-column m-direction-row content-apart codesWrapper">
+            <div class="codeWrapper">
+                <h2>
+                    Macdom
+                </h2>
+                <pre>
+<code class="language-html">
+!5
+    html
+        head
+            utf-8
+            viewport
+            favicon includes/favicon.ico
+            title Macdom example
+        body
+            h1 #title .titles .main-title Hello world
+            nav
+                @ a $http://www.[@].com $blank Link on -
+                [google] .first-link Google
+                [yahoo] Yahoo
+                [github] Github
+            div #wrapper Some text <b>here</b>.
+            https://www.code.jquery.com/jquery-1.12.0.min.js async
+</code>
+                </pre>
+            </div>
+            <div class="codeWrapper">
+                <h2>
+                    HTML
+                </h2>
+                <pre>
+<code class="language-html">
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+        &lt;head&gt;
+            &lt;meta charset=&quot;utf-8&quot;&gt;
+            &lt;meta content=&quot;width=device-width&quot; name=&quot;viewport&quot;&gt;
+            &lt;link rel=&quot;shortcut icon&quot; href=&quot;includes/favicon.ico&quot;&gt;
+            &lt;title&gt;Macdom example&lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+            &lt;h1 id=&quot;title&quot; class=&quot;titles main-title&quot;&gt;Hello world&lt;/h1&gt;
+            &lt;nav&gt;
+                &lt;a target=&quot;blank&quot; href=&quot;http://www.google.com&quot; class=&quot;first-link&quot;&gt;Link on - Google&lt;/a&gt;
+                &lt;a target=&quot;blank&quot; href=&quot;http://www.yahoo.com&quot;&gt;Link on - Yahoo&lt;/a&gt;
+                &lt;a target=&quot;blank&quot; href=&quot;http://www.github.com&quot;&gt;Link on - Github&lt;/a&gt;
+            &lt;/nav&gt;
+            &lt;div id=&quot;wrapper&quot;&gt;
+                Some text &lt;b&gt;here&lt;/b&gt;.
+            &lt;/div&gt;
+            &lt;script async=&quot;&quot; type=&quot;text/javascript&quot; src=&quot;https://www.code.jquery.com/jquery-1.12.0.min.js&quot;&gt;&lt;/script&gt;
+        &lt;/body&gt;
+    &lt;/html&gt;
+</code>
+                </pre>
+            </div>
+        </div>
+        <div class="text-centered badgets">
+            <iframe src="https://ghbtns.com/github-btn.html?user=Machy8&amp;repo=macdom&amp;type=star&amp;count=true" frameborder="0" scrolling="0" width="80px" height="20px"></iframe>
+            <a href="https://travis-ci.org/Machy8/Macdom"><img src="https://travis-ci.org/Machy8/Macdom.svg?branch=master" alt="Build Status"></a>
+            <a href='https://coveralls.io/github/Machy8/Macdom?branch=master'><img src='https://coveralls.io/repos/github/Machy8/Macdom/badge.svg?branch=master' alt='Coverage Status' /></a>
+            <a href="https://packagist.org/packages/machy8/macdom"><img src="https://img.shields.io/packagist/v/machy8/macdom.svg?maxAge=2592000" alt="Packagist"></a>
+            <a href="https://github.com/Machy8/Macdom/blob/master/license.md"><img src="https://img.shields.io/badge/license-New%20BSD-blue.svg" alt="License"></a>
+            <a href="https://gitter.im/Machy8/Macdom?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Machy8/Macdom.svg" alt="Join the chat at https://gitter.im/Machy8/Macdom"></a>
+        </div>
+    </main>
+
+    <script src="prism.js" type="text/javascript" async></script>
+    <script src="script.js" type="text/javascript" async></script>
+</body>
+</html>

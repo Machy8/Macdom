@@ -1,0 +1,50 @@
+body {
+    font-family: sans-serif;
+}
+
+h1 {
+    color: #1C6BA0;
+    font-size: 2.5rem;
+}
+
+.shortDescription {
+    font-size: 1.2rem
+}
+
+.shortDescription a {
+    color: #1C6BA0;
+    display: inline-block;
+    text-decoration: none;
+    border-bottom: 2px solid #1C6BA0
+}
+
+.shortDescription .visit {
+    color: #F92672;
+    border-color: #F92672;
+}
+
+@media (min-width: 1025px) {
+    .codeWrapper {
+        width: 47%;
+    }
+}
+
+pre {
+    height: 45vh;
+    overflow: auto;
+    font-size: 0.7rem;
+}
+
+.codesWrapper {
+    margin-bottom: 30px;
+}
+
+.badgets a {
+    display: inline-block;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.composerCode {
+    background-color: #eee;
+}
