@@ -32,7 +32,7 @@ Macros in Macdom are "prearranged code".
 - Adding `$macdom->addMacro()`
 - Removing `$macdom->removeMacro('macroname', Engine::CONTENT_HTML)`
 
-````
+```` PHP
 $quickList = function ($content) {
     $listItems = explode(' ', $content);
     $list = '<ul>';
