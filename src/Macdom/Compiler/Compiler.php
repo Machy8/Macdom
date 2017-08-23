@@ -204,7 +204,7 @@ final class Compiler
 				}
 
 				if ($removeMatch) {
-					$tokenText = str_replace($match[0], '', $tokenText);
+					$tokenText = preg_replace('/' . preg_quote($match[0], '/') . '/', '', $tokenText, 1);
 				}
 			}
 		}
