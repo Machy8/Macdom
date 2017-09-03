@@ -40,6 +40,7 @@ final class CoreBooleanAttributes extends AbstractElementsManager
 			->addBooleanAttribute('hidden')
 			->addBooleanAttribute('checked')
 			->addBooleanAttribute('ismap')
+			->addBooleanAttribute('itemscope')
 			->addBooleanAttribute('loop')
 			->addBooleanAttribute('multiple')
 			->addBooleanAttribute('muted')
