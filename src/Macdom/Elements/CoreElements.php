@@ -153,7 +153,7 @@ final class CoreElements extends AbstractElementsManager
 			// XML elements
 			->addElement('xml', [Engine::CONTENT_XML, 'quickAttributes' => ['version', 'encoding'], 'openTags' => ['<?'], 'closeTags' => ['?>']])
 			->addElement('changefreq', [Engine::CONTENT_XML])
-			->addElement('lastmod', Engine::CONTENT_XML)
+			->addElement('lastmod', [Engine::CONTENT_XML])
 			->addElement('loc', [Engine::CONTENT_XML])
 			->addElement('priority', [Engine::CONTENT_XML])
 			->addElement('sitemap', [Engine::CONTENT_XML])
