@@ -153,6 +153,8 @@ final class CoreElements extends AbstractElementsManager
 			// XML elements
 			->addElement('xml', [Engine::CONTENT_XML, 'quickAttributes' => ['version', 'encoding'], 'openTags' => ['<?'], 'closeTags' => ['?>']])
 			->addElement('category', [Engine::CONTENT_XML])
+			->addElement('changefreq', [Engine::CONTENT_XML])
+			->addElement('priority', [Engine::CONTENT_XML])
 			->addElement('channel', [Engine::CONTENT_XML])
 			->addElement('cloud', [Engine::CONTENT_XML, Engine::UNPAIRED_ELEMENT, 'quickAttributes' => ['domain', 'port', 'path', 'registerProcedure', 'protocol']])
 			->addElement('copyright', [Engine::CONTENT_XML])
@@ -167,7 +169,9 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('item', [Engine::CONTENT_XML])
 			->addElement('language', [Engine::CONTENT_XML])
 			->addElement('lastBuildDate', [Engine::CONTENT_XML])
+			->addElement('lastmod', [Engine::CONTENT_XML])
 			->addElement('link', [Engine::CONTENT_XML])
+			->addElement('loc', [Engine::CONTENT_XML])
 			->addElement('managingEditor', [Engine::CONTENT_XML])
 			->addElement('pubDate', [Engine::CONTENT_XML])
 			->addElement('rating', [Engine::CONTENT_XML])
@@ -179,6 +183,7 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('title', [Engine::CONTENT_XML])
 			->addElement('ttl', [Engine::CONTENT_XML])
 			->addElement('url', [Engine::CONTENT_XML])
+			->addElement('urlset', [Engine::CONTENT_XML, 'quickAttributes' => ['xmlns']])
 			->addElement('webMaster', [Engine::CONTENT_XML]);
 	}
 
