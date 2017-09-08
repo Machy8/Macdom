@@ -153,11 +153,21 @@ final class CoreElements extends AbstractElementsManager
 			// XML elements
 			->addElement('xml', [Engine::CONTENT_XML, 'quickAttributes' => ['version', 'encoding'], 'openTags' => ['<?'], 'closeTags' => ['?>']])
 			->addElement('changefreq', [Engine::CONTENT_XML])
+			->addElement('comments', [Engine::CONTENT_XML])
+			->addElement('description', [Engine::CONTENT_XML])
+			->addElement('guid', [Engine::CONTENT_XML])
+			->addElement('dc:creator', [Engine::CONTENT_XML])
+			->addElement('item', [Engine::CONTENT_XML])
+			->addElement('language', [Engine::CONTENT_XML])
 			->addElement('lastmod', [Engine::CONTENT_XML])
+			->addElement('link', [Engine::CONTENT_XML])
 			->addElement('loc', [Engine::CONTENT_XML])
 			->addElement('priority', [Engine::CONTENT_XML])
+			->addElement('pubDate', [Engine::CONTENT_XML])
+			->addElement('rss', [Engine::CONTENT_XML, 'quickAttributes' => ['version']])
 			->addElement('sitemap', [Engine::CONTENT_XML])
 			->addElement('sitemapindex', [Engine::CONTENT_XML, 'quickAttributes' => ['xmlns']])
+			->addElement('title', [Engine::CONTENT_XML])
 			->addElement('url', [Engine::CONTENT_XML])
 			->addElement('urlset', [Engine::CONTENT_XML, 'quickAttributes' => ['xmlns']]);
 	}

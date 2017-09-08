@@ -17,6 +17,7 @@ namespace Macdom\Macros;
 
 use Macdom\Register;
 use Macdom\Engine;
+use function Sodium\add;
 
 
 final class CoreMacros extends AbstractMacrosManager
@@ -107,7 +108,11 @@ final class CoreMacros extends AbstractMacrosManager
 			// XML macros
 			->addMacro('!xml', function () {
 				return '<?xml version="1.0" encoding="UTF-8" ?>';
-			}, [Engine::CONTENT_XML]);
+			}, [Engine::CONTENT_XML])
+
+			->addMacro('cdata', function ($line) {
+				return '<![CDATA[ ' . $line . ' ]]>';
+			});
 	}
 
 }
