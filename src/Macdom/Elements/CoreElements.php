@@ -151,7 +151,7 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('picture')
 
 			// XML elements
-			->addElement('xml', [Engine::CONTENT_XML, 'quickAttributes' => ['version', 'encoding'], 'openTags' => ['<?'], 'closeTags' => ['?>']])
+			->addElement('atom:link', [Engine::CONTENT_XML, Engine::UNPAIRED_ELEMENT, 'quickAttributes' => ['href', 'rel', 'type']])
 			->addElement('changefreq', [Engine::CONTENT_XML])
 			->addElement('comments', [Engine::CONTENT_XML])
 			->addElement('description', [Engine::CONTENT_XML])
@@ -160,6 +160,7 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('item', [Engine::CONTENT_XML])
 			->addElement('language', [Engine::CONTENT_XML])
 			->addElement('lastmod', [Engine::CONTENT_XML])
+			->addElement('lastBuildDate', [Engine::CONTENT_XML])
 			->addElement('link', [Engine::CONTENT_XML])
 			->addElement('loc', [Engine::CONTENT_XML])
 			->addElement('priority', [Engine::CONTENT_XML])
@@ -169,7 +170,8 @@ final class CoreElements extends AbstractElementsManager
 			->addElement('sitemapindex', [Engine::CONTENT_XML, 'quickAttributes' => ['xmlns']])
 			->addElement('title', [Engine::CONTENT_XML])
 			->addElement('url', [Engine::CONTENT_XML])
-			->addElement('urlset', [Engine::CONTENT_XML, 'quickAttributes' => ['xmlns']]);
+			->addElement('urlset', [Engine::CONTENT_XML, 'quickAttributes' => ['xmlns']])
+			->addElement('xml', [Engine::CONTENT_XML, 'quickAttributes' => ['version', 'encoding'], 'openTags' => ['<?'], 'closeTags' => ['?>']]);
 	}
 
 }
