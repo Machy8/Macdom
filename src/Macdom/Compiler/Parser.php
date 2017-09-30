@@ -336,7 +336,6 @@ final class Parser
 			'/(' . $indentation . $firstIndentationMultiplier . ')(?<! |\S)(?:' . $skippedElements . ')(?:(?= |\t) [^\n]*)?((?:\n\1' . $indentation . '.*)+)/' => TRUE, // indented block
 			'/<(' . $skippedElements . ')(?:[-\w]+)?(?:[^>]+)?>([\s\S]*?)<\/\1>/' => FALSE // tags
 		];
-		bdump($this->codePlaceholdersRegularExpression);
 	}
 
 
