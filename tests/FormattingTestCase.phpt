@@ -18,6 +18,9 @@ namespace Macdom\Tests;
 require_once 'bootstrap.php';
 
 
+/**
+ * @testCase
+ */
 final class FormattingTestCase extends AbstractTestCase
 {
 
@@ -56,4 +59,4 @@ final class FormattingTestCase extends AbstractTestCase
 
 }
 
-run(new FormattingTestCase());
+(new FormattingTestCase())->run();

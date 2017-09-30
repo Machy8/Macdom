@@ -1,3 +1,6 @@
 vendor/
 .idea/
+input.html
+index.php
+output.html
 composer.lock

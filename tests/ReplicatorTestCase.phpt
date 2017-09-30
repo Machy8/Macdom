@@ -17,7 +17,9 @@ namespace Macdom\Tests;
 
 require_once 'bootstrap.php';
 
-
+/**
+ * @testCase
+ */
 final class ReplicatorTestCase extends AbstractTestCase
 {
 
@@ -49,4 +51,4 @@ final class ReplicatorTestCase extends AbstractTestCase
 
 }
 
-run(new ReplicatorTestCase());
+(new ReplicatorTestCase())->run();

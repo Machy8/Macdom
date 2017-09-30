@@ -14,21 +14,21 @@
 ```` Slim
 !5
 html
-head
-	utf-8
-	viewport
-	favicon includes/favicon.ico
-	title Macdom example
-body
-	h1 #title .titles .main-title Hello world
-	nav
-		@ a $http://www.[@].com $blank Link on -
-		[google] .first-link Google
-		[yahoo] Yahoo
-		[github] Github	
-	div #wrapper Some text <b>here</b>.
-	https://www.code.jquery.com/jquery-1.12.0.min.js async
-	
+    head
+        utf-8
+        viewport
+        favicon includes/favicon.ico
+        title Macdom example
+    body
+        h1 #title .titles .main-title Hello world
+        nav
+            @ a $http://www.[@].com $blank Link on -
+            [google] .first-link Google
+            [yahoo] Yahoo
+            [github] Github	
+        div #wrapper Some text <b>here</b>.
+        https://www.code.jquery.com/jquery-1.12.0.min.js async
+
 ````
 
 **Result**
@@ -77,33 +77,33 @@ $compiled = $macdom->compile($content);
 *Nette framework:*
 ```PHP
 
-	use Macdom\Engine;
-	use Macdom\Bridges\MacdomLatte\FileLoader;
+use Macdom\Engine;
+use Macdom\Bridges\MacdomLatte\FileLoader;
 
-	/**
-	 * @var Engine
-	 */
-	private $macdom;
+/**
+ * @var Engine
+ */
+private $macdom;
 
-	/**
-	 * @var FileLoader
-	 */
-	private $fileLoader;
+/**
+ * @var FileLoader
+ */
+private $fileLoader;
 
-	
-	public function __construct(Engine $macdom, FileLoader $fileLoader) {
-		$this->macdom = $macdom;
-		$this->fileLoader = $fileLoader;
-	}
 
-	
-	protected function createTemplate()
-	{
-		$template = parent::createTemplate();
-		$this->fileLoader->setMacdom($this->macdom);
-		$template->getLatte()->setLoader($this->fileLoader);
-		return $template;
-	}
+public function __construct(Engine $macdom, FileLoader $fileLoader) {
+	$this->macdom = $macdom;
+	$this->fileLoader = $fileLoader;
+}
+
+
+protected function createTemplate()
+{
+	$template = parent::createTemplate();
+	$this->fileLoader->setMacdom($this->macdom);
+	$template->getLatte()->setLoader($this->fileLoader);
+	return $template;
+}
 ```
 
 And in the config neon
