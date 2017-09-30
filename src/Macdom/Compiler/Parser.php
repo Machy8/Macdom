@@ -332,10 +332,11 @@ final class Parser
 
 		// Regular expression => indented from left
 		$this->codePlaceholdersRegularExpression = [
-			'/<\?php(?: |\n)(?:.|\n)*\?>/Um' => FALSE, // PHP code
-			'/(' . $indentation . $firstIndentationMultiplier . ')(?<! |\S)(?:' . $skippedElements . ')((?= ) [\S\h]+(?:.*\n\1' . $indentation . '.*)*|((?= *\n)(?:.*\n\1' . $indentation . '.*)+))/' => TRUE, // indented block
+			"/<\?php(?: |\n)(?:.|\n)*\?>/Um" => FALSE, // PHP code
+			'/(' . $indentation . $firstIndentationMultiplier . ')(?<! |\S)(?:' . $skippedElements . ')(?:(?= |\t) [^\n]*)?((?:\n\1' . $indentation . '.*)+)/' => TRUE, // indented block
 			'/<(' . $skippedElements . ')(?:[-\w]+)?(?:[^>]+)?>([\s\S]*?)<\/\1>/' => FALSE // tags
 		];
+		bdump($this->codePlaceholdersRegularExpression);
 	}
 
 
