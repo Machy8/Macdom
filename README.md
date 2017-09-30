@@ -14,21 +14,21 @@
 ```` Slim
 !5
 html
-head
-	utf-8
-	viewport
-	favicon includes/favicon.ico
-	title Macdom example
-body
-	h1 #title .titles .main-title Hello world
-	nav
-		@ a $http://www.[@].com $blank Link on -
-		[google] .first-link Google
-		[yahoo] Yahoo
-		[github] Github	
-	div #wrapper Some text <b>here</b>.
-	https://www.code.jquery.com/jquery-1.12.0.min.js async
-	
+    head
+        utf-8
+        viewport
+        favicon includes/favicon.ico
+        title Macdom example
+    body
+        h1 #title .titles .main-title Hello world
+        nav
+            @ a $http://www.[@].com $blank Link on -
+            [google] .first-link Google
+            [yahoo] Yahoo
+            [github] Github	
+        div #wrapper Some text <b>here</b>.
+        https://www.code.jquery.com/jquery-1.12.0.min.js async
+
 ````
 
 **Result**
