@@ -18,6 +18,9 @@ namespace Macdom\Tests;
 require_once 'bootstrap.php';
 
 
+/**
+ * @testCase
+ */
 final class MacrosTestCase extends AbstractTestCase
 {
 
@@ -97,4 +100,4 @@ final class MacrosTestCase extends AbstractTestCase
 
 }
 
-run(new MacrosTestCase());
+(new MacrosTestCase())->run();
