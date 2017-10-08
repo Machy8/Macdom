@@ -5,7 +5,7 @@
     "license": "New BSD License",
     "require": {
         "php": ">=7.0",
-        "machy8/xhtml-formatter": "^0.1"
+        "machy8/xhtml-formatter": "^1.0"
     },
     "require-dev": {
         "nette/tester": "^1.7",
