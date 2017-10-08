@@ -77,33 +77,33 @@ $compiled = $macdom->compile($content);
 *Nette framework:*
 ```PHP
 
-	use Macdom\Engine;
-	use Macdom\Bridges\MacdomLatte\FileLoader;
+use Macdom\Engine;
+use Macdom\Bridges\MacdomLatte\FileLoader;
 
-	/**
-	 * @var Engine
-	 */
-	private $macdom;
+/**
+ * @var Engine
+ */
+private $macdom;
 
-	/**
-	 * @var FileLoader
-	 */
-	private $fileLoader;
+/**
+ * @var FileLoader
+ */
+private $fileLoader;
 
-	
-	public function __construct(Engine $macdom, FileLoader $fileLoader) {
-		$this->macdom = $macdom;
-		$this->fileLoader = $fileLoader;
-	}
 
-	
-	protected function createTemplate()
-	{
-		$template = parent::createTemplate();
-		$this->fileLoader->setMacdom($this->macdom);
-		$template->getLatte()->setLoader($this->fileLoader);
-		return $template;
-	}
+public function __construct(Engine $macdom, FileLoader $fileLoader) {
+	$this->macdom = $macdom;
+	$this->fileLoader = $fileLoader;
+}
+
+
+protected function createTemplate()
+{
+	$template = parent::createTemplate();
+	$this->fileLoader->setMacdom($this->macdom);
+	$template->getLatte()->setLoader($this->fileLoader);
+	return $template;
+}
 ```
 
 And in the config neon
