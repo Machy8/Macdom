@@ -18,6 +18,11 @@
         }
     ],
     "autoload": {
-        "classmap": [""]
+        "classmap": ["src/"]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        }
     }
 }
