@@ -27,21 +27,18 @@
 - bgsound, dialog, hgroup, image, menu, menuitem, nobr, picture
     
 **Default XML elements**
-- xml,
-- category, channel, cloud, copyright
-- day, description, docs
-- enclosure
-- generator, guid
-- hour
-- image, item
-- language, lastBuildDate, link
-- managingEditor
-- pubDate
-- rating, rss
-- skipDays, skipHours, source
-- textInput, title, ttl
-- url
-- webmaster
+- atom:link
+- changefreq, comments
+- description, dc:creator
+- guid
+- item
+- language, lastmod, lastBuildDate, link, loc
+- priority, pubdate
+- rss
+- sitemap, sitemapindex
+- title
+- url, urlset
+- xml
 
 ## Managing elements 
 - Adding - `$macdom->addElement()`

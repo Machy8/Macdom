@@ -61,46 +61,47 @@ You can change element quick attributes by calling
 
 ### Default settings for each element
 
-| Element  | Attributes                                      |
-|----------|-------------------------------------------------|
-| a         | href, target, role                              |
-| abbr      | title                                           |
-| audio     | src                                             |
-| base      | href                                            |
-| bdo       | dir                                             |
-| button    | type, value                                     |
-| canvas    | width, height                                   |
-| col       | span                                            |
-| data      | value                                           |
-| embed     | src, type, width, height                        |
-| form      | action, method, target                          |
-| html      | lang                                            |
-| iframe    | src, frameborder, width, height                 |
-| img       | src, alt                                        |
-| input     | type, value, placeholder                        |
-| label     | for                                             |
-| link      | href, rel, title                                |
-| meta      | name, content                                   |
-| object    | data, type                                      |
-| ol        | type, start, reversed                           |
-| optgroup  | label                                           |
-| option    | value                                           |
-| param     | name, value                                     |
-| progress  | value, max                                      |
-| q         | cite                                            |
-| script    | src, type                                       |
-| source    | src, type                                       |
-| style     | type                                            |
-| td        | rowspan, colspan                                |
-| textarea  | placeholder                                     |
-| track     | src, srclang, kind                              |
-| menu      | type, label                                     |
-| menuitem  | type                                            |
-| xml       | version encoding                                |
-| cloud     | domain, port, path, registerProcedure, protocol |
-| enclosure | url                                             |
-| rss       | version                                         |
-| source    | url                                             |
+| Element      | Attributes                                      |
+|--------------|-------------------------------------------------|
+| a            | href, target, role                              |
+| abbr         | title                                           |
+| audio        | src                                             |
+| base         | href                                            |
+| bdo          | dir                                             |
+| button       | type, value                                     |
+| canvas       | width, height                                   |
+| col          | span                                            |
+| data         | value                                           |
+| embed        | src, type, width, height                        |
+| form         | action, method, target                          |
+| html         | lang                                            |
+| iframe       | src, frameborder, width, height                 |
+| img          | src, alt                                        |
+| input        | type, value, placeholder                        |
+| label        | for                                             |
+| link         | href, rel, title                                |
+| meta         | name, content                                   |
+| object       | data, type                                      |
+| ol           | type, start, reversed                           |
+| optgroup     | label                                           |
+| option       | value                                           |
+| param        | name, value                                     |
+| progress     | value, max                                      |
+| q            | cite                                            |
+| script       | src, type                                       |
+| source       | src, type                                       |
+| style        | type                                            |
+| td           | rowspan, colspan                                |
+| textarea     | placeholder                                     |
+| track        | src, srclang, kind                              |
+| menu         | type, label                                     |
+| menuitem     | type                                            |
+| atom:link    | href, rel, type                                 |
+| rss          | version                                         |
+| sitemapindex | xmlns                                           |
+| urlset       | xmlns                                           |
+| xml          | version, encoding                               |
+
 
 ### Example with "a" tag
 
