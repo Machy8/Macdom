@@ -13,7 +13,7 @@
 
 declare(strict_types = 1);
 
-namespace Macdom\Bridges\MacdomTracy;
+namespace Macdom\Bridges\Tracy;
 
 use Macdom;
 use Macdom\Engine;

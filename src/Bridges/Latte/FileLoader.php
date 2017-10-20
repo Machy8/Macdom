@@ -13,7 +13,7 @@
 
 declare(strict_types = 1);
 
-namespace Macdom\Bridges\MacdomLatte;
+namespace Macdom\Bridges\Latte;
 
 use Latte\Loaders\FileLoader as LatteFileLoader;
 use Macdom\Engine;

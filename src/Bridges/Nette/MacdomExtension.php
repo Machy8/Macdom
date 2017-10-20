@@ -13,7 +13,7 @@
 
 declare(strict_types = 1);
 
-namespace Macdom\Bridges\MacdomNette;
+namespace Macdom\Bridges\Nette;
 
 use Nette\DI\CompilerExtension;
 
@@ -35,16 +35,15 @@ class MacdomExtension extends CompilerExtension
 		$config = $this->getConfig($this->config);
 
 		$builder->addDefinition($this->prefix('loader'))
-			->setClass('Macdom\Bridges\MacdomLatte\FileLoader');
+			->setClass('Macdom\Bridges\Latte\FileLoader');
 
-		$compiler = $builder->addDefinition($this->prefix('engine'))
+		$builder->addDefinition($this->prefix('engine'))
 			->setClass('Macdom\Engine');
 
 		if ($config['debugger']) {
 			$builder->addDefinition($this->prefix('tracyPanel'))
-				->setClass('Macdom\Bridges\MacdomTracy\MacdomPanel');
-
-			$compiler->addSetup('@' . $this->prefix('tracyPanel') . '::setMacdom', ['@' . $this->prefix('engine')]);
+				->setClass('Macdom\Bridges\MacdomTracy\MacdomPanel')
+				->addSetup('setMacdom', ['@' . $this->prefix('engine')]);
 		}
 	}
 
