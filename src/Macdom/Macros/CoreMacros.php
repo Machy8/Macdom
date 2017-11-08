@@ -86,6 +86,12 @@ final class CoreMacros extends AbstractMacrosManager
 			->addMacro('js-async', function ($line) {
 				return '<script type="text/javascript" src="' . $line . '" async="true"></script>';
 			})
+			->addMacro('preload-css', function ($line) {
+				return '<link rel="preload" href="' . $line . '" as="style">';
+			})
+			->addMacro('preload-js', function ($line) {
+				return '<link rel="preload" href="' . $line . '" as="script">';
+			})
 			->addMacro('//', function ($line) {
 				return '<!-- ' . $line . ' -->';
 			})
