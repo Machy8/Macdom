@@ -153,6 +153,7 @@ final class CoreElements extends AbstractElementsManager
 			// XML elements
 			->addElement('atom:link', [Engine::CONTENT_XML, Engine::UNPAIRED_ELEMENT, 'quickAttributes' => ['href', 'rel', 'type']])
 			->addElement('changefreq', [Engine::CONTENT_XML])
+			->addElement('channel', [Engine::CONTENT_XML])
 			->addElement('comments', [Engine::CONTENT_XML])
 			->addElement('description', [Engine::CONTENT_XML])
 			->addElement('guid', [Engine::CONTENT_XML])
