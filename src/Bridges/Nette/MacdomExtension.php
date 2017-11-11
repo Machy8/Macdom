@@ -42,7 +42,7 @@ class MacdomExtension extends CompilerExtension
 
 		if ($config['debugger']) {
 			$builder->addDefinition($this->prefix('tracyPanel'))
-				->setClass('Macdom\Bridges\MacdomTracy\MacdomPanel')
+				->setClass('Macdom\Bridges\Tracy\MacdomPanel')
 				->addSetup('setMacdom', ['@' . $this->prefix('engine')]);
 		}
 	}
