@@ -37,14 +37,23 @@ final class CoreMacros extends AbstractMacrosManager
 			->addMacro('author', function ($line) {
 				return '<meta name="author" content="' . $line . '">';
 			})
+			->addMacro('canonical', function ($line) {
+				return '<link rel="canonical" href="' . $line . '">';
+			})
 			->addMacro('charset', function ($line) {
 				return '<meta charset="' . $line . '">';
 			})
 			->addMacro('css', function ($line) {
 				return '<link rel="stylesheet" type="text/css" href="' . $line . '">';
 			})
+			->addMacro('css-preload', function ($line) {
+				return '<link rel="preload" href="' . $line . '" as="style">';
+			})
 			->addMacro('description', function ($line) {
 				return '<meta name="description" content="' . $line . '">';
+			})
+			->addMacro('dns-prefetch', function ($line) {
+				return '<link rel="dns-prefetch" href="' . $line . '">';
 			})
 			->addMacro('favicon', function ($line) {
 				return '<link rel="shortcut icon" href="' . $line . '">';
@@ -63,6 +72,9 @@ final class CoreMacros extends AbstractMacrosManager
 			})
 			->addMacro('js-async', function ($line) {
 				return '<script type="text/javascript" src="' . $line . '" async="true"></script>';
+			})
+			->addMacro('js-preload', function ($line) {
+				return '<link rel="preload" href="' . $line . '" as="script">';
 			})
 			->addMacro('keywords', function ($line) {
 				return '<meta name="keywords" content="' . $line . '">';
