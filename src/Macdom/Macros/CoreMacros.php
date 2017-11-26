@@ -34,33 +34,20 @@ final class CoreMacros extends AbstractMacrosManager
 			->addMacro('!DOCTYPE', function ($line) {
 				return '<!DOCTYPE ' . $line . '>';
 			})
+			->addMacro('author', function ($line) {
+				return '<meta name="author" content="' . $line . '">';
+			})
 			->addMacro('charset', function ($line) {
 				return '<meta charset="' . $line . '">';
 			})
-			->addMacro('utf-8', function () {
-				return '<meta charset="utf-8">';
-			})
-			->addMacro('keywords', function ($line) {
-				return '<meta name="keywords" content="' . $line . '">';
+			->addMacro('css', function ($line) {
+				return '<link rel="stylesheet" type="text/css" href="' . $line . '">';
 			})
 			->addMacro('description', function ($line) {
 				return '<meta name="description" content="' . $line . '">';
 			})
-			->addMacro('author', function ($line) {
-				return '<meta name="author" content="' . $line . '">';
-			})
-			->addMacro('viewport', function ($line) {
-				$viewport = '<meta name="viewport" content="';
-				$viewport .= ! empty($line) ? $line : 'width=device-width, initial-scale=1';
-				$viewport .= '">';
-
-				return $viewport;
-			})
-			->addMacro('index-follow', function () {
-				return '<meta name="robots" content="index, follow">';
-			})
-			->addMacro('no-index-follow', function () {
-				return '<meta name="robots" content="noindex, nofollow">';
+			->addMacro('favicon', function ($line) {
+				return '<link rel="shortcut icon" href="' . $line . '">';
 			})
 			->addMacro('fb', function ($line) {
 				$selected = strtok($line, " ");
@@ -68,17 +55,8 @@ final class CoreMacros extends AbstractMacrosManager
 
 				return '<meta property="og:' . $selected . '" content="' . $content . '">';
 			})
-			->addMacro('tw', function ($line) {
-				$selected = strtok($line, " ");
-				$content = trim(preg_replace("/" . $selected . "/", "", $line, 1));
-
-				return '<meta name="twitter:' . $selected . '" content="' . $content . '">';
-			})
-			->addMacro('css', function ($line) {
-				return '<link rel="stylesheet" type="text/css" href="' . $line . '">';
-			})
-			->addMacro('favicon', function ($line) {
-				return '<link rel="shortcut icon" href="' . $line . '">';
+			->addMacro('index-follow', function () {
+				return '<meta name="robots" content="index, follow">';
 			})
 			->addMacro('js', function ($line) {
 				return '<script type="text/javascript" src="' . $line . '"></script>';
@@ -86,11 +64,33 @@ final class CoreMacros extends AbstractMacrosManager
 			->addMacro('js-async', function ($line) {
 				return '<script type="text/javascript" src="' . $line . '" async="true"></script>';
 			})
+			->addMacro('keywords', function ($line) {
+				return '<meta name="keywords" content="' . $line . '">';
+			})
+			->addMacro('no-index-follow', function () {
+				return '<meta name="robots" content="noindex, nofollow">';
+			})
 			->addMacro('preload-css', function ($line) {
 				return '<link rel="preload" href="' . $line . '" as="style">';
 			})
 			->addMacro('preload-js', function ($line) {
 				return '<link rel="preload" href="' . $line . '" as="script">';
+			})
+			->addMacro('tw', function ($line) {
+				$selected = strtok($line, " ");
+				$content = trim(preg_replace("/" . $selected . "/", "", $line, 1));
+
+				return '<meta name="twitter:' . $selected . '" content="' . $content . '">';
+			})
+			->addMacro('utf-8', function () {
+				return '<meta charset="utf-8">';
+			})
+			->addMacro('viewport', function ($line) {
+				$viewport = '<meta name="viewport" content="';
+				$viewport .= ! empty($line) ? $line : 'width=device-width, initial-scale=1';
+				$viewport .= '">';
+
+				return $viewport;
 			})
 			->addMacro('//', function ($line) {
 				return '<!-- ' . $line . ' -->';
