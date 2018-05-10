@@ -21,6 +21,12 @@ use Nette\DI\CompilerExtension;
 class MacdomExtension extends CompilerExtension
 {
 
+	const
+		ENGINE_CLASSNAME = 'Macdom\Engine',
+
+		TRACY_CLASSNAME = 'Tracy\Debugger',
+		TRACY_PANEL_CLASSNAME = 'Macdom\Bridges\Tracy\MacdomPanel';
+
 	/**
 	 * @var array
 	 */
@@ -38,13 +44,26 @@ class MacdomExtension extends CompilerExtension
 			->setClass('Macdom\Bridges\Latte\FileLoader');
 
 		$builder->addDefinition($this->prefix('engine'))
-			->setClass('Macdom\Engine');
+			->setClass(self::ENGINE_CLASSNAME);
 
 		if ($config['debugger']) {
 			$builder->addDefinition($this->prefix('tracyPanel'))
-				->setClass('Macdom\Bridges\Tracy\MacdomPanel')
+				->setClass(self::TRACY_PANEL_CLASSNAME)
 				->addSetup('setMacdom', ['@' . $this->prefix('engine')]);
 		}
+	}
+
+
+	public function afterCompile(\Nette\PhpGenerator\ClassType $classType)
+	{
+		if ($this->config['debugger'] !== TRUE || ! class_exists(self::TRACY_CLASSNAME)) {
+			return;
+		}
+
+		$classType->getMethod('initialize')->addBody(
+			'$this->getByType("' . self::TRACY_PANEL_CLASSNAME
+			. '")->setMacdom($this->getByType("' . self::ENGINE_CLASSNAME . '"));'
+		);
 	}
 
 }
