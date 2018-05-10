@@ -2,7 +2,7 @@
     "name": "machy8/macdom",
     "description": "The best, highly customizable HTML preprocessor with many amazing features.",
     "keywords": ["macdom", "html", "preprocessor", "templating", "minification"],
-    "license": "New BSD License",
+    "license": "BSD-3-Clause",
     "require": {
         "php": ">=7.0",
         "machy8/xhtml-formatter": "^1.0"
@@ -27,7 +27,7 @@
         "composer-synchronizer": {
             "nette2": {
                 "resources": {
-                    "composer-synchronizer-configuration/nette2/": "%configDir%/macdom/"
+                    "composer-synchronizer/nette2/": "%configDir%/macdom/"
                 },
                 "includes": [
                     "macdom/macdom.neon"
