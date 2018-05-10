@@ -77,8 +77,8 @@ $compiled = $macdom->compile($content);
 *Nette framework:*
 ```PHP
 
+use Macdom\Bridges\Latte\FileLoader;
 use Macdom\Engine;
-use Macdom\Bridges\MacdomLatte\FileLoader;
 
 /**
  * @var Engine
@@ -109,7 +109,7 @@ protected function createTemplate()
 And add a config neon file with the following content (or try [Composer synchronizer](https://github.com/composer-synchronizer/composer-synchronizer). It will do it for you automatically).
 ```
 extensions:
-    macdom: Macdom\Bridges\MacdomNette\MacdomExtension
+    macdom: Macdom\Bridges\Nette\MacdomExtension
   
 macdom:
     debugger: TRUE
