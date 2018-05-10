@@ -106,7 +106,7 @@ protected function createTemplate()
 }
 ```
 
-And in the config neon
+And add a config neon file with the following content (or try [Composer synchronizer](https://github.com/composer-synchronizer/composer-synchronizer). It will do it for you automatically).
 ```
 extensions:
     macdom: Macdom\Bridges\MacdomNette\MacdomExtension
