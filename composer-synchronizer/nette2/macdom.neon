@@ -1,5 +1,5 @@
 extensions:
-	macdom: Macdom\Bridges\MacdomNette\MacdomExtension
+	macdom: Macdom\Bridges\Nette\MacdomExtension
 
 macdom:
 	debugger: TRUE
