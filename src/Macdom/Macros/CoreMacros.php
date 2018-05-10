@@ -82,12 +82,6 @@ final class CoreMacros extends AbstractMacrosManager
 			->addMacro('no-index-follow', function () {
 				return '<meta name="robots" content="noindex, nofollow">';
 			})
-			->addMacro('preload-css', function ($line) {
-				return '<link rel="preload" href="' . $line . '" as="style">';
-			})
-			->addMacro('preload-js', function ($line) {
-				return '<link rel="preload" href="' . $line . '" as="script">';
-			})
 			->addMacro('tw', function ($line) {
 				$selected = strtok($line, " ");
 				$content = trim(preg_replace("/" . $selected . "/", "", $line, 1));
