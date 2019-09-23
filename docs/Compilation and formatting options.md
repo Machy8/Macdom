@@ -31,7 +31,7 @@ div
 ## Output formatter
 Macdom is using [Xhtml formatter](https://github.com/Machy8/xhtml-formatter). 
 If you don't want to format the output code, you can switch off the formatter
-by wrapping your by `<formatter-off></formatter-off>` tag or by calling the method 
+by wrapping your code by `<formatter-off></formatter-off>` tag or by calling the method 
 `$macdom->disableOutputFormatter()` to disable the output formatter entirely.
 
 ```` HTML
